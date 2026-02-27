@@ -14,7 +14,6 @@
 #include "app/tag/_main.h"
 #include "app/tag/tag_commands.h"
 #include "app/config_file/_main.h"
-#include "app/reader/_main.h"
 #include "app/myserial_check/_main.h"
 #include "app/web_server/_main.h"
 #include "app/rgb/_main.h"

@@ -40,6 +40,9 @@ public:
     bool protected_inventory_enabled = false;
     String protected_inventory_password = "00000000";
 
+    // ANTENAS
+    String ant_cfg = "1:1-22;2:0-22;3:0-22;4:0-22";
+
     void set_rssi_filter(byte value)
     {
         rssi_filter = max(value, current_rssi);
@@ -48,6 +51,11 @@ public:
     void set_session(byte value)
     {
         current_session = constrain(value, 0, max_session);
+    }
+
+    void set_ant_cfg(String cfg)
+    {
+        ant_cfg = cfg;
     }
 
     void load()
@@ -72,6 +80,7 @@ public:
         webhook_url = prefs.getString("webhook_url", "http://192.168.1.10:5001");
         protected_inventory_enabled = prefs.getBool("protected_inventory_enabled", false);
         protected_inventory_password = prefs.getString("protected_inventory_password", "00000000");
+        ant_cfg = prefs.getString("ant_cfg", "1:1-22;2:0-22;3:0-22;4:0-22");
         prefs.end();
 
         mirrorValues = getMirrorString();
@@ -107,6 +116,7 @@ public:
             prefs.putString("webhook_url", webhook_url);
             prefs.putBool("protected_inventory_enabled", protected_inventory_enabled);
             prefs.putString("protected_inventory_password", protected_inventory_password);
+            prefs.putString("ant_cfg", ant_cfg);
             prefs.end();
             mirrorValues = currentMirror;
         }
@@ -133,7 +143,8 @@ public:
         s += String(webhook_on) + ",";
         s += webhook_url + ",";
         s += String(protected_inventory_enabled) + ",";
-        s += protected_inventory_password;
+        s += protected_inventory_password + ",";
+        s += ant_cfg;
         return s;
     }
 };

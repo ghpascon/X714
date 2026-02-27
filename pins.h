@@ -6,16 +6,16 @@
 #define ETH_RST_PIN -1
 #define ETH_ADDR 1
 
-#define in_1_pin 18
-#define in_2_pin 11
-#define in_3_pin 12
+#define IN_1_PIN 18
+#define IN_2_PIN 11
+#define IN_3_PIN 12
 
-#define out_1_pin 41
-#define out_2_pin 40
-#define out_3_pin 39
+#define OUT_1_PIN 41
+#define OUT_2_PIN 40
+#define OUT_3_PIN 39
 
-#define tx_reader_module 13
-#define rx_reader_module 14
+#define TX_READER_MODULE 13
+#define RX_READER_MODULE 14
 
-#define buzzer_pin 4
-#define indicator_pin 42
+#define BUZZER_PIN 4
+#define INDICATOR_PIN 42

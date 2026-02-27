@@ -15,6 +15,10 @@ Settings settings;
 #include "app/tags.h"
 Tags tags;
 
+// READER
+#include "app/reader/_main.h"
+READER reader(RX_READER_MODULE, TX_READER_MODULE);
+
 // ==================== Core 0 Task (RGB + Pins) ====================
 void core0Task(void *pvParameters)
 {
@@ -61,9 +65,8 @@ void setup()
     // Load Settings
     settings.load();
 
-    // Load configuration
-    if (fs_loaded)
-        config_file_commands.get_config();
+    // Setup Reader
+    reader.setup();
 
     // Initialize modules
     connection.setup();
@@ -71,16 +74,8 @@ void setup()
     web_server.setup();
     webhook.setup();
 
-    // Pre-reserve String buffers for tags to reduce heap churn/fragmentation
-    // cada EPC/TID esperado tem ~24 chars hex; reservar um pouco mais (32)
-    for (int i = 0; i < max_tags; i++)
-    {
-        tags[i].epc.reserve(24);
-        tags[i].tid.reserve(24);
-    }
     rgb.setup();
     pins.setup();
-    reader_module.setup();
 
     // Create task for Core 0 (RGB + Pins)
     xTaskCreatePinnedToCore(
