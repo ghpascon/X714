@@ -7,6 +7,14 @@
 #include <WiFiClientSecure.h>
 #define WATCHDOG_TIMEOUT 10
 
+// SETTINGS
+#include "app/settings.h"
+Settings settings;
+
+// TAGS
+#include "app/tags.h"
+Tags tags;
+
 // ==================== Core 0 Task (RGB + Pins) ====================
 void core0Task(void *pvParameters)
 {
@@ -50,6 +58,9 @@ void setup()
     esp_task_wdt_init(&wdt_config);
     esp_task_wdt_add(NULL);
 
+    // Load Settings
+    settings.load();
+
     // Load configuration
     if (fs_loaded)
         config_file_commands.get_config();
@@ -59,7 +70,6 @@ void setup()
     myserial.setup();
     web_server.setup();
     webhook.setup();
-    tag_commands.clear_tags();
 
     // Pre-reserve String buffers for tags to reduce heap churn/fragmentation
     // cada EPC/TID esperado tem ~24 chars hex; reservar um pouco mais (32)
@@ -92,6 +102,9 @@ void loop()
 {
     // Reset the Watchdog
     esp_task_wdt_reset();
+
+    // SETTINGS
+    settings.save();
 
     // Process serial communication
     myserial.loop();
