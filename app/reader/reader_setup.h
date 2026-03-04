@@ -236,8 +236,8 @@ public:
 			0xff,
 			0x7f,
 			0x01,
-			0x14,
-			0x15};
+			0x00,
+			0x8d};
 		crcValue = uiCrc16Cal(rf_link_gen2x, sizeof(rf_link_gen2x));
 		crc1 = crcValue & 0xFF;
 		crc2 = (crcValue >> 8) & 0xFF;
