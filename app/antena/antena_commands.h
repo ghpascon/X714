@@ -3,6 +3,7 @@
 class ANTENA_COMMANDS
 {
 public:
+	bool need_update_antena = false;
 	void set_antena(int num, bool active, byte power, byte rssi)
 	{
 		if (num < 1 || num > ant_qtd)
@@ -11,6 +12,7 @@ public:
 		antena[num - 1].active = active;
 		antena[num - 1].power = power;
 		antena[num - 1].rssi = rssi;
+		need_update_antena = true;
 	}
 
 	void set_power_all(byte set_power)
@@ -23,6 +25,7 @@ public:
 		}
 
 		myserial.write("#READ_POWER:" + String(set_power, DEC));
+		need_update_antena = true;
 	}
 
 	void decrease_power(byte qtd = 1)
@@ -31,5 +34,7 @@ public:
 		{
 			antena[i].power = max((int)antena[i].power - (int)qtd, (int)min_power);
 		}
+
+		need_update_antena = true;
 	}
 };

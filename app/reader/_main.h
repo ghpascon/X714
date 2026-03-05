@@ -18,6 +18,7 @@ public:
 
 	void functions()
 	{
+		check_update_antena();
 		check_serial();
 		reader_verify();
 
@@ -40,10 +41,10 @@ public:
 		}
 	}
 
-	void setup_reader()
+	void setup_reader(byte _step = 0)
 	{
 		setup_done = false;
-		step = 0;
+		step = _step;
 	}
 
 	void config_reader()
@@ -59,9 +60,9 @@ public:
 		else if (step == 4)
 			reader_session();
 		else if (step == 5)
-			set_active_ant();
+			set_tag_focus();
 		else if (step == 6)
-			set_ant_power();
+			protected_inventory(protected_inventory_enabled, protected_inventory_password);
 		else if (step == 7)
 			set_ant_check();
 		else if (step == 8)
@@ -79,13 +80,22 @@ public:
 		else if (step == 14)
 			set_rf_link_gen2x();
 		else if (step == 15)
-			set_tag_focus();
+			set_active_ant();
 		else if (step == 16)
-			protected_inventory(protected_inventory_enabled, protected_inventory_password);
+			set_ant_power();
 		else
 		{
 			myserial.write("#SETUP_DONE");
 			setup_done = true;
+		}
+	}
+
+	void check_update_antena()
+	{
+		if (antena_commands.need_update_antena)
+		{
+			setup_reader(15);
+			antena_commands.need_update_antena = false;
 		}
 	}
 
