@@ -87,6 +87,8 @@ public:
 			set_active_ant();
 		else if (step == 16)
 			set_ant_power();
+		else if (step == 17)
+			set_ant_power_all();
 		else
 		{
 			myserial.write("#SETUP_DONE");

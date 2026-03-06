@@ -36,4 +36,4 @@ extern bool protected_inventory_enabled;
 extern String protected_inventory_password;
 extern bool reader_in_protected_inventory;
 
-bool one_ant = false;
+bool one_ant = true;
