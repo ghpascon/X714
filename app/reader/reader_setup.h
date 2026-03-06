@@ -99,7 +99,7 @@ public:
 			0x05,
 			0xff,
 			0x3f,
-			get_active_ant()};
+			one_ant ? 0x01 : get_active_ant()};
 		crcValue = uiCrc16Cal(reader_active_ant, sizeof(reader_active_ant));
 		crc1 = crcValue & 0xFF;
 		crc2 = (crcValue >> 8) & 0xFF;
@@ -118,6 +118,19 @@ public:
 
 	void set_ant_power()
 	{
+		if (one_ant)
+		{
+			byte reader_ant_power_1[] = {
+				0x05,
+				0xff,
+				0x2f,
+				antena[0].power};
+			crcValue = uiCrc16Cal(reader_ant_power_1, sizeof(reader_ant_power_1));
+			crc1 = crcValue & 0xFF;
+			crc2 = (crcValue >> 8) & 0xFF;
+			write_bytes(reader_ant_power_1, sizeof(reader_ant_power_1), crc1, crc2);
+			return;
+		}
 		byte reader_ant_power[] = {
 			0x08,
 			0xff,

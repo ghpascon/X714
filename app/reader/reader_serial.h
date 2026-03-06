@@ -63,6 +63,14 @@ private:
 				myserial.write("#ANT_ERROR: ");
 			}
 
+			if (reader_cmd == "21")
+			{
+				if (cmd.substring(12, 14) == "71")
+					one_ant = true;
+				else
+					one_ant = false;
+				myserial.write("#ONE_ANT:" + String(one_ant));
+			}
 			else if (reader_cmd == "06")
 			{
 				if (cmd.substring(6, 8) == "00")

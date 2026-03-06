@@ -81,9 +81,6 @@ void setup()
         NULL,        // Task handle
         0            // Core where the task should run (0)
     );
-
-    // Pause for stability
-    delay(500);
 }
 
 // ==================== Loop (Core 1 - Main) ====================

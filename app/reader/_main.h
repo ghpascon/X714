@@ -14,6 +14,10 @@ public:
 	void setup()
 	{
 		Serial2.begin(115200, SERIAL_8N1, rx_reader_module, tx_reader_module);
+		delay(300);
+		// flush
+		while (Serial2.available())
+			Serial2.read();
 	}
 
 	void functions()
