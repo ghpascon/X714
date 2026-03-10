@@ -99,7 +99,7 @@ public:
 			0x05,
 			0xff,
 			0x3f,
-			one_ant ? 0x01 : get_active_ant()};
+			get_active_ant()};
 		crcValue = uiCrc16Cal(reader_active_ant, sizeof(reader_active_ant));
 		crc1 = crcValue & 0xFF;
 		crc2 = (crcValue >> 8) & 0xFF;

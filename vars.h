@@ -57,7 +57,7 @@ bool decode_gtin = true;
 bool fs_loaded = true;
 
 // ==================== Watchdog ====================
-#define WATCHDOG_TIMEOUT 10
+#define WATCHDOG_TIMEOUT 60
 
 bool btConnected = false;
 bool eth_connected = false;
