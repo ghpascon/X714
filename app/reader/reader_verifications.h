@@ -28,20 +28,14 @@ public:
 	void check_timeout(bool force = false)
 	{
 		const int answer_timeout = 1000;
-		static bool first_timeout = true;
 		static unsigned long current_answer_timeout = 0;
 		if (answer_rec)
 			current_answer_timeout = millis();
 
 		if (force || (millis() - current_answer_timeout > answer_timeout && setup_done))
 		{
-			if (!first_timeout)
-			{
-				antena_commands.decrease_power();
-			}
 			myserial.write("#TIMEOUT");
 			answer_rec = true;
-			first_timeout = false;
 			setup_done = false;
 			step = 0;
 		}
