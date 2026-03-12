@@ -1,3 +1,7 @@
+#pragma GCC diagnostic ignored "-Wreturn-type"
+#pragma GCC diagnostic ignored "-Wnarrowing"
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 #include "pins.h"
 #include "helpers.h"
 #include "libs.h"

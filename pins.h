@@ -6,9 +6,9 @@
 #define ETH_RST_PIN -1
 #define ETH_ADDR 1
 
-#define in_1_pin 5
-#define in_2_pin 6
-#define in_3_pin 7
+#define in_1_pin 18
+#define in_2_pin 11
+#define in_3_pin 12
 
 #define out_1_pin 41
 #define out_2_pin 40
