@@ -78,7 +78,7 @@ public:
 		else if (step == 11)
 			query_parameters();
 		else if (step == 12)
-			set_write_power(antena[0].power);
+			set_write_power(max_power);
 		else if (step == 13)
 			set_rf_link();
 		else if (step == 14)
