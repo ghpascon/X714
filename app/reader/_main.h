@@ -100,7 +100,7 @@ public:
 	{
 		if (antena_commands.need_update_antena)
 		{
-			setup_reader(15);
+			setup_reader();
 			antena_commands.need_update_antena = false;
 		}
 	}

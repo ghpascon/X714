@@ -323,7 +323,7 @@ public:
             byte current_rssi = ant_cmd.toInt();
             current_power = constrain(current_power, min_power, max_power);
             current_rssi = max(current_rssi, min_rssi);
-            antena_commands.set_antena(current_ant, String(current_active == "on"), current_power, current_rssi);
+            antena_commands.set_antena(current_ant, current_active == "on", current_power, current_rssi);
             myserial.write("#ANT_CONFIGURED:" + String(current_ant) + "," + String(current_active == "on" ? "on" : "off") + "," + String(current_power) + "," + String(current_rssi));
         }
         else if (cmd.startsWith("#session:"))
