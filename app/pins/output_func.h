@@ -12,8 +12,8 @@ public:
 	{
 		for (int i = 0; i < gpo_qtd; i++)
 			gpo[i]
-				? pinMode(gpo_pin[i], INPUT_PULLUP)
-				: pinMode(gpo_pin[i], OUTPUT);
+				? pinMode(gpo_pin[i], OUTPUT)
+				: pinMode(gpo_pin[i], INPUT_PULLUP);
 	}
 
 	void set_buzzer()

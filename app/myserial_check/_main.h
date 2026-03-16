@@ -459,6 +459,23 @@ public:
             hotspot_on = cmd.endsWith("on");
             myserial.write("#HOTSPOT:" + String(hotspot_on ? "ON" : "OFF"));
         }
+
+        // ================= GPO Commands =================
+        else if (cmd.startsWith("#gpo:"))
+        {
+            // Formato: #gpo:n,state
+            String gpo_cmd = cmd.substring(5);
+            const String sep = ",";
+            int idx = gpo_cmd.indexOf(sep);
+            if (idx == -1)
+                return;
+            int gpo_index = gpo_cmd.substring(0, idx).toInt();
+            String state_str = gpo_cmd.substring(idx + 1);
+            state_str.toLowerCase();
+            bool state = (state_str == "on" || state_str == "true");
+            pins.write_gpo(gpo_index, state);
+            myserial.write("#GPO:" + String(gpo_index) + "," + (state ? "ON" : "OFF"));
+        }
         // ================= Fallback =================
         else
         {

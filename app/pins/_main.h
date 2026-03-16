@@ -18,4 +18,13 @@ public:
 		pinMode(buzzer_pin, OUTPUT);
 		pinMode(indicator_pin, INPUT_PULLUP);
 	}
+
+	void write_gpo(int index, bool state)
+	{
+		index -= 1; // Adjust index to be 0-based
+		if (index < 0 || index >= gpo_qtd)
+			return;
+
+		gpo[index] = state;
+	}
 };

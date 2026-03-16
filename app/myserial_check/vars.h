@@ -32,3 +32,5 @@ extern bool decode_gtin;
 
 // Prefix config (extern only)
 extern String prefix;
+
+extern PINS pins;
