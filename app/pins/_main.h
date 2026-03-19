@@ -11,9 +11,9 @@ public:
 		pinMode(in_2_pin, INPUT_PULLUP);
 		pinMode(in_3_pin, INPUT_PULLUP);
 
-		pinMode(gpo_pin[0], OUTPUT);
-		pinMode(gpo_pin[1], OUTPUT);
-		pinMode(gpo_pin[2], OUTPUT);
+		pinMode(gpo_pin[0], INPUT_PULLUP);
+		pinMode(gpo_pin[1], INPUT_PULLUP);
+		pinMode(gpo_pin[2], INPUT_PULLUP);
 
 		pinMode(buzzer_pin, OUTPUT);
 		pinMode(indicator_pin, INPUT_PULLUP);

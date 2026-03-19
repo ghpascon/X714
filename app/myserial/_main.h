@@ -23,6 +23,22 @@ public:
     void loop()
     {
         loop_bt();
+        eth_state_changed();
+    }
+
+    void eth_state_changed()
+    {
+        static String last_state = "";
+        if (eth_state != last_state)
+        {
+            write("Ethernet state: " + eth_state);
+            if (eth_state == "got_ip" && pServer != nullptr)
+            {
+                stop_bt();
+                write("BLE stopped due to Ethernet connection");
+            }
+            last_state = eth_state;
+        }
     }
 
     void write(const String &data, bool all = false)

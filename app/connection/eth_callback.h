@@ -4,9 +4,11 @@ void WiFiEvent(arduino_event_id_t event)
     {
     case ARDUINO_EVENT_ETH_START:
         Serial.println("ETH Started");
+        eth_state = "started";
         break;
     case ARDUINO_EVENT_ETH_CONNECTED:
         Serial.println("ETH Connected");
+        eth_state = "connected";
         break;
     case ARDUINO_EVENT_ETH_GOT_IP:
         Serial.print("ETH MAC: ");
@@ -21,15 +23,19 @@ void WiFiEvent(arduino_event_id_t event)
         Serial.print(ETH.linkSpeed());
         Serial.println("Mbps");
 
+        eth_state = "got_ip";
+
         eth_ip = ETH.localIP().toString();
         eth_connected = true;
         break;
     case ARDUINO_EVENT_ETH_DISCONNECTED:
         Serial.println("ETH Disconnected");
+        eth_state = "disconnected";
         eth_connected = false;
         break;
     case ARDUINO_EVENT_ETH_STOP:
         Serial.println("ETH Stopped");
+        eth_state = "stopped";
         eth_connected = false;
         break;
     default:

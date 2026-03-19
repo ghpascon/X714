@@ -61,6 +61,7 @@ bool fs_loaded = true;
 
 bool btConnected = false;
 bool eth_connected = false;
+String eth_state = "";
 
 // ==================== Ethernet Configuration ====================
 bool dhcp_on = false;
@@ -79,3 +80,4 @@ String prefix = "";
 bool protected_inventory_enabled = false;
 String protected_inventory_password = "00000000";
 bool reader_in_protected_inventory = false;
+

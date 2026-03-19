@@ -7,8 +7,7 @@
 #include "libs.h"
 #include "vars.h"
 #include <freertos/semphr.h>
-#include <HTTPClient.h>
-#include <WiFiClientSecure.h>
+
 
 // ==================== Core 0 Task (RGB + Pins) ====================
 void core0Task(void *pvParameters)
@@ -65,7 +64,6 @@ void setup()
     tag_commands.clear_tags();
 
     // Pre-reserve String buffers for tags to reduce heap churn/fragmentation
-    // cada EPC/TID esperado tem ~24 chars hex; reservar um pouco mais (32)
     for (int i = 0; i < max_tags; i++)
     {
         tags[i].epc.reserve(24);
@@ -101,7 +99,7 @@ void loop()
     // Process reader module (Core 1)
     reader_module.functions();
     myserialcheck.loop();
-
+    
     // Save configuration
     config_file_commands.save_config();
 

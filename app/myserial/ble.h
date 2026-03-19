@@ -10,6 +10,7 @@
 BLEServer *pServer = nullptr;
 BLECharacteristic *pTxCharacteristic = nullptr;
 BLEAdvertising *pAdvertising = nullptr;
+bool bt_enabled = false;
 
 String bt_cmd = "";
 
@@ -73,11 +74,15 @@ void setup_bt()
     pAdvertising->addServiceUUID(SERVICE_UUID);
     pAdvertising->setScanResponse(true);
     pAdvertising->start();
+    bt_enabled = true;
 }
 
 // ==================== Loop ====================
 void loop_bt()
 {
+    if (!bt_enabled)
+        return;
+
     const int LOOP_INTERVAL_MS = 500;
     static unsigned long lastLoopTime = millis();
     if (millis() - lastLoopTime < LOOP_INTERVAL_MS)
@@ -89,6 +94,27 @@ void loop_bt()
     {
         BLEDevice::startAdvertising();
     }
+}
+
+// ==================== Stop ====================
+void stop_bt()
+{
+    if (!bt_enabled)
+        return;
+    bt_enabled = false; // para o loop_bt imediatamente
+    btConnected = false;
+    bt_cmd = "";
+    delay(100); // aguarda loop_bt sair caso esteja rodando
+    if (pAdvertising != nullptr)
+    {
+        pAdvertising->stop();
+        delay(50);
+    }
+    BLEDevice::deinit(true);
+    pServer = nullptr;
+    pTxCharacteristic = nullptr;
+    pAdvertising = nullptr;
+    Serial.println("BLE desativado (Ethernet conectada)");
 }
 
 // ==================== Write ====================
