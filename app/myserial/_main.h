@@ -55,6 +55,8 @@ public:
 
         if (keyboard)
         {
+            if (btConnected)
+                return;
             int interval = 10;
             for (size_t i = 0; i < data.length(); i++)
             {
