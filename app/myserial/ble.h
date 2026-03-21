@@ -99,39 +99,43 @@ void setup_bt()
 {
     BLEDevice::init(get_esp_name().c_str());
 
+    // Limpa ponteiros antigos
+    pServer = nullptr;
+    pTxCharacteristic = nullptr;
+    pAdvertising = nullptr;
+    pHIDService = nullptr;
+    pHIDInput = nullptr;
+
     pServer = BLEDevice::createServer();
     pServer->setCallbacks(new ServerCallbacks());
 
-    BLEService *pService = pServer->createService(SERVICE_UUID);
-
-    // TX
-    pTxCharacteristic = pService->createCharacteristic(
+    // UART BLE
+    BLEService *pUARTService = pServer->createService(SERVICE_UUID);
+    pTxCharacteristic = pUARTService->createCharacteristic(
         CHARACTERISTIC_TX,
         BLECharacteristic::PROPERTY_NOTIFY);
-    pTxCharacteristic->addDescriptor(new BLE2902());
-
-    // RX
-    BLECharacteristic *pRxCharacteristic = pService->createCharacteristic(
+    BLEDescriptor *tx2902 = new BLE2902();
+    pTxCharacteristic->addDescriptor(tx2902);
+    BLECharacteristic *pRxCharacteristic = pUARTService->createCharacteristic(
         CHARACTERISTIC_RX,
         BLECharacteristic::PROPERTY_WRITE);
     pRxCharacteristic->setCallbacks(new MyCallbacks());
 
-    pService->start();
-
-    // HID Keyboard Service
+    // HID BLE
     pHIDService = pServer->createService(BLE_HID_SERVICE_UUID);
-    // Report Map
     BLECharacteristic *pReportMap = pHIDService->createCharacteristic(
         BLE_HID_REPORT_MAP_UUID, BLECharacteristic::PROPERTY_READ);
     pReportMap->setValue((uint8_t *)reportMap, sizeof(reportMap));
-    // Input Report
     pHIDInput = pHIDService->createCharacteristic(
         BLE_HID_REPORT_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
-    pHIDInput->addDescriptor(new BLE2902());
-    // Outros descritores/características HID podem ser adicionados conforme necessário
+    BLEDescriptor *hid2902 = new BLE2902();
+    pHIDInput->addDescriptor(hid2902);
+
+    // Inicia ambos os serviços
+    pUARTService->start();
     pHIDService->start();
 
-    // Advertisement
+    // Advertising
     pAdvertising = BLEDevice::getAdvertising();
     pAdvertising->addServiceUUID(SERVICE_UUID);
     pAdvertising->addServiceUUID(BLE_HID_SERVICE_UUID);
@@ -152,10 +156,13 @@ void loop_bt()
         return;
     lastLoopTime = millis();
 
+    // Watchdog para evitar travamento
+    esp_task_wdt_reset();
+
     // check_connection
-    if (!btConnected && !BLEDevice::getAdvertising()->isAdvertising())
+    if (!btConnected && pAdvertising && !pAdvertising->isAdvertising())
     {
-        BLEDevice::startAdvertising();
+        pAdvertising->start();
     }
 }
 
@@ -173,10 +180,13 @@ void stop_bt()
         pAdvertising->stop();
         delay(50);
     }
+    // Limpa ponteiros e deinit
     BLEDevice::deinit(true);
     pServer = nullptr;
     pTxCharacteristic = nullptr;
     pAdvertising = nullptr;
+    pHIDService = nullptr;
+    pHIDInput = nullptr;
     Serial.println("BLE desativado (Ethernet conectada)");
 }
 
@@ -228,19 +238,28 @@ void write_bt(String cmd)
             {
                 continue;
             }
-            pHIDInput->setValue(report, 8);
-            pHIDInput->notify();
+            if (pHIDInput)
+            {
+                pHIDInput->setValue(report, 8);
+                pHIDInput->notify();
+            }
             delay(10);
             // Solta tecla
             memset(report, 0, 8);
-            pHIDInput->setValue(report, 8);
-            pHIDInput->notify();
+            if (pHIDInput)
+            {
+                pHIDInput->setValue(report, 8);
+                pHIDInput->notify();
+            }
             delay(5);
         }
     }
     else
     {
-        pTxCharacteristic->setValue(cmd);
-        pTxCharacteristic->notify();
+        if (pTxCharacteristic)
+        {
+            pTxCharacteristic->setValue(cmd);
+            pTxCharacteristic->notify();
+        }
     }
 }
