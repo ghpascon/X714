@@ -48,6 +48,24 @@ public:
 	}
 
 private:
+	bool is_hex_string(const String &value)
+	{
+		if (value.length() == 0 || (value.length() % 2) != 0)
+			return false;
+
+		for (int i = 0; i < value.length(); i++)
+		{
+			const char c = value[i];
+			const bool is_num = (c >= '0' && c <= '9');
+			const bool is_lower_hex = (c >= 'a' && c <= 'f');
+			const bool is_upper_hex = (c >= 'A' && c <= 'F');
+			if (!is_num && !is_lower_hex && !is_upper_hex)
+				return false;
+		}
+
+		return true;
+	}
+
 	void cmd_handler(String cmd)
 	{
 		if (cmd.length() < 10)
@@ -118,7 +136,6 @@ private:
 		}
 		else
 		{
-			myserial.write("#ERRO: " + status);
 			return;
 		}
 
@@ -136,26 +153,6 @@ private:
 
 	void tag_command(String tag_cmd)
 	{
-		// [COM54 → COM11]
-		// 21 00 01 03 01 01 98 aa a0 00
-		// 00 00 00 00 00 00 00 00 10 e2
-		// 80 11 90 20 00 75 81 8b 89 03
-		// 2a 63 bf 2f 21 00 01 03 01 01
-		// 98 aa a0 00 00 00 00 00 00 00
-		// 00 00 08 e2 80 11 70 20 00 05
-		// cc 86 4b 0b 60 67 5a 2a 19 00
-		// 01 03 01 01 90 00 00 00 11 e2
-		// 80 11 b0 20 00 78 d3 11 6d 03
-		// d1 69 eb f4 21 00 01 03 01 01
-		// 98 aa a0 00 00 00 00 00 00 00
-		// 00 00 01 e2 80 11 70 20 00 15
-		// 33 86 40 0b 60 69 5b da 21 00
-		// 01 03 01 01 98 aa a0 11 70 00
-		// 00 02 1a c5 35 dc b2 e2 80 11
-		// 70 20 00 14 b2 a6 bb 0b 58 69
-		// e7 5b 21 00 01 03 01 01 98 aa
-		// a2 e1 a1 64 31 7b d5 13 86 35
-		// 0b e2 80 11 70 20
 		// Split concatenated inventory data using each frame length byte (hex).
 		while (tag_cmd.length() >= 2)
 		{
@@ -183,6 +180,8 @@ private:
 	{
 		if (tag_cmd.length() < 18)
 			return;
+		if (!is_hex_string(tag_cmd))
+			return;
 
 		const int cmd_size = strtol(tag_cmd.substring(0, 2).c_str(), NULL, 16);
 		const int cmd_len_chars = (cmd_size + 1) * 2;
@@ -191,47 +190,62 @@ private:
 
 		// Expected frame format (byte-by-byte):
 		// [size] [00] [01] [xx] [xx] [xx] [pc0] [pc1] [epc...] [tid...] [rssi]
-		if (tag_cmd.substring(4, 6) != "01")
+		if (tag_cmd.substring(2, 4) != "00")
 			return;
-
-		const int epc_start = 14; // payload starts 1 byte earlier to align EPC/TID boundaries
-		if (tag_cmd.length() <= epc_start)
+		if (tag_cmd.substring(4, 6) != "01")
 			return;
 
 		// Rule requested: when size = 0x21 => EPC = 24 chars.
 		const int epc_len = (cmd_size - 0x15) * 2;
-		if (epc_len < 4 || epc_len > 48 || (epc_len % 2) != 0)
+		if (epc_len < 4 || epc_len > 48 || (epc_len % 2) != 0 || (epc_len % 4) != 0)
 			return;
 
+		const int epc_start = 14;
 		const int epc_end = epc_start + epc_len;
 		if (epc_end > tag_cmd.length())
 			return;
 
 		const String current_epc = tag_cmd.substring(epc_start, epc_end);
+		if (!is_hex_string(current_epc))
+			return;
 
-		const int tail_start = epc_end;
-		const int tail_len = tag_cmd.length() - tail_start;
+		const int tid_start = epc_end;
+		if (tid_start + 24 > tag_cmd.length() - 2)
+			return;
 
-		String current_tid = "";
-		if (tail_len >= 24)
-			current_tid = tag_cmd.substring(tail_start, tail_start + 24);
-		else if (tail_len >= 2)
-			current_tid = tag_cmd.substring(tail_start, tag_cmd.length() - 2);
-
-		if (current_tid == "")
-			current_tid = current_epc;
+		const String current_tid = tag_cmd.substring(tid_start, tid_start + 24);
+		if (!is_hex_string(current_tid))
+			return;
+		if (current_tid.substring(0, 2) != "e2")
+			return;
 
 		int current_rssi = 0;
 		if (tag_cmd.length() >= 2)
 			current_rssi = strtol(tag_cmd.substring(tag_cmd.length() - 2).c_str(), NULL, 16);
 
-		int current_ant = strtol(tag_cmd.substring(10, 12).c_str(), NULL, 16);
+		int current_ant = 0;
+		const int ant_positions[3] = {6, 8, 10};
+		for (int i = 0; i < 3; i++)
+		{
+			const int pos = ant_positions[i];
+			if (tag_cmd.length() < pos + 2)
+				continue;
+
+			const int ant_candidate = strtol(tag_cmd.substring(pos, pos + 2).c_str(), NULL, 16);
+			if (ant_candidate == 1 || ant_candidate == 2 || ant_candidate == 4 || ant_candidate == 8)
+			{
+				current_ant = ant_candidate;
+				break;
+			}
+		}
+
+		if (current_ant == 0)
+			current_ant = 1;
+
 		if (current_ant == 4)
 			current_ant = 3;
 		if (current_ant == 8)
 			current_ant = 4;
-		if (current_ant <= 0)
-			current_ant = 1;
 
 		tag_commands.add_tag(current_epc, current_tid, current_ant, current_rssi);
 	}
