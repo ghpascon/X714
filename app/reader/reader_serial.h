@@ -1,53 +1,92 @@
-class serial_reader
+class serial_reader : public commands_reader
 {
 public:
 	void check_serial()
 	{
-		if (!Serial2.available())
-			return;
+		static byte rx_buffer[256];
+		static int rx_size = 0;
+		static int expected_size = 0;
+		static unsigned long frame_start_ms = 0;
+		static unsigned long last_byte_ms = 0;
 
-		const int timeout_serial_rec = 100;
-		unsigned long current_timeout_serial_rec = 0;
-		const int full_cmd_timeout = 3000;
-		unsigned long current_full_cmd_timeout = millis();
-		int cmd_length = 0;
-		String cmd_rec = "";
-		current_timeout_serial_rec = millis();
-		while (millis() - current_timeout_serial_rec < timeout_serial_rec && millis() - current_full_cmd_timeout < full_cmd_timeout)
+		const unsigned long timeout_serial_rec = 100;
+		const unsigned long full_cmd_timeout = 3000;
+		unsigned long now = millis();
+
+		if (rx_size > 0)
 		{
-			if (!Serial2.available())
-				continue;
-			byte cmd = Serial2.read();
-
-			// determine expected command length from first byte
-			if (cmd_rec == "")
+			const bool timeout_between_bytes = (now - last_byte_ms) > timeout_serial_rec;
+			const bool timeout_full_frame = (now - frame_start_ms) > full_cmd_timeout;
+			if (timeout_between_bytes || timeout_full_frame)
 			{
-				cmd_length = 2 * (cmd + 1);
-				answer_rec = true; // Reset answer_rec for each new command
+				rx_size = 0;
+				expected_size = 0;
 			}
-
-			cmd_rec += String((cmd < 0x10) ? "0" : "") + String(cmd, HEX);
-
-			// process command when complete
-			if (cmd_rec.length() == cmd_length)
-			{
-				cmd_handler(cmd_rec);
-				cmd_rec = "";
-				cmd_length = 0;
-				// answer_rec will be set to false by write_bytes in cmd_handler
-			}
-
-			current_timeout_serial_rec = millis();
 		}
 
-		// Process any remaining incomplete command
-		if (cmd_rec.length() > 0)
+		while (Serial2.available())
 		{
-			cmd_handler(cmd_rec);
+			byte current = Serial2.read();
+			now = millis();
+
+			if (rx_size == 0)
+			{
+				expected_size = ((int)current) + 1;
+
+				// Minimum frame: [len][status][cmd][crc1][crc2]
+				if (expected_size < 5 || expected_size > (int)sizeof(rx_buffer))
+				{
+					expected_size = 0;
+					continue;
+				}
+
+				frame_start_ms = now;
+				answer_rec = true;
+			}
+
+			rx_buffer[rx_size++] = current;
+			last_byte_ms = now;
+
+			if (expected_size > 0 && rx_size == expected_size)
+			{
+				if (is_valid_frame(rx_buffer, rx_size))
+				{
+					cmd_handler(bytes_to_hex_string(rx_buffer, rx_size));
+				}
+
+				// Invalid frame is silently discarded.
+				rx_size = 0;
+				expected_size = 0;
+			}
 		}
 	}
 
 private:
+	bool is_valid_frame(const byte *frame, int frame_size)
+	{
+		if (frame == NULL || frame_size < 5)
+			return false;
+
+		const uint16_t crc = uiCrc16Cal(frame, frame_size - 2);
+		const byte crc1 = crc & 0xFF;
+		const byte crc2 = (crc >> 8) & 0xFF;
+
+		return frame[frame_size - 2] == crc1 && frame[frame_size - 1] == crc2;
+	}
+
+	String bytes_to_hex_string(const byte *data, int size)
+	{
+		String result = "";
+		result.reserve(size * 2);
+
+		for (int i = 0; i < size; i++)
+		{
+			result += String((data[i] < 0x10) ? "0" : "") + String(data[i], HEX);
+		}
+
+		return result;
+	}
+
 	bool is_hex_string(const String &value)
 	{
 		if (value.length() == 0 || (value.length() % 2) != 0)
