@@ -14,9 +14,6 @@ extern const byte max_power;
 extern const byte min_rssi;
 
 extern TAG_COMMANDS tag_commands;
-extern const int max_tags;
-extern TAG tags[];
-extern int current_tag;
 
 extern bool read_on;
 extern byte temperatura;

@@ -8,7 +8,6 @@
 #include "vars.h"
 #include <freertos/semphr.h>
 
-
 // ==================== Core 0 Task (RGB + Pins) ====================
 void core0Task(void *pvParameters)
 {
@@ -62,13 +61,6 @@ void setup()
     web_server.setup();
     webhook.setup();
     tag_commands.clear_tags();
-
-    // Pre-reserve String buffers for tags to reduce heap churn/fragmentation
-    for (int i = 0; i < max_tags; i++)
-    {
-        tags[i].epc.reserve(24);
-        tags[i].tid.reserve(24);
-    }
     rgb.setup();
     pins.setup();
     reader_module.setup();
@@ -99,7 +91,7 @@ void loop()
     // Process reader module (Core 1)
     reader_module.functions();
     myserialcheck.loop();
-    
+
     // Save configuration
     config_file_commands.save_config();
 

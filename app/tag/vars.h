@@ -1,8 +1,4 @@
 
-extern const int max_tags;
-extern TAG tags[];
-extern int current_tag;
-
 extern const int ant_qtd;
 extern ANTENA antena[];
 

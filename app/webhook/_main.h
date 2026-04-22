@@ -6,8 +6,6 @@
 extern bool webhook_on;
 extern String webhook_url;
 extern bool eth_connected;
-extern const int max_tags;
-extern TAG tags[];
 extern TAG_COMMANDS tag_commands;
 extern MySerial myserial;
 
@@ -98,18 +96,8 @@ private:
     unsigned long last_post = 0; // timestamp da última postagem
     static constexpr int batch_size = 30;
 
-    // Conta quantas tags estão preenchidas
-    int count_tags()
-    {
-        int total = 0;
-        for (int i = 0; i < max_tags; i++)
-        {
-            if (tags[i].epc.length() == 0)
-                break;
-            total++;
-        }
-        return total;
-    }
+    // Conta quantas tags estao preenchidas
+    int count_tags() { return tag_commands.tagCount(); }
 
     // Loop principal da classe
     void tick()
@@ -141,14 +129,16 @@ private:
             {
                 if (i > 0)
                     payload += ",";
-                const TAG &t = tags[offset + i];
+                const TagRecord *t = tag_commands.getTag(offset + i);
+                if (!t)
+                    break;
                 payload += "{\"device\":\"" + get_esp_name() + "\",";
                 payload += "\"event_type\":\"tag\",";
                 payload += "\"event_data\":{";
-                payload += "\"epc\":\"" + t.epc + "\",";
-                payload += "\"tid\":\"" + t.tid + "\",";
-                payload += "\"ant\":" + String(t.ant_number) + ",";
-                payload += "\"rssi\":" + String(t.rssi) + "}}";
+                payload += "\"epc\":\"" + String(t->epc) + "\",";
+                payload += "\"tid\":\"" + String(t->tid) + "\",";
+                payload += "\"ant\":" + String(t->ant_number) + ",";
+                payload += "\"rssi\":" + String(t->rssi) + "}}";
             }
 
             payload += "]";

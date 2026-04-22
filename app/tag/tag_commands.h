@@ -1,71 +1,64 @@
 #include "vars.h"
-#include <freertos/semphr.h>
 
 class TAG_COMMANDS
 {
 public:
+	TagStore store; // fonte de verdade: todas as tags lidas
 	bool send_protect_mode = false;
+
 	void ensure_protect_mode_correct()
 	{
 		static unsigned long current_time = 0;
 		if (!reader_in_protected_inventory)
 			current_time = millis();
 		if (millis() - current_time > 500)
-		{
 			send_protect_mode = true;
-		}
 		else
-		{
 			send_protect_mode = false;
-		}
 	}
 
-	void add_tag(String current_epc, String current_tid, int current_ant, int current_rssi)
+	// Acessores publicos para consumidores (web server, webhook)
+	int tagCount() const { return store.size(); }
+	const TagRecord *getTag(int i) const { return store.get(i); }
+
+	void add_tag(const String &current_epc, const String &current_tid, int current_ant, int current_rssi)
 	{
-		// quick checks that don't need tags[] lock
 		if (!read_on)
 			return;
 
 		if (antena[current_ant - 1].rssi < current_rssi)
 			return;
 
-		// prefix implementation
+		// Filtro de prefixo
 		if (prefix.length() > 0)
 		{
 			bool prefix_match = false;
 
-			// Se não tem vírgula, testa prefixo único
 			if (prefix.indexOf(',') == -1)
 			{
 				String trimmed_prefix = prefix;
 				trimmed_prefix.trim();
 				trimmed_prefix.toLowerCase();
 				if (trimmed_prefix.length() > 0 && current_epc.startsWith(trimmed_prefix))
-				{
 					prefix_match = true;
-				}
 			}
 			else
 			{
-				// Divide os prefixes por vírgula e verifica cada um
 				int start = 0;
 				int separator_pos = prefix.indexOf(',');
 
 				while (start < prefix.length())
 				{
 					String current_prefix = (separator_pos != -1) ? prefix.substring(start, separator_pos) : prefix.substring(start);
-
-					current_prefix.trim(); // Remove espaços
+					current_prefix.trim();
 					current_prefix.toLowerCase();
 					if (current_prefix.length() > 0 && current_epc.startsWith(current_prefix))
 					{
 						prefix_match = true;
 						break;
 					}
-
 					if (separator_pos == -1)
 						break;
-
 					start = separator_pos + 1;
 					separator_pos = prefix.indexOf(',', start);
 				}
@@ -75,54 +68,48 @@ public:
 				return;
 		}
 
+		// always_send: emite antes do check de duplicata
 		if (always_send)
-			display_current_tag(String(current_epc), String(current_tid), String(current_ant), String(current_rssi));
+			display_current_tag(current_epc, current_tid, String(current_ant), String(current_rssi));
 
-		// Check duplicates and find empty slot
-		for (int i = 0; i < max_tags; i++)
-		{
-			if (current_epc == tags[i].epc || current_tid == tags[i].tid)
-				return;
-			if (tags[i].epc == "" || tags[i].tid == "")
-				break;
-		}
-
-		tags[current_tag].epc = current_epc;
-		tags[current_tag].tid = current_tid;
-		tags[current_tag].ant_number = current_ant;
-		tags[current_tag].rssi = current_rssi;
-
-		current_tag_num();
+		// Deduplicacao O(1) por TID via hash table
+		if (!store.upsert(current_epc.c_str(), current_tid.c_str(), current_ant, current_rssi))
+			return; // TID duplicado ou store cheio
 
 		if (buzzer_on)
 			pins.buzzer_time = millis();
 
 		if (!always_send)
-			display_current_tag(String(tags[(current_tag == 0 ? max_tags - 1 : current_tag - 1)].epc), String(tags[(current_tag == 0 ? max_tags - 1 : current_tag - 1)].tid), String(tags[(current_tag == 0 ? max_tags - 1 : current_tag - 1)].ant_number), String(tags[(current_tag == 0 ? max_tags - 1 : current_tag - 1)].rssi));
+		{
+			const TagRecord *r = store.get(store.size() - 1);
+			if (r)
+				display_current_tag(String(r->epc), String(r->tid), String(r->ant_number), String(r->rssi));
+		}
 	}
 
 	void tag_data_display()
 	{
 		String tags_to_send = "#tags:";
-		for (int i = 0; i < max_tags; i++)
+		const int n = store.size();
+		for (int i = 0; i < n; i++)
 		{
-			if (tags[i].epc == "")
-				break;
-			tags_to_send += "@" + tags[i].epc;
+			const TagRecord *r = store.get(i);
+			if (r)
+				tags_to_send += "@" + String(r->epc);
 		}
 		myserial.write(tags_to_send, true);
-
 		clear_tags();
 	}
 
 	void tag_data_display_all()
 	{
 		String tags_to_send = "#tags:";
-		for (int i = 0; i < max_tags; i++)
+		const int n = store.size();
+		for (int i = 0; i < n; i++)
 		{
-			if (tags[i].epc == "")
-				break;
-			tags_to_send += "@" + tags[i].epc + "|" + tags[i].tid + "|" + tags[i].ant_number + "|" + tags[i].rssi;
+			const TagRecord *r = store.get(i);
+			if (r)
+				tags_to_send += "@" + String(r->epc) + "|" + String(r->tid) + "|" + String(r->ant_number) + "|" + String(r->rssi);
 		}
 		myserial.write(tags_to_send, true);
 		clear_tags();
@@ -130,33 +117,22 @@ public:
 
 	void clear_tags()
 	{
-		for (int i = 0; i < max_tags; i++)
-		{
-			tags[i].epc = "";
-			tags[i].tid = "";
-			tags[i].ant_number = 0;
-			tags[i].rssi = 0;
-		}
-		current_tag = 0;
+		store.clear();
 		myserial.write("#TAGS_CLEARED");
 	}
 
 private:
-	void current_tag_num()
+	void display_current_tag(const String &epc, const String &tid, const String &ant, const String &rssi)
 	{
-		(current_tag < max_tags - 1) ? current_tag++ : current_tag = 0;
-	}
-
-	void display_current_tag(String epc, String tid, String ant, String rssi)
-	{
+		String epc_out = epc;
 		if (decode_gtin)
-			epc = epcToGtin(epc);
-		if (epc == "")
+			epc_out = epcToGtin(epc);
+		if (epc_out == "")
 			return;
 		if (!simple_send)
-			myserial.write("#T+@" + epc + "|" + tid + "|" + ant + "|" + rssi + "|" + (send_protect_mode ? "on" : "off"));
+			myserial.write("#T+@" + epc_out + "|" + tid + "|" + ant + "|" + rssi + "|" + (send_protect_mode ? "on" : "off"));
 		else
-			myserial.write(epc, true);
+			myserial.write(epc_out, true);
 	}
 
 	// Calculate GTIN check digit (mod 10)

@@ -10,9 +10,7 @@ const byte max_power = 27;
 const byte min_rssi = 40;
 
 // ==================== Tags ====================
-const int max_tags = 300;
-TAG tags[max_tags];
-int current_tag = 0;
+const int max_tags = TagStore::CAPACITY; // alias de compatibilidade
 TAG_COMMANDS tag_commands;
 
 // ==================== Serial ====================
@@ -80,4 +78,3 @@ String prefix = "";
 bool protected_inventory_enabled = false;
 String protected_inventory_password = "00000000";
 bool reader_in_protected_inventory = false;
-

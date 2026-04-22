@@ -23,13 +23,10 @@ extern CONFIG_FILE config_file_commands;
 
 // tags
 extern TAG_COMMANDS tag_commands;
-extern const int max_tags;
-extern TAG tags[];
 
 extern bool read_on;
 
 extern MySerial myserial;
-extern int current_tag;
 
 // ==================== Protected Inventory ====================
 extern bool protected_inventory_enabled;

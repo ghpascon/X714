@@ -119,10 +119,11 @@ public:
 	{
 		const unsigned long clear_time = 300000;
 		static unsigned long current_clear_time = millis();
-		static int last_tag = -1;
-		if (current_tag != last_tag)
+		static int last_tag_count = -1;
+		const int current_count = tag_commands.tagCount();
+		if (current_count != last_tag_count)
 		{
-			last_tag = current_tag;
+			last_tag_count = current_count;
 			current_clear_time = millis();
 		}
 
