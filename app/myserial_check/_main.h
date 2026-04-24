@@ -220,6 +220,7 @@ private:
 public:
     void check_commands(String cmd)
     {
+        cmd.trim();
         if (cmd.length() == 0)
             return;
         // ================= Comandos Gerais =================
