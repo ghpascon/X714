@@ -192,31 +192,6 @@ private:
 
 	void tag_command(String tag_cmd)
 	{
-		// Split concatenated inventory data using each frame length byte (hex).
-		while (tag_cmd.length() >= 2)
-		{
-			const int cmd_size = strtol(tag_cmd.substring(0, 2).c_str(), NULL, 16);
-			const int cmd_len_chars = (cmd_size + 1) * 2;
-
-			if (cmd_size <= 0)
-			{
-				tag_cmd = tag_cmd.substring(2);
-				continue;
-			}
-
-			if (cmd_len_chars > tag_cmd.length())
-			{
-				tag_cmd = tag_cmd.substring(2);
-				continue;
-			}
-
-			handle_tag_command(tag_cmd.substring(0, cmd_len_chars));
-			tag_cmd = tag_cmd.substring(cmd_len_chars);
-		}
-	}
-
-	void handle_tag_command(String tag_cmd)
-	{
 		if (tag_cmd.length() < 18)
 			return;
 		if (!is_hex_string(tag_cmd))
@@ -229,8 +204,6 @@ private:
 
 		// Expected frame format (byte-by-byte):
 		// [size] [00] [01] [xx] [xx] [xx] [pc0] [pc1] [epc...] [tid...] [rssi]
-		if (tag_cmd.substring(2, 4) != "00")
-			return;
 		if (tag_cmd.substring(4, 6) != "01")
 			return;
 
@@ -260,7 +233,7 @@ private:
 
 		int current_rssi = 0;
 		if (tag_cmd.length() >= 2)
-			current_rssi = strtol(tag_cmd.substring(tag_cmd.length() - 2).c_str(), NULL, 16);
+			current_rssi = strtol(tag_cmd.substring(tag_cmd.length() - 6, tag_cmd.length() - 4).c_str(), NULL, 16);
 
 		int current_ant = 0;
 		const int ant_positions[3] = {6, 8, 10};
