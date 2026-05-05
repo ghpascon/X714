@@ -48,6 +48,7 @@ private:
 
 			start_antena_data = parameter.indexOf(antena_data_prefix);
 			byte current_power = parameter.substring(0, start_antena_data).toInt();
+			current_power = constrain(current_power, min_power, 27);
 			parameter = parameter.substring(start_antena_data + 1);
 
 			byte current_rssi = parameter.toInt();

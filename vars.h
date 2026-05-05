@@ -6,7 +6,7 @@ const int ant_qtd = 4;
 ANTENA antena[ant_qtd];
 ANTENA_COMMANDS antena_commands;
 const byte min_power = 1;
-const byte max_power = 27;
+const byte max_power = 33;
 const byte min_rssi = 40;
 
 // ==================== Tags ====================
