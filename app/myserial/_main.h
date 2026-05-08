@@ -14,7 +14,7 @@ public:
         USB.VID(0x0001);
         USB.PID(0x0001);
         USB.manufacturerName("Smartx");
-        USB.productName("XPAD_PLUS");
+        USB.productName("X714");
         USB.usbAttributes(0x80);
         USB.begin();
         my_usb.begin(115200);

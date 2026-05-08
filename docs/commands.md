@@ -1,8 +1,8 @@
-# XPAD PLUS - Comandos de Comunicação
+# X714 - Comandos de Comunicação
 
 ## Visão Geral
 
-O XPAD PLUS aceita comandos através de múltiplas interfaces de comunicação:
+O X714 aceita comandos através de múltiplas interfaces de comunicação:
 
 - **Serial** (UART)
 - **Bluetooth Low Energy (BLE)**

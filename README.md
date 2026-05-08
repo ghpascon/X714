@@ -1,4 +1,4 @@
-# XPAD PLUS - Sistema Inteligente de Leitura RFID UHF
+# X714 - Sistema Inteligente de Leitura RFID UHF
 
 > **Solução profissional completa para identificação e rastreamento por RFID UHF**  
 > Produto **SMARTX** - Tecnologia brasileira de alta performance
@@ -7,9 +7,9 @@
 
 ## 🎯 **Visão Geral**
 
-O **XPAD PLUS** é um leitor RFID UHF de alto desempenho desenvolvido pela **SMARTX** para aplicações industriais e comerciais que exigem **precisão**, **confiabilidade** e **integração simples**. 
+O **X714** é um leitor RFID UHF de alto desempenho desenvolvido pela **SMARTX** para aplicações industriais e comerciais que exigem **precisão**, **confiabilidade** e **integração simples**. 
 
-Totalmente **plug-and-play**, o XPAD PLUS oferece múltiplas formas de conexão e controle:
+Totalmente **plug-and-play**, o X714 oferece múltiplas formas de conexão e controle:
 
 ✅ **Leitura simultânea de até 300 tags** em memória  
 ✅ **4 antenas independentes** com controle individual de potência (10-33 dBm)  
@@ -48,7 +48,7 @@ Totalmente **plug-and-play**, o XPAD PLUS oferece múltiplas formas de conexão 
 
 ### 🌐 **Conectividade - 5 Formas de Integração**
 
-O XPAD PLUS oferece **máxima flexibilidade** com múltiplos protocolos de comunicação simultâneos:
+O X714 oferece **máxima flexibilidade** com múltiplos protocolos de comunicação simultâneos:
 
 #### **1. Serial**
 - Conexão via cabo USB
@@ -79,7 +79,7 @@ O XPAD PLUS oferece **máxima flexibilidade** com múltiplos protocolos de comun
 - Batching inteligente (até 50 tags por requisição)
 
 #### **Interface Web Embarcada**
-Além das formas de comunicação, o XPAD PLUS possui um servidor web completo acessível via navegador:
+Além das formas de comunicação, o X714 possui um servidor web completo acessível via navegador:
 
 | Página | Função |
 |--------|--------|
@@ -231,7 +231,7 @@ Além das formas de comunicação, o XPAD PLUS possui um servidor web completo a
    - Pressione Enter
 
 4. **Pronto!**
-   - A interface de configuração do XPAD PLUS será exibida
+   - A interface de configuração do X714 será exibida
    - Configure as antenas, Ethernet e demais parâmetros
 
 > 💡 **Dica**: Após configurar o Ethernet, você pode desconectar do WiFi e acessar o dispositivo via cabo de rede
@@ -243,7 +243,7 @@ Além das formas de comunicação, o XPAD PLUS possui um servidor web completo a
 **Ideal para instalação permanente em rede corporativa**
 
 1. **Conecte o cabo Ethernet**
-   - Conecte um cabo de rede entre o XPAD PLUS e seu switch/roteador
+   - Conecte um cabo de rede entre o X714 e seu switch/roteador
 
 2. **Descubra o IP do dispositivo**
    - **Opção A (via WiFi)**: Conecte-se ao WiFi do dispositivo (veja Opção 1) e verifique o IP atual em **Ethernet Config**
@@ -272,7 +272,7 @@ Além das formas de comunicação, o XPAD PLUS possui um servidor web completo a
    - Aproxime uma tag RFID da antena
    - O código será "digitado" automaticamente no documento
 
-> 💡 **Plug-and-Play**: Nesse modo, o XPAD funciona como um teclado - não precisa instalar nada!
+> 💡 **Plug-and-Play**: Nesse modo, o X714 funciona como um teclado - não precisa instalar nada!
 
 ---
 
@@ -288,7 +288,7 @@ Além das formas de comunicação, o XPAD PLUS possui um servidor web completo a
 
 ## 🎓 **Diferenciais Competitivos**
 
-| Característica | XPAD PLUS | Concorrentes |
+| Característica | X714 | Concorrentes |
 |----------------|-----------|--------------|
 | **5 formas de conexão** | ✅ Serial, BLE, Ethernet, HID, Webhook | ❌ Apenas 1 ou 2 protocolos |
 | **Interface web embarcada** | ✅ Completa, sem instalação | ❌ Requer software proprietário |
@@ -314,7 +314,7 @@ Além das formas de comunicação, o XPAD PLUS possui um servidor web completo a
 
 ## 📞 **Contato e Suporte**
 
-Para mais informações sobre o **XPAD PLUS**:
+Para mais informações sobre o **X714**:
 
 - **Fabricante**: SMARTX - Tecnologia RFID Brasileira
 - **Suporte técnico**: Disponível em português
@@ -328,6 +328,6 @@ Produto desenvolvido e fabricado por **SMARTX** - Todos os direitos reservados.
 
 ---
 
-**Transforme sua operação com tecnologia RFID inteligente. Escolha XPAD PLUS.**
+**Transforme sua operação com tecnologia RFID inteligente. Escolha X714.**
 
 
