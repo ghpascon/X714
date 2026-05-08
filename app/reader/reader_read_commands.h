@@ -1,14 +1,33 @@
 class reader_read_on_commands : public commands_reader
 {
 public:
+    byte get_current_ant()
+    {
+        static byte current_ant = 0x00;
+        for (int i = 0; i < ant_qtd; i++)
+        {
+            current_ant = (current_ant + 1) % ant_qtd;
+            if (antena[current_ant].active)
+            {
+                return current_ant;
+            }
+        }
+        current_ant = 0x00;
+        return 0x00;
+    }
+
     void read_on_command()
     {
         byte reader_read_on_command[] = {
-            0x06,
+            0x09,
             0xff,
             0x01,
             0x24,
-            session};
+            session,
+            0x00,
+            0x80 + get_current_ant(),
+            0x00,
+        };
         crcValue = uiCrc16Cal(reader_read_on_command, sizeof(reader_read_on_command));
         crc1 = crcValue & 0xFF;
         crc2 = (crcValue >> 8) & 0xFF;
