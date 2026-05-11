@@ -10,6 +10,55 @@
 #include "script_prefix.h"
 #include "script_protected_inventory.h"
 
+static const char *WEB_AUTH_USER = "smartx";
+static const char *WEB_AUTH_PASSWORD = "smartx12345";
+static const byte MAX_AUTH_IPS = 8;
+static IPAddress authenticated_html_ips[MAX_AUTH_IPS];
+static byte authenticated_html_count = 0;
+
+bool is_html_ip_authenticated(IPAddress ip)
+{
+    for (byte i = 0; i < authenticated_html_count; i++)
+    {
+        if (authenticated_html_ips[i] == ip)
+            return true;
+    }
+    return false;
+}
+
+void mark_html_ip_authenticated(IPAddress ip)
+{
+    if (is_html_ip_authenticated(ip))
+        return;
+
+    if (authenticated_html_count < MAX_AUTH_IPS)
+    {
+        authenticated_html_ips[authenticated_html_count++] = ip;
+        return;
+    }
+
+    for (byte i = 1; i < MAX_AUTH_IPS; i++)
+        authenticated_html_ips[i - 1] = authenticated_html_ips[i];
+
+    authenticated_html_ips[MAX_AUTH_IPS - 1] = ip;
+}
+
+bool ensure_html_route_auth()
+{
+    IPAddress remote_ip = server.client().remoteIP();
+    if (is_html_ip_authenticated(remote_ip))
+        return true;
+
+    if (!server.authenticate(WEB_AUTH_USER, WEB_AUTH_PASSWORD))
+    {
+        server.requestAuthentication();
+        return false;
+    }
+
+    mark_html_ip_authenticated(remote_ip);
+    return true;
+}
+
 class WEB_SERVER
 {
 public:
@@ -66,6 +115,7 @@ public:
     {
         server.on("/", HTTP_GET, []()
                   {
+                      if (!ensure_html_route_auth()) return;
                       File f = LittleFS.open("/html/home.html", "r");
                       if (!f) { server.send(404, "text/plain", "Not found"); return; }
                       server.streamFile(f, "text/html");
@@ -73,6 +123,7 @@ public:
 
         server.on("/reader", HTTP_GET, []()
                   {
+                      if (!ensure_html_route_auth()) return;
                       File f = LittleFS.open("/html/reader.html", "r");
                       if (!f) { server.send(404, "text/plain", "Not found"); return; }
                       server.streamFile(f, "text/html");
@@ -80,6 +131,7 @@ public:
 
         server.on("/ant_config", HTTP_GET, []()
                   {
+                      if (!ensure_html_route_auth()) return;
                       File f = LittleFS.open("/html/ant_config.html", "r");
                       if (!f) { server.send(404, "text/plain", "Not found"); return; }
                       server.streamFile(f, "text/html");
@@ -87,6 +139,7 @@ public:
 
         server.on("/reader_config", HTTP_GET, []()
                   {
+                      if (!ensure_html_route_auth()) return;
                       File f = LittleFS.open("/html/reader_config.html", "r");
                       if (!f) { server.send(404, "text/plain", "Not found"); return; }
                       server.streamFile(f, "text/html");
@@ -94,6 +147,7 @@ public:
 
         server.on("/reader_modes", HTTP_GET, []()
                   {
+                      if (!ensure_html_route_auth()) return;
                       File f = LittleFS.open("/html/reader_modes.html", "r");
                       if (!f) { server.send(404, "text/plain", "Not found"); return; }
                       server.streamFile(f, "text/html");
@@ -101,6 +155,7 @@ public:
 
         server.on("/gpo_test", HTTP_GET, []()
                   {
+                      if (!ensure_html_route_auth()) return;
                       File f = LittleFS.open("/html/gpo_test.html", "r");
                       if (!f) { server.send(404, "text/plain", "Not found"); return; }
                       server.streamFile(f, "text/html");
@@ -108,6 +163,7 @@ public:
 
         server.on("/eth_config", HTTP_GET, []()
                   {
+                      if (!ensure_html_route_auth()) return;
                       File f = LittleFS.open("/html/eth_config.html", "r");
                       if (!f) { server.send(404, "text/plain", "Not found"); return; }
                       server.streamFile(f, "text/html");
@@ -116,6 +172,7 @@ public:
         // prefix
         server.on("/prefix", HTTP_GET, []()
                   {
+                      if (!ensure_html_route_auth()) return;
                       File f = LittleFS.open("/html/prefix.html", "r");
                       if (!f) { server.send(404, "text/plain", "Not found"); return; }
                       server.streamFile(f, "text/html");
@@ -124,6 +181,7 @@ public:
         // protected_inventory
         server.on("/protected_inventory", HTTP_GET, []()
                   {
+                      if (!ensure_html_route_auth()) return;
                       File f = LittleFS.open("/html/protected_inventory.html", "r");
                       if (!f) { server.send(404, "text/plain", "Not found"); return; }
                       server.streamFile(f, "text/html");
