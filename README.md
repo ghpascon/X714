@@ -7,7 +7,7 @@
 
 ## 🎯 **Visão Geral**
 
-O **X714** é um leitor RFID UHF de alto desempenho desenvolvido pela **SMARTX** para aplicações industriais e comerciais que exigem **precisão**, **confiabilidade** e **integração simples**. 
+O **X714** é um leitor RFID UHF de alto desempenho desenvolvido pela **SMARTX** para aplicações industriais e comerciais que exigem **precisão**, **confiabilidade** e **integração simples**.
 
 Totalmente **plug-and-play**, o X714 oferece múltiplas formas de conexão e controle:
 
@@ -18,7 +18,7 @@ Totalmente **plug-and-play**, o X714 oferece múltiplas formas de conexão e con
 ✅ **Integração nativa** com sistemas externos via HTTP/HTTPS  
 ✅ **I/O programáveis** (3 entradas + 3 saídas) para automação industrial  
 ✅ **Escrita e proteção avançada** de tags RFID com alteração de senhas  
-✅ **Pronto para usar** - não requer programação ou desenvolvimento  
+✅ **Pronto para usar** - não requer programação ou desenvolvimento
 
 ---
 
@@ -51,27 +51,32 @@ Totalmente **plug-and-play**, o X714 oferece múltiplas formas de conexão e con
 O X714 oferece **máxima flexibilidade** com múltiplos protocolos de comunicação simultâneos:
 
 #### **1. Serial**
+
 - Conexão via cabo USB
 - Protocolo de comandos baseado em texto
 
 #### **2. Bluetooth Low Energy (BLE)**
+
 - Comunicação sem fio de curto alcance
 - Mesmo protocolo de comandos da serial
 - Pareamento simples e rápido
 
 #### **3. Ethernet**
+
 - Conexão cabeada 10/100 Mbps full-duplex
 - Suporta DHCP (automático) ou IP estático
 - mDNS para descoberta automática na rede local
 - Servidor Telnet integrado para debug e comandos remotos
 
 #### **4. Emulador de Teclado (HID)**
+
 - Simula um teclado USB conectado ao computador
 - Tags lidas são digitadas automaticamente como se fossem teclado
 - **Plug-and-play** total - não requer drivers ou software
 - Compatível com Windows, Linux, macOS, Android
 
 #### **5. Webhook (HTTP/HTTPS)**
+
 - Envio automático de eventos para servidores externos
 - Suporte a HTTP e HTTPS
 - Payload JSON estruturado com eventos de tag e keep-alive
@@ -79,19 +84,27 @@ O X714 oferece **máxima flexibilidade** com múltiplos protocolos de comunicaç
 - Batching inteligente (até 50 tags por requisição)
 
 #### **Interface Web Embarcada**
+
 Além das formas de comunicação, o X714 possui um servidor web completo acessível via navegador:
 
-| Página | Função |
-|--------|--------|
-| **Home** | Dashboard com status do sistema |
-| **Reader Config** | Configuração de potência, sessão, modos de leitura |
-| **Antenna Config** | Controle individual das 4 antenas |
-| **Ethernet Config** | Configuração de rede (DHCP/estático) |
-| **Webhook Config** | Integração HTTP/HTTPS para envio de eventos |
-| **GPO Test** | Teste manual de saídas digitais |
-| **Reader Status** | Monitoramento de tags lidas em tempo real |
+| Página              | Função                                             |
+| ------------------- | -------------------------------------------------- |
+| **Home**            | Dashboard com status do sistema                    |
+| **Reader Config**   | Configuração de potência, sessão, modos de leitura |
+| **Antenna Config**  | Controle individual das 4 antenas                  |
+| **Ethernet Config** | Configuração de rede (DHCP/estático)               |
+| **Webhook Config**  | Integração HTTP/HTTPS para envio de eventos        |
+| **GPO Test**        | Teste manual de saídas digitais                    |
+| **Reader Status**   | Monitoramento de tags lidas em tempo real          |
 
-**Acesso**: Basta digitar o IP do dispositivo no navegador - sem instalação de software!
+**Acesso**: Digite o IP do dispositivo no navegador e faça login na interface web.
+
+**Login Web (Interface HTML):**
+
+- Usuário: **`smartx`**
+- Senha: **`smartx12345`**
+- A autenticação é solicitada no primeiro acesso por IP.
+- Após autenticar, o mesmo IP não precisa logar novamente até o equipamento reiniciar.
 
 ### 🔒 **Funcionalidades Avançadas de Tags RFID**
 
@@ -110,6 +123,7 @@ Além das formas de comunicação, o X714 possui um servidor web completo acess�
 - **Validação de integridade**: Verificação automática de parâmetros antes da escrita
 
 **Casos de uso de segurança:**
+
 - Proteção de tags críticas contra alteração acidental
 - Controle de acesso a dados sensíveis
 - Rastreabilidade com garantia de integridade
@@ -174,15 +188,15 @@ Além das formas de comunicação, o X714 possui um servidor web completo acess�
 
 ## ⚙️ **Especificações Técnicas**
 
-| Característica | Especificação |
-|----------------|--------------|
-| **Frequência** | 902–907,5 - 915–928 MHz |
-| **Potência de saída** | 10 a 33 dBm  |
-| **Portas de antena** | 4  |
-| **Interface de rede** | Ethernet 10/100 Mbps |
-| **Protocolos** | HTTP, HTTPS, Telnet, mDNS, Serial (UART), Bluetooth (BLE), HID (Teclado) |
-| **GPO/GPI** | 3 entradas / 3 saídas |
-| **Alimentação** | 5V DC |
+| Característica        | Especificação                                                            |
+| --------------------- | ------------------------------------------------------------------------ |
+| **Frequência**        | 902–907,5 - 915–928 MHz                                                  |
+| **Potência de saída** | 10 a 33 dBm                                                              |
+| **Portas de antena**  | 4                                                                        |
+| **Interface de rede** | Ethernet 10/100 Mbps                                                     |
+| **Protocolos**        | HTTP, HTTPS, Telnet, mDNS, Serial (UART), Bluetooth (BLE), HID (Teclado) |
+| **GPO/GPI**           | 3 entradas / 3 saídas                                                    |
+| **Alimentação**       | 5V DC                                                                    |
 
 ---
 
@@ -229,6 +243,9 @@ Além das formas de comunicação, o X714 possui um servidor web completo acess�
    - Abra seu navegador (Chrome, Firefox, Edge, Safari)
    - Digite na barra de endereços: **`192.168.4.1`**
    - Pressione Enter
+   - Quando solicitado, faça login com:
+     - Usuário: **`admin`**
+     - Senha: **`smartx12345`**
 
 4. **Pronto!**
    - A interface de configuração do X714 será exibida
@@ -276,7 +293,6 @@ Além das formas de comunicação, o X714 possui um servidor web completo acess�
 
 ---
 
-
 ### **Teste de Leitura**
 
 1. Acesse **Reader** na interface web
@@ -288,17 +304,17 @@ Além das formas de comunicação, o X714 possui um servidor web completo acess�
 
 ## 🎓 **Diferenciais Competitivos**
 
-| Característica | X714 | Concorrentes |
-|----------------|-----------|--------------|
-| **5 formas de conexão** | ✅ Serial, BLE, Ethernet, HID, Webhook | ❌ Apenas 1 ou 2 protocolos |
-| **Interface web embarcada** | ✅ Completa, sem instalação | ❌ Requer software proprietário |
-| **Emulador de teclado** | ✅ Plug-and-play total | ❌ Não disponível |
-| **Webhook nativo** | ✅ HTTP/HTTPS integrado | ⚠️ Apenas via gateway externo |
-| **Escrita avançada de tags** | ✅ EPC, TID, filtros, senhas | ⚠️ Funcionalidade limitada |
-| **Modo protegido** | ✅ Proteção contra escrita | ❌ Não disponível |
-| **Configuração simples** | ✅ Via navegador | ❌ Software desktop obrigatório |
-| **Multi-plataforma** | ✅ Windows, Linux, macOS, Android | ⚠️ Apenas Windows |
-| **Suporte técnico** | ✅ Nacional (Brasil) | ❌ Importado, suporte limitado |
+| Característica               | X714                                   | Concorrentes                    |
+| ---------------------------- | -------------------------------------- | ------------------------------- |
+| **5 formas de conexão**      | ✅ Serial, BLE, Ethernet, HID, Webhook | ❌ Apenas 1 ou 2 protocolos     |
+| **Interface web embarcada**  | ✅ Completa, sem instalação            | ❌ Requer software proprietário |
+| **Emulador de teclado**      | ✅ Plug-and-play total                 | ❌ Não disponível               |
+| **Webhook nativo**           | ✅ HTTP/HTTPS integrado                | ⚠️ Apenas via gateway externo   |
+| **Escrita avançada de tags** | ✅ EPC, TID, filtros, senhas           | ⚠️ Funcionalidade limitada      |
+| **Modo protegido**           | ✅ Proteção contra escrita             | ❌ Não disponível               |
+| **Configuração simples**     | ✅ Via navegador                       | ❌ Software desktop obrigatório |
+| **Multi-plataforma**         | ✅ Windows, Linux, macOS, Android      | ⚠️ Apenas Windows               |
+| **Suporte técnico**          | ✅ Nacional (Brasil)                   | ❌ Importado, suporte limitado  |
 
 ---
 
@@ -309,6 +325,7 @@ Além das formas de comunicação, o X714 possui um servidor web completo acess�
 - Watchdog automático para recuperação de falhas
 - Proteção contra perda de dados em quedas de energia
 - Rede WiFi com senha protegida (padrão: smartx12345)
+- Login obrigatório na interface web (usuário/senha)
 
 ---
 
@@ -329,5 +346,3 @@ Produto desenvolvido e fabricado por **SMARTX** - Todos os direitos reservados.
 ---
 
 **Transforme sua operação com tecnologia RFID inteligente. Escolha X714.**
-
-
