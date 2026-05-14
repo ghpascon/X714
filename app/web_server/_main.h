@@ -12,41 +12,12 @@
 
 static const char *WEB_AUTH_USER = "smartx";
 static const char *WEB_AUTH_PASSWORD = "smartx12345";
-static const byte MAX_AUTH_IPS = 8;
-static IPAddress authenticated_html_ips[MAX_AUTH_IPS];
-static byte authenticated_html_count = 0;
-
-bool is_html_ip_authenticated(IPAddress ip)
-{
-    for (byte i = 0; i < authenticated_html_count; i++)
-    {
-        if (authenticated_html_ips[i] == ip)
-            return true;
-    }
-    return false;
-}
-
-void mark_html_ip_authenticated(IPAddress ip)
-{
-    if (is_html_ip_authenticated(ip))
-        return;
-
-    if (authenticated_html_count < MAX_AUTH_IPS)
-    {
-        authenticated_html_ips[authenticated_html_count++] = ip;
-        return;
-    }
-
-    for (byte i = 1; i < MAX_AUTH_IPS; i++)
-        authenticated_html_ips[i - 1] = authenticated_html_ips[i];
-
-    authenticated_html_ips[MAX_AUTH_IPS - 1] = ip;
-}
+static const unsigned long AUTH_TIMEOUT_MS = 5UL * 60UL * 1000UL; // 5 minutos
+static unsigned long auth_granted_at = 0;
 
 bool ensure_html_route_auth()
 {
-    IPAddress remote_ip = server.client().remoteIP();
-    if (is_html_ip_authenticated(remote_ip))
+    if (auth_granted_at > 0 && (millis() - auth_granted_at) < AUTH_TIMEOUT_MS)
         return true;
 
     if (!server.authenticate(WEB_AUTH_USER, WEB_AUTH_PASSWORD))
@@ -55,7 +26,7 @@ bool ensure_html_route_auth()
         return false;
     }
 
-    mark_html_ip_authenticated(remote_ip);
+    auth_granted_at = millis();
     return true;
 }
 
