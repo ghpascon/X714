@@ -234,6 +234,7 @@ private:
 		int current_rssi = 0;
 		if (tag_cmd.length() >= 2)
 			current_rssi = strtol(tag_cmd.substring(tag_cmd.length() - 6, tag_cmd.length() - 4).c_str(), NULL, 16);
+		current_rssi = abs(128 - current_rssi);
 
 		int current_ant = 0;
 		const int ant_positions[3] = {6, 8, 10};
