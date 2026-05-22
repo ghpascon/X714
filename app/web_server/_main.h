@@ -172,23 +172,23 @@ public:
                       json += "\"version\":\"" + String(VERSION) + "\"";
                       json += "}";
                       server.send(200, "application/json", json); });
-                      
-        void script_web_server()
-        {
-            all_script();
-            reader_script();
-            config_ant_script();
-            config_reader_script();
-            reader_modes_script();
-            gpo_test_script();
-            eth_config_script();
-            webhook_config_script();
-            prefix_script();
-            protected_inventory_script();
-        }
+    }
+    void script_web_server()
+    {
+        all_script();
+        reader_script();
+        config_ant_script();
+        config_reader_script();
+        reader_modes_script();
+        gpo_test_script();
+        eth_config_script();
+        webhook_config_script();
+        prefix_script();
+        protected_inventory_script();
+    }
 
-        void loop()
-        {
-            server.handleClient();
-        }
-    };
+    void loop()
+    {
+        server.handleClient();
+    }
+};

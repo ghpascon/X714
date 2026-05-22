@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
   <head>
+    <meta charset="utf-8" />
     <title>X714 HOME</title>
     <link rel="stylesheet" type="text/css" href="/style.css" />
   </head>
@@ -100,7 +101,19 @@
     </div>
     <div class="container1" id="info-container" style="display: none">
       <h2>Informações do dispositivo</h2>
-      <div id="device-info">Carregando informações...</div>
+      <table class="table_tags" id="deviceTable">
+        <thead>
+          <tr>
+            <th>Propriedade</th>
+            <th>Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="2">Carregando informações...</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </body>
 
@@ -109,27 +122,55 @@
       fetch("/get_info", { credentials: "same-origin" })
         .then(function (resp) {
           if (!resp.ok) throw new Error("Network response was not ok");
-          return resp.json();
+          return resp.arrayBuffer();
+        })
+        .then(function (buffer) {
+          // Tenta UTF-8 primeiro; se falhar, tenta ISO-8859-1
+          var decoder = new TextDecoder("utf-8");
+          var text = decoder.decode(buffer);
+          try {
+            return JSON.parse(text);
+          } catch (e) {
+            var decoderIso = new TextDecoder("iso-8859-1");
+            text = decoderIso.decode(buffer);
+            return JSON.parse(text);
+          }
         })
         .then(function (data) {
           var container = document.getElementById("info-container");
-          var info = document.getElementById("device-info");
+          var tbody = document
+            .getElementById("deviceTable")
+            .getElementsByTagName("tbody")[0];
           container.style.display = "block";
-          var html = "";
-          if (data.name)
-            html += "<p><strong>Nome:</strong> " + data.name + "</p>";
-          if (data.bt_mac)
-            html += "<p><strong>BT MAC:</strong> " + data.bt_mac + "</p>";
-          if (data.eth_mac)
-            html += "<p><strong>ETH MAC:</strong> " + data.eth_mac + "</p>";
-          if (data.ip) html += "<p><strong>IP:</strong> " + data.ip + "</p>";
-          if (data.version)
-            html += "<p><strong>Versão:</strong> " + data.version + "</p>";
-          info.innerHTML = html;
+          tbody.innerHTML = "";
+          var rows = [
+            ["Nome", data.name],
+            ["BT MAC", data.bt_mac],
+            ["ETH MAC", data.eth_mac],
+            ["IP", data.ip],
+            ["Versão", data.version],
+          ];
+          rows.forEach(function (pair) {
+            var key = pair[0];
+            var value = pair[1];
+            if (value !== undefined && value !== null && value !== "") {
+              var tr = document.createElement("tr");
+              var tdKey = document.createElement("td");
+              tdKey.textContent = key;
+              var tdVal = document.createElement("td");
+              tdVal.textContent = value;
+              tr.appendChild(tdKey);
+              tr.appendChild(tdVal);
+              tbody.appendChild(tr);
+            }
+          });
         })
         .catch(function (err) {
-          var info = document.getElementById("device-info");
-          info.textContent = "Erro ao obter informações";
+          var tbody = document
+            .getElementById("deviceTable")
+            .getElementsByTagName("tbody")[0];
+          tbody.innerHTML =
+            "<tr><td colspan='2'>Erro ao obter informações</td></tr>";
           console.error(err);
         });
     });
