@@ -1,4 +1,5 @@
 #include "vars.h"
+#include "version.h"
 #include "script_all.h"
 #include "script_ant_config.h"
 #include "script_reader_config.h"
@@ -157,23 +158,37 @@ public:
                       if (!f) { server.send(404, "text/plain", "Not found"); return; }
                       server.streamFile(f, "text/html");
                       f.close(); });
-    }
-    void script_web_server()
-    {
-        all_script();
-        reader_script();
-        config_ant_script();
-        config_reader_script();
-        reader_modes_script();
-        gpo_test_script();
-        eth_config_script();
-        webhook_config_script();
-        prefix_script();
-        protected_inventory_script();
-    }
 
-    void loop()
-    {
-        server.handleClient();
-    }
-};
+        // get_info
+        server.on("/get_info", HTTP_GET, []()
+                  {
+                      // Compose JSON response
+                      server.sendHeader("Access-Control-Allow-Origin", "*");
+                      String json = "{";
+                      json += "\"name\":\"" + get_esp_name() + "\",";
+                      json += "\"bt_mac\":\"" + get_bt_mac() + "\",";
+                      json += "\"eth_mac\":\"" + String(ETH.macAddress()) + "\",";
+                      json += "\"ip\":\"" + ETH.localIP().toString() + "\",";
+                      json += "\"version\":\"" + String(VERSION) + "\"";
+                      json += "}";
+                      server.send(200, "application/json", json); });
+                      
+        void script_web_server()
+        {
+            all_script();
+            reader_script();
+            config_ant_script();
+            config_reader_script();
+            reader_modes_script();
+            gpo_test_script();
+            eth_config_script();
+            webhook_config_script();
+            prefix_script();
+            protected_inventory_script();
+        }
+
+        void loop()
+        {
+            server.handleClient();
+        }
+    };

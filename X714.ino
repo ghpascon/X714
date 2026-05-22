@@ -2,6 +2,7 @@
 #pragma GCC diagnostic ignored "-Wnarrowing"
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
+#include "version.h"
 #include "pins.h"
 #include "helpers.h"
 #include "libs.h"

@@ -1,5 +1,6 @@
 void all_script()
 {
+
   server.on("/read_on", HTTP_GET, []()
             {
                 if(!gpi_start)

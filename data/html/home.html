@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <title>X714 HOME</title>
@@ -15,7 +15,7 @@
     </div>
 
     <div class="container1">
-      <button class="button_links" onclick="window.location.href='/reader'">
+      <button class="button_links" onclick="window.location.href = '/reader'">
         READER
       </button>
     </div>
@@ -24,7 +24,7 @@
     <div class="container1">
       <button
         class="button_links"
-        onclick="window.location.href='/reader_modes'"
+        onclick="window.location.href = '/reader_modes'"
       >
         READER MODES
       </button>
@@ -33,7 +33,10 @@
     <br />
 
     <div class="container1">
-      <button class="button_links" onclick="window.location.href='/ant_config'">
+      <button
+        class="button_links"
+        onclick="window.location.href = '/ant_config'"
+      >
         CONFIG ANT
       </button>
     </div>
@@ -41,7 +44,10 @@
     <br />
 
     <div class="container1">
-      <button class="button_links" onclick="window.location.href='/eth_config'">
+      <button
+        class="button_links"
+        onclick="window.location.href = '/eth_config'"
+      >
         ETH CONFIG
       </button>
     </div>
@@ -51,7 +57,7 @@
     <div class="container1">
       <button
         class="button_links"
-        onclick="window.location.href='/webhook_config'"
+        onclick="window.location.href = '/webhook_config'"
       >
         WEBHOOK CONFIG
       </button>
@@ -60,7 +66,7 @@
     <br />
 
     <div class="container1">
-      <button class="button_links" onclick="window.location.href='/prefix'">
+      <button class="button_links" onclick="window.location.href = '/prefix'">
         PREFIX CONFIG
       </button>
     </div>
@@ -70,7 +76,7 @@
     <div class="container1">
       <button
         class="button_links"
-        onclick="window.location.href='/protected_inventory'"
+        onclick="window.location.href = '/protected_inventory'"
       >
         PROTECTED INVENTORY
       </button>
@@ -79,7 +85,7 @@
     <div class="container1">
       <button
         class="button_links"
-        onclick="window.location.href='/reader_config'"
+        onclick="window.location.href = '/reader_config'"
       >
         CONFIG READER
       </button>
@@ -88,11 +94,44 @@
     <br />
 
     <div class="container1">
-      <button class="button_links" onclick="window.location.href='/gpo_test'">
+      <button class="button_links" onclick="window.location.href = '/gpo_test'">
         GPO
       </button>
     </div>
+    <div class="container1" id="info-container" style="display: none">
+      <h2>Informações do dispositivo</h2>
+      <div id="device-info">Carregando informações...</div>
+    </div>
   </body>
 
-  <script></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      fetch("/get_info", { credentials: "same-origin" })
+        .then(function (resp) {
+          if (!resp.ok) throw new Error("Network response was not ok");
+          return resp.json();
+        })
+        .then(function (data) {
+          var container = document.getElementById("info-container");
+          var info = document.getElementById("device-info");
+          container.style.display = "block";
+          var html = "";
+          if (data.name)
+            html += "<p><strong>Nome:</strong> " + data.name + "</p>";
+          if (data.bt_mac)
+            html += "<p><strong>BT MAC:</strong> " + data.bt_mac + "</p>";
+          if (data.eth_mac)
+            html += "<p><strong>ETH MAC:</strong> " + data.eth_mac + "</p>";
+          if (data.ip) html += "<p><strong>IP:</strong> " + data.ip + "</p>";
+          if (data.version)
+            html += "<p><strong>Versão:</strong> " + data.version + "</p>";
+          info.innerHTML = html;
+        })
+        .catch(function (err) {
+          var info = document.getElementById("device-info");
+          info.textContent = "Erro ao obter informações";
+          console.error(err);
+        });
+    });
+  </script>
 </html>
