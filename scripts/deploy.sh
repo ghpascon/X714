@@ -24,14 +24,14 @@ if [[ -z "$repo_root" ]]; then
 fi
 cd "$repo_root"
 
-version_file="$repo_root/program_version.h"
+version_file="$repo_root/version.h"
 if [[ ! -f "$version_file" ]]; then
   echo "Arquivo $version_file nao encontrado. Abortando."
   exit 1
 fi
 
 # ler versao atual
-current_version=$(sed -n 's/.*#define PROGRAM_VERSION "\([^"]*\)".*/\1/p' "$version_file" | head -n1)
+current_version=$(sed -n 's/.*#define VERSION "\([^"]*\)".*/\1/p' "$version_file" | head -n1)
 if [[ -z "$current_version" ]]; then
   echo "Nao foi possivel ler a versao atual em $version_file"
   exit 1
@@ -60,7 +60,7 @@ new_version="${major}.${minor}.${patch}"
 echo "Atualizando $version_file: $current_version -> $new_version"
 tmpfile=$(mktemp)
 cat > "$tmpfile" <<EOF
-#define PROGRAM_VERSION "$new_version"
+#define VERSION "$new_version"
 EOF
 mv "$tmpfile" "$version_file"
 

@@ -61,25 +61,39 @@ public:
     {
         server.on("/style.css", HTTP_GET, []()
                   {
+                      bool _fs_locked = false;
+                      if (fs_mutex) {
+                          if (xSemaphoreTake(fs_mutex, pdMS_TO_TICKS(2000)) == pdTRUE) _fs_locked = true;
+                          else { server.send(500, "text/plain", "FS busy"); return; }
+                      }
                       File f = LittleFS.open("/html/style.css", "r");
                       if (!f)
                       {
+                          if (_fs_locked) xSemaphoreGive(fs_mutex);
                           server.send(404, "text/plain", "Not found");
                           return;
                       }
                       server.streamFile(f, "text/css");
-                      f.close(); });
+                      f.close();
+                      if (_fs_locked) xSemaphoreGive(fs_mutex); });
 
         server.on("/FONT_SMARTX.woff", HTTP_GET, []()
                   {
+                      bool _fs_locked = false;
+                      if (fs_mutex) {
+                          if (xSemaphoreTake(fs_mutex, pdMS_TO_TICKS(2000)) == pdTRUE) _fs_locked = true;
+                          else { server.send(500, "text/plain", "FS busy"); return; }
+                      }
                       File f = LittleFS.open("/html/FONT_SMARTX.woff", "r");
                       if (!f)
                       {
+                          if (_fs_locked) xSemaphoreGive(fs_mutex);
                           server.send(404, "text/plain", "Not found");
                           return;
                       }
                       server.streamFile(f, "font/woff");
-                      f.close(); });
+                      f.close();
+                      if (_fs_locked) xSemaphoreGive(fs_mutex); });
     }
 
     void routes_web_server()
@@ -87,78 +101,132 @@ public:
         server.on("/", HTTP_GET, []()
                   {
                       if (!ensure_html_route_auth()) return;
+                      bool _fs_locked = false;
+                      if (fs_mutex) {
+                          if (xSemaphoreTake(fs_mutex, pdMS_TO_TICKS(2000)) == pdTRUE) _fs_locked = true;
+                          else { server.send(500, "text/plain", "FS busy"); return; }
+                      }
                       File f = LittleFS.open("/html/home.html", "r");
-                      if (!f) { server.send(404, "text/plain", "Not found"); return; }
+                      if (!f) { if (_fs_locked) xSemaphoreGive(fs_mutex); server.send(404, "text/plain", "Not found"); return; }
                       server.streamFile(f, "text/html");
-                      f.close(); });
+                      f.close();
+                      if (_fs_locked) xSemaphoreGive(fs_mutex); });
 
         server.on("/reader", HTTP_GET, []()
                   {
                       if (!ensure_html_route_auth()) return;
+                      bool _fs_locked = false;
+                      if (fs_mutex) {
+                          if (xSemaphoreTake(fs_mutex, pdMS_TO_TICKS(2000)) == pdTRUE) _fs_locked = true;
+                          else { server.send(500, "text/plain", "FS busy"); return; }
+                      }
                       File f = LittleFS.open("/html/reader.html", "r");
-                      if (!f) { server.send(404, "text/plain", "Not found"); return; }
+                      if (!f) { if (_fs_locked) xSemaphoreGive(fs_mutex); server.send(404, "text/plain", "Not found"); return; }
                       server.streamFile(f, "text/html");
-                      f.close(); });
+                      f.close();
+                      if (_fs_locked) xSemaphoreGive(fs_mutex); });
 
         server.on("/ant_config", HTTP_GET, []()
                   {
                       if (!ensure_html_route_auth()) return;
+                      bool _fs_locked = false;
+                      if (fs_mutex) {
+                          if (xSemaphoreTake(fs_mutex, pdMS_TO_TICKS(2000)) == pdTRUE) _fs_locked = true;
+                          else { server.send(500, "text/plain", "FS busy"); return; }
+                      }
                       File f = LittleFS.open("/html/ant_config.html", "r");
-                      if (!f) { server.send(404, "text/plain", "Not found"); return; }
+                      if (!f) { if (_fs_locked) xSemaphoreGive(fs_mutex); server.send(404, "text/plain", "Not found"); return; }
                       server.streamFile(f, "text/html");
-                      f.close(); });
+                      f.close();
+                      if (_fs_locked) xSemaphoreGive(fs_mutex); });
 
         server.on("/reader_config", HTTP_GET, []()
                   {
                       if (!ensure_html_route_auth()) return;
+                      bool _fs_locked = false;
+                      if (fs_mutex) {
+                          if (xSemaphoreTake(fs_mutex, pdMS_TO_TICKS(2000)) == pdTRUE) _fs_locked = true;
+                          else { server.send(500, "text/plain", "FS busy"); return; }
+                      }
                       File f = LittleFS.open("/html/reader_config.html", "r");
-                      if (!f) { server.send(404, "text/plain", "Not found"); return; }
+                      if (!f) { if (_fs_locked) xSemaphoreGive(fs_mutex); server.send(404, "text/plain", "Not found"); return; }
                       server.streamFile(f, "text/html");
-                      f.close(); });
+                      f.close();
+                      if (_fs_locked) xSemaphoreGive(fs_mutex); });
 
         server.on("/reader_modes", HTTP_GET, []()
                   {
                       if (!ensure_html_route_auth()) return;
+                      bool _fs_locked = false;
+                      if (fs_mutex) {
+                          if (xSemaphoreTake(fs_mutex, pdMS_TO_TICKS(2000)) == pdTRUE) _fs_locked = true;
+                          else { server.send(500, "text/plain", "FS busy"); return; }
+                      }
                       File f = LittleFS.open("/html/reader_modes.html", "r");
-                      if (!f) { server.send(404, "text/plain", "Not found"); return; }
+                      if (!f) { if (_fs_locked) xSemaphoreGive(fs_mutex); server.send(404, "text/plain", "Not found"); return; }
                       server.streamFile(f, "text/html");
-                      f.close(); });
+                      f.close();
+                      if (_fs_locked) xSemaphoreGive(fs_mutex); });
 
         server.on("/gpo_test", HTTP_GET, []()
                   {
                       if (!ensure_html_route_auth()) return;
+                      bool _fs_locked = false;
+                      if (fs_mutex) {
+                          if (xSemaphoreTake(fs_mutex, pdMS_TO_TICKS(2000)) == pdTRUE) _fs_locked = true;
+                          else { server.send(500, "text/plain", "FS busy"); return; }
+                      }
                       File f = LittleFS.open("/html/gpo_test.html", "r");
-                      if (!f) { server.send(404, "text/plain", "Not found"); return; }
+                      if (!f) { if (_fs_locked) xSemaphoreGive(fs_mutex); server.send(404, "text/plain", "Not found"); return; }
                       server.streamFile(f, "text/html");
-                      f.close(); });
+                      f.close();
+                      if (_fs_locked) xSemaphoreGive(fs_mutex); });
 
         server.on("/eth_config", HTTP_GET, []()
                   {
                       if (!ensure_html_route_auth()) return;
+                      bool _fs_locked = false;
+                      if (fs_mutex) {
+                          if (xSemaphoreTake(fs_mutex, pdMS_TO_TICKS(2000)) == pdTRUE) _fs_locked = true;
+                          else { server.send(500, "text/plain", "FS busy"); return; }
+                      }
                       File f = LittleFS.open("/html/eth_config.html", "r");
-                      if (!f) { server.send(404, "text/plain", "Not found"); return; }
+                      if (!f) { if (_fs_locked) xSemaphoreGive(fs_mutex); server.send(404, "text/plain", "Not found"); return; }
                       server.streamFile(f, "text/html");
-                      f.close(); });
+                      f.close();
+                      if (_fs_locked) xSemaphoreGive(fs_mutex); });
 
         // prefix
         server.on("/prefix", HTTP_GET, []()
                   {
                       if (!ensure_html_route_auth()) return;
+                      bool _fs_locked = false;
+                      if (fs_mutex) {
+                          if (xSemaphoreTake(fs_mutex, pdMS_TO_TICKS(2000)) == pdTRUE) _fs_locked = true;
+                          else { server.send(500, "text/plain", "FS busy"); return; }
+                      }
                       File f = LittleFS.open("/html/prefix.html", "r");
-                      if (!f) { server.send(404, "text/plain", "Not found"); return; }
+                      if (!f) { if (_fs_locked) xSemaphoreGive(fs_mutex); server.send(404, "text/plain", "Not found"); return; }
                       server.streamFile(f, "text/html");
-                      f.close(); });
+                      f.close();
+                      if (_fs_locked) xSemaphoreGive(fs_mutex); });
 
         // protected_inventory
         server.on("/protected_inventory", HTTP_GET, []()
                   {
                       if (!ensure_html_route_auth()) return;
+                      bool _fs_locked = false;
+                      if (fs_mutex) {
+                          if (xSemaphoreTake(fs_mutex, pdMS_TO_TICKS(2000)) == pdTRUE) _fs_locked = true;
+                          else { server.send(500, "text/plain", "FS busy"); return; }
+                      }
                       File f = LittleFS.open("/html/protected_inventory.html", "r");
-                      if (!f) { server.send(404, "text/plain", "Not found"); return; }
+                      if (!f) { if (_fs_locked) xSemaphoreGive(fs_mutex); server.send(404, "text/plain", "Not found"); return; }
                       server.streamFile(f, "text/html");
-                      f.close(); });
+                      f.close();
+                      if (_fs_locked) xSemaphoreGive(fs_mutex); });
 
-        //get info
+        // get info
         server.on("/info", HTTP_GET, []()
                   {
                       if (!ensure_html_route_auth()) return;
@@ -167,7 +235,7 @@ public:
                       json += "\"bt_mac\":\"" + get_bt_mac() + "\",";
                       json += "\"eth_mac\":\"" + String(ETH.macAddress()) + "\",";
                       json += "\"ip\":\"" + ETH.localIP().toString() + "\",";
-                      json += "\"version\":\"" + String(PROGRAM_VERSION) + "\"";
+                      json += "\"version\":\"" + String(VERSION) + "\"";
                       json += "}";
                       server.send(200, "application/json", json); });
     }

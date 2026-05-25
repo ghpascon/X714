@@ -2,10 +2,15 @@ void protected_inventory_script()
 {
     server.on("/protected_inventory", HTTP_GET, []()
               {
+                  bool _fs_locked = false;
+                  if (fs_mutex) {
+                      if (xSemaphoreTake(fs_mutex, pdMS_TO_TICKS(2000)) == pdTRUE) _fs_locked = true;
+                      else { server.send(500, "text/plain", "FS busy"); return; }
+                  }
                   File f = LittleFS.open("/html/protected_inventory.html", "r");
-                  if (!f) { server.send(404, "text/plain", "Not found"); return; }
+                  if (!f) { if (_fs_locked) xSemaphoreGive(fs_mutex); server.send(404, "text/plain", "Not found"); return; }
                   server.streamFile(f, "text/html");
-                  f.close(); });
+                  f.close(); if (_fs_locked) xSemaphoreGive(fs_mutex); });
 
     server.on("/get_protected_inventory", HTTP_GET, []()
               {

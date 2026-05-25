@@ -209,6 +209,15 @@ tbody tr:nth-child(odd) {
   font-size: 45px;
 }
 
+/* Garantir que textos dentro de .table_2 (labels e h1 internos) fiquem pretos,
+   sobrescrevendo regras globais de `label` e `h1` */
+.table_2 label,
+.table_2 td label,
+.table_2 th h1,
+.table_2 h1 {
+  color: #000000;
+}
+
 .table_tags {
   border-collapse: collapse;
 }

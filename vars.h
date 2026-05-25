@@ -53,6 +53,8 @@ bool hotspot_on = true;
 bool buzzer_on = false;
 bool decode_gtin = true;
 bool fs_loaded = true;
+// Mutex para proteger operações com o sistema de arquivos
+extern SemaphoreHandle_t fs_mutex;
 
 // ==================== Watchdog ====================
 #define WATCHDOG_TIMEOUT 60

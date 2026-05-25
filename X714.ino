@@ -2,12 +2,15 @@
 #pragma GCC diagnostic ignored "-Wnarrowing"
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
-#include "program_version.h"
+#include "version.h"
 #include "pins.h"
 #include "helpers.h"
+#include <freertos/semphr.h>
+// Mutex para proteger operações de arquivo (LittleFS) - definido aqui
+SemaphoreHandle_t fs_mutex = NULL;
 #include "libs.h"
 #include "vars.h"
-#include <freertos/semphr.h>
+
 
 // ==================== Core 0 Task (RGB + Pins) ====================
 void core0Task(void *pvParameters)
@@ -29,6 +32,9 @@ void core0Task(void *pvParameters)
         // Update outputs
         pins.set_outputs();
 
+        // Save configuration
+        config_file_commands.save_config();
+
         // Small delay to prevent task from starving other processes
         vTaskDelay(pdMS_TO_TICKS(10)); // 10ms delay
     }
@@ -43,6 +49,13 @@ void setup()
     {
         Serial.println("Error initializing LittleFS!");
         fs_loaded = false;
+    }
+
+    // Cria mutex para operações com o sistema de arquivos
+    fs_mutex = xSemaphoreCreateMutex();
+    if (fs_mutex == NULL)
+    {
+        Serial.println("Error creating fs_mutex");
     }
 
     // Configure the Watchdog for both cores
@@ -93,9 +106,6 @@ void loop()
     // Process reader module (Core 1)
     reader_module.functions();
     myserialcheck.loop();
-
-    // Save configuration
-    config_file_commands.save_config();
 
     // Handle web server requests (synchronous server)
     web_server.loop();
