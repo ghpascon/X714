@@ -1,304 +1,288 @@
 #include "vars.h"
 
-// ==================== Classe de Configuração ====================
+// Arquivos usados na escrita atômica
+static const String config_file_tmp = "/config.txt.tmp";
+static const String config_file_bak = "/config.txt.bak";
+
 class CONFIG_FILE
 {
 private:
-	// Buffer reutilizado para montar a string de configuração (reduz fragmentação)
-	String new_config;
+    String _buf; // buffer reutilizado para montar config
 
-	// Limpa o arquivo de configuração
-	void clearFile()
-	{
-		File file_config = LittleFS.open(config_file, "w"); // Trunca o arquivo
-		if (!file_config)
-			return;
-		file_config.close();
-	}
+    // ------------------------------------------------------------------
+    // Helpers de I/O
+    // ------------------------------------------------------------------
 
-	// Parse boolean flexível (on/1/true/yes)
-	bool parseBool(String v)
-	{
-		v.trim();
-		v.toLowerCase();
-		return (v == "on" || v == "1" || v == "true" || v == "yes");
-	}
+    // Copia src → dst; retorna true se OK
+    static bool _copyFile(const String &src, const String &dst)
+    {
+        File in = LittleFS.open(src, "r");
+        if (!in) return false;
 
-	// Salva um parâmetro lido do arquivo (key/value separados)
-	void save_parameter(String key, String value)
-	{
-		// keys are already lowercase and trimmed
-		// ==================== Configuração da antena ====================
-		if (key == "antena")
-		{
-			// form expected: <num>,<on|off>,<power>,<rssi>
-			int s1 = value.indexOf(',');
-			if (s1 < 0)
-				return;
-			int s2 = value.indexOf(',', s1 + 1);
-			if (s2 < 0)
-				return;
-			int s3 = value.indexOf(',', s2 + 1);
-			if (s3 < 0)
-				return;
+        File out = LittleFS.open(dst, "w");
+        if (!out) { in.close(); return false; }
 
-			String t1 = value.substring(0, s1);		 // antenna index
-			String t2 = value.substring(s1 + 1, s2); // active
-			String t3 = value.substring(s2 + 1, s3); // power
-			String t4 = value.substring(s3 + 1);	 // rssi
+        uint8_t chunk[64];
+        while (in.available())
+        {
+            size_t n = in.read(chunk, sizeof(chunk));
+            if (n) out.write(chunk, n);
+        }
+        in.close();
+        out.close();
+        return true;
+    }
 
-			t1.trim();
-			t2.trim();
-			t3.trim();
-			t4.trim();
+    // Retorna true se o arquivo existe e tem tamanho > 0
+    static bool _fileValid(const String &path)
+    {
+        File f = LittleFS.open(path, "r");
+        if (!f) return false;
+        size_t sz = f.size();
+        f.close();
+        return sz > 0;
+    }
 
-			int current_ant = t1.toInt();
-			bool current_active = parseBool(t2);
-			int current_power = t3.toInt();
-			int current_rssi = t4.toInt();
+    // ------------------------------------------------------------------
+    // Parse / apply
+    // ------------------------------------------------------------------
 
-			// enforce maximum of 27 as requested
-			int effective_max_power = max_power;
-			if (effective_max_power > 27)
-				effective_max_power = 27;
+    static bool _parseBool(String v)
+    {
+        v.trim();
+        v.toLowerCase();
+        return (v == "on" || v == "1" || v == "true" || v == "yes");
+    }
 
-			current_power = constrain(current_power, (int)min_power, effective_max_power);
-			current_rssi = max(current_rssi, (int)min_rssi);
+    void _applyParam(const String &key, String value)
+    {
+        // Antena: <num>,<on|off>,<power>,<rssi>
+        if (key == "antena")
+        {
+            int s1 = value.indexOf(',');                if (s1 < 0) return;
+            int s2 = value.indexOf(',', s1 + 1);        if (s2 < 0) return;
+            int s3 = value.indexOf(',', s2 + 1);        if (s3 < 0) return;
 
-			if (current_ant < 1 || current_ant > ant_qtd)
-				return;
+            String t1 = value.substring(0, s1);        t1.trim();
+            String t2 = value.substring(s1 + 1, s2);   t2.trim();
+            String t3 = value.substring(s2 + 1, s3);   t3.trim();
+            String t4 = value.substring(s3 + 1);       t4.trim();
 
-			antena_commands.set_antena(
-				current_ant,
-				current_active,
-				(byte)current_power,
-				(byte)current_rssi);
-		}
-		// ==================== Sessão ====================
-		else if (key == "session")
-		{
-			int v = value.toInt();
-			if (v > max_session || v < 0)
-				v = 0x00;
-			session = v;
-		}
-		// ==================== Modos gerais ====================
-		else if (key == "start_reading")
-		{
-			start_reading = parseBool(value);
-			read_on = start_reading;
-		}
-		else if (key == "gpi_start")
-		{
-			gpi_start = parseBool(value);
-		}
-		else if (key == "gpi_stop_delay")
-		{
-			int v = value.toInt();
-			if (v < 0)
-				v = 0;
-			gpi_stop_delay = v;
-		}
-		else if (key == "always_send")
-		{
-			always_send = parseBool(value);
-		}
-		else if (key == "simple_send")
-		{
-			simple_send = parseBool(value);
-		}
-		else if (key == "hotspot_on")
-		{
-			hotspot_on = parseBool(value);
-		}
-		else if (key == "keyboard")
-		{
-			keyboard = parseBool(value);
-		}
-		else if (key == "buzzer_on")
-		{
-			buzzer_on = parseBool(value);
-		}
-		else if (key == "decode_gtin")
-		{
-			decode_gtin = parseBool(value);
-		}
-		else if (key == "dhcp_on")
-		{
-			dhcp_on = parseBool(value);
-		}
-		else if (key == "static_ip")
-		{
-			static_ip = value;
-		}
-		else if (key == "gateway_ip")
-		{
-			gateway_ip = value;
-		}
-		else if (key == "subnet_mask")
-		{
-			subnet_mask = value;
-		}
-		// ==================== Webhook ====================
-		else if (key == "webhook_on")
-		{
-			webhook_on = parseBool(value);
-		}
-		else if (key == "webhook_url")
-		{
-			webhook_url = value;
-		}
-		else if (key == "prefix")
-		{
-			// replace spaces with commas as requested
-			value.replace(" ", ",");
-			prefix = value;
-		}
-		// Protected Inventory
-		else if (key == "protected_inventory_enabled")
-		{
-			protected_inventory_enabled = parseBool(value);
-		}
-		else if (key == "protected_inventory_password")
-		{
-			protected_inventory_password = value;
-		}
-	}
+            int idx   = (int)t1.toInt();
+            bool act  = _parseBool(t2);
+            int pwr   = constrain((int)t3.toInt(), (int)min_power, (int)min((byte)27, max_power));
+            int rssi  = max((int)t4.toInt(), (int)min_rssi);
+
+            if (idx < 1 || idx > ant_qtd) return;
+            antena_commands.set_antena(idx, act, (byte)pwr, (byte)rssi);
+            return;
+        }
+
+        if (key == "session")               { int v = value.toInt(); session = (v < 0 || v > max_session) ? 0 : v; return; }
+        if (key == "start_reading")         { start_reading = _parseBool(value); read_on = start_reading; return; }
+        if (key == "gpi_start")             { gpi_start       = _parseBool(value); return; }
+        if (key == "gpi_stop_delay")        { int v = value.toInt(); gpi_stop_delay = max(v, 0); return; }
+        if (key == "always_send")           { always_send     = _parseBool(value); return; }
+        if (key == "simple_send")           { simple_send     = _parseBool(value); return; }
+        if (key == "hotspot_on")            { hotspot_on      = _parseBool(value); return; }
+        if (key == "keyboard")              { keyboard        = _parseBool(value); return; }
+        if (key == "buzzer_on")             { buzzer_on       = _parseBool(value); return; }
+        if (key == "decode_gtin")           { decode_gtin     = _parseBool(value); return; }
+        if (key == "dhcp_on")               { dhcp_on         = _parseBool(value); return; }
+        if (key == "static_ip")             { static_ip       = value; return; }
+        if (key == "gateway_ip")            { gateway_ip      = value; return; }
+        if (key == "subnet_mask")           { subnet_mask     = value; return; }
+        if (key == "webhook_on")            { webhook_on      = _parseBool(value); return; }
+        if (key == "webhook_url")           { webhook_url     = value; return; }
+        if (key == "prefix")                { value.replace(" ", ","); prefix = value; return; }
+        if (key == "protected_inventory_enabled")  { protected_inventory_enabled  = _parseBool(value); return; }
+        if (key == "protected_inventory_password") { protected_inventory_password = value; return; }
+    }
+
+    // ------------------------------------------------------------------
+    // Montagem do buffer
+    // ------------------------------------------------------------------
+
+    void _buildConfig()
+    {
+        _buf = "";
+
+        for (int i = 0; i < ant_qtd; i++)
+        {
+            _buf += "antena:";
+            _buf += String(i + 1);        _buf += ',';
+            _buf += antena[i].active ? "on" : "off"; _buf += ',';
+            _buf += String(antena[i].power);          _buf += ',';
+            _buf += String(antena[i].rssi);           _buf += '\n';
+        }
+
+        _buf += "session:"            + String(session)                                          + "\n";
+        _buf += "start_reading:"      + String(start_reading     ? "on" : "off")                 + "\n";
+        _buf += "gpi_start:"          + String(gpi_start         ? "on" : "off")                 + "\n";
+        _buf += "gpi_stop_delay:"     + String(gpi_stop_delay)                                   + "\n";
+        _buf += "always_send:"        + String(always_send       ? "on" : "off")                 + "\n";
+        _buf += "simple_send:"        + String(simple_send       ? "on" : "off")                 + "\n";
+        _buf += "hotspot_on:"         + String(hotspot_on        ? "on" : "off")                 + "\n";
+        _buf += "keyboard:"           + String(keyboard          ? "on" : "off")                 + "\n";
+        _buf += "buzzer_on:"          + String(buzzer_on         ? "on" : "off")                 + "\n";
+        _buf += "decode_gtin:"        + String(decode_gtin       ? "on" : "off")                 + "\n";
+        _buf += "dhcp_on:"            + String(dhcp_on           ? "on" : "off")                 + "\n";
+        _buf += "static_ip:"          + static_ip                                                + "\n";
+        _buf += "gateway_ip:"         + gateway_ip                                               + "\n";
+        _buf += "subnet_mask:"        + subnet_mask                                              + "\n";
+        _buf += "webhook_on:"         + String(webhook_on        ? "on" : "off")                 + "\n";
+        _buf += "webhook_url:"        + webhook_url                                              + "\n";
+        _buf += "prefix:"             + prefix                                                   + "\n";
+        _buf += "protected_inventory_enabled:"  + String(protected_inventory_enabled  ? "on" : "off") + "\n";
+        _buf += "protected_inventory_password:" + protected_inventory_password                   + "\n";
+    }
+
+    // Grava _buf em path; retorna true se OK
+    bool _writeBuf(const String &path)
+    {
+        File f = LittleFS.open(path, "w");
+        if (!f) return false;
+        f.print(_buf);
+        f.close();
+        return true;
+    }
+
+    // Escrita atômica: tmp → bak → config
+    // Mesmo que a energia caia no meio, bak ou config ainda tem conteúdo válido
+    bool _atomicSave()
+    {
+        // 1. Grava conteúdo novo em .tmp
+        if (!_writeBuf(config_file_tmp))
+        {
+            LittleFS.remove(config_file_tmp);
+            return false;
+        }
+
+        // 2. Promove config atual → bak (melhor esforço; ignora falha)
+        if (_fileValid(config_file))
+            _copyFile(config_file, config_file_bak);
+
+        // 3. Promove .tmp → config
+        if (!_copyFile(config_file_tmp, config_file))
+        {
+            LittleFS.remove(config_file_tmp);
+            return false;
+        }
+
+        LittleFS.remove(config_file_tmp);
+        return true;
+    }
+
+    // Lê e aplica todas as linhas de um arquivo aberto
+    void _parseFile(File &f)
+    {
+        while (f.available())
+        {
+            String line = f.readStringUntil('\n');
+            line.replace("\r", "");
+            line.trim();
+            if (line.length() == 0) continue;
+
+            int sep = line.indexOf(':');
+            if (sep < 0) continue;
+
+            String key = line.substring(0, sep);
+            String val = line.substring(sep + 1);
+            key.trim();
+            key.toLowerCase();
+            val.trim();
+
+            _applyParam(key, val);
+        }
+    }
 
 public:
-	// Salva toda a configuração no arquivo
-	void save_config()
-	{
-		const int save_time = 10000; // intervalo mínimo entre salvamentos (ms)
-		static unsigned long last_save_time = 0;
-		static String old_config = "";
-		static bool first_time = true;
-		static bool reserved_capacity = false; // reserva apenas uma vez
+    // ------------------------------------------------------------------
+    // API pública
+    // ------------------------------------------------------------------
 
-		if ((millis() - last_save_time) < save_time)
-			return;
+    // Chame no setup(): carrega config principal; se inválida tenta o backup
+    void get_config()
+    {
+        // Reserva buffer uma vez para aliviar alocações no save
+        if (_buf.length() == 0)
+            _buf.reserve((size_t)ant_qtd * 32u + 512u);
 
-		last_save_time = millis();
+        const String *source = nullptr;
 
-		// Na primeira chamada, reservar uma capacidade aproximada para reduzir realocações
-		if (!reserved_capacity)
-		{
-			// Estimativa: ~32 chars por antena + ~512 chars para demais parâmetros
-			size_t approx = (size_t)ant_qtd * 32u + 512u;
-			new_config.reserve(approx);
-			reserved_capacity = true;
-		}
+        if (_fileValid(config_file))
+            source = &config_file;
+        else if (_fileValid(config_file_bak))
+        {
+            Serial.println("[CFG] config.txt ausente/vazio, usando backup");
+            source = &config_file_bak;
+        }
+        else
+        {
+            Serial.println("[CFG] Nenhum arquivo de config encontrado, usando padroes");
+            return;
+        }
 
-		// Limpa o conteúdo mantendo a capacidade reservada
-		new_config = "";
+        File f = LittleFS.open(*source, "r");
+        if (!f)
+        {
+            Serial.println("[CFG] Falha ao abrir arquivo de config");
+            return;
+        }
+        _parseFile(f);
+        f.close();
+    }
 
-		// Monta a configuração atual em uma única string
+    // Chame no loop(): salva apenas se a config mudou e o intervalo passou
+    // Retorna true se efetivamente gravou no flash
+    bool save_config()
+    {
+        static const unsigned long SAVE_INTERVAL_MS = 10000UL;
+        static unsigned long last_save_ms = 0;
+        static String        last_saved   = "";
+        static bool          initialized  = false;
 
-		// Antenas
-		for (int i = 0; i < ant_qtd; i++)
-		{
-			new_config += "antena:" +
-						  String(i + 1) + "," +
-						  (antena[i].active ? "on" : "off") + "," +
-						  String(antena[i].power) + "," +
-						  String(antena[i].rssi) + "\n";
-		}
+        // Throttle: nunca salva mais de 1x a cada SAVE_INTERVAL_MS
+        if ((millis() - last_save_ms) < SAVE_INTERVAL_MS)
+            return false;
 
-		// Demais parâmetros
-		new_config += "session:" + String(session) + "\n";
-		new_config += "start_reading:" + String(start_reading ? "on" : "off") + "\n";
-		new_config += "gpi_start:" + String(gpi_start ? "on" : "off") + "\n";
-		new_config += "gpi_stop_delay:" + String(gpi_stop_delay) + "\n";
-		new_config += "always_send:" + String(always_send ? "on" : "off") + "\n";
-		new_config += "simple_send:" + String(simple_send ? "on" : "off") + "\n";
-		new_config += "hotspot_on:" + String(hotspot_on ? "on" : "off") + "\n";
-		new_config += "keyboard:" + String(keyboard ? "on" : "off") + "\n";
-		new_config += "buzzer_on:" + String(buzzer_on ? "on" : "off") + "\n";
-		new_config += "decode_gtin:" + String(decode_gtin ? "on" : "off") + "\n";
-		new_config += "dhcp_on:" + String(dhcp_on ? "on" : "off") + "\n";
-		new_config += "static_ip:" + static_ip + "\n";
-		new_config += "gateway_ip:" + gateway_ip + "\n";
-		new_config += "subnet_mask:" + subnet_mask + "\n";
-		// Webhook
-		new_config += "webhook_on:" + String(webhook_on ? "on" : "off") + "\n";
-		new_config += "webhook_url:" + webhook_url + "\n";
-		new_config += "prefix:" + prefix + "\n";
-		// Protected Inventory
-		new_config += "protected_inventory_enabled:" + String(protected_inventory_enabled ? "on" : "off") + "\n";
-		new_config += "protected_inventory_password:" + protected_inventory_password + "\n";
+        last_save_ms = millis();
+        _buildConfig();
 
-		// Na primeira chamada, apenas inicializa a referência e não salva
-		if (first_time)
-		{
-			old_config = new_config;
-			first_time = false;
-			return;
-		}
+        // Na primeira passagem pelo loop apenas inicializa o cache
+        // sem gravar (a config acabou de ser lida do disco no setup)
+        if (!initialized)
+        {
+            last_saved  = _buf;
+            initialized = true;
+            return false;
+        }
 
-		// Se não mudou, não precisa salvar
-		if (new_config == old_config)
-			return;
+        if (_buf == last_saved)
+            return false; // nada mudou
 
-		old_config = new_config; // atualiza cache
+        if (!_atomicSave())
+        {
+            Serial.println("[CFG] Erro ao salvar config");
+            return false;
+        }
 
-		// Na primeira chamada já tratada acima; agora gravar o novo conteúdo
-		// Sanitiza prefix antes de gravar (substitui espaços por vírgulas)
-		String to_write = new_config;
-		int pidx = to_write.indexOf("prefix:");
-		if (pidx >= 0)
-		{
-			int lineStart = pidx;
-			int lineEnd = to_write.indexOf('\n', lineStart);
-			if (lineEnd == -1)
-				lineEnd = to_write.length();
-			String prefixLine = to_write.substring(lineStart, lineEnd);
-			String prefixValue = prefixLine.substring(String("prefix:").length());
-			prefixValue.trim();
-			prefixValue.replace(" ", ",");
-			String newPrefixLine = "prefix:" + prefixValue;
-			to_write = to_write.substring(0, lineStart) + newPrefixLine + to_write.substring(lineEnd);
-		}
+        last_saved = _buf;
+        Serial.println("[CFG] Config salva");
+        return true;
+    }
 
-		// Grava o arquivo de uma vez, para reduzir operações em flash
-		File file_config = LittleFS.open(config_file, "w");
-		if (!file_config)
-			return;
-		file_config.print(to_write);
-		file_config.close();
-	}
-
-	// Carrega a configuração do arquivo
-	void get_config()
-	{
-		File file_config = LittleFS.open(config_file, "r");
-		if (!file_config)
-			return;
-
-		while (file_config.available())
-		{
-			String line = file_config.readStringUntil('\n');
-			line.replace("\r", "");
-			line.trim();
-			if (line.length() == 0)
-				continue;
-
-			int sep = line.indexOf(':');
-			if (sep < 0)
-				continue;
-
-			String key = line.substring(0, sep);
-			String value = line.substring(sep + 1);
-			key.trim();
-			key.toLowerCase();
-			value.trim();
-
-			// garantir que prefix usa vírgulas em vez de espaços (redundante com save)
-			if (key == "prefix")
-				value.replace(" ", ",");
-
-			save_parameter(key, value);
-		}
-
-		file_config.close();
-	}
+    // Força gravação imediata ignorando throttle e cache (use em shutdown/reset planejado)
+    // Retorna true se gravou com sucesso
+    bool force_save()
+    {
+        _buildConfig();
+        if (!_atomicSave())
+        {
+            Serial.println("[CFG] Erro ao forçar save");
+            return false;
+        }
+        Serial.println("[CFG] Config salva (forcado)");
+        return true;
+    }
 };

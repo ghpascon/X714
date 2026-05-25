@@ -29,6 +29,9 @@ void core0Task(void *pvParameters)
         // Update outputs
         pins.set_outputs();
 
+    // Save configuration
+    config_file_commands.save_config();
+    
         // Small delay to prevent task from starving other processes
         vTaskDelay(pdMS_TO_TICKS(10)); // 10ms delay
     }
@@ -93,8 +96,7 @@ void loop()
     reader_module.functions();
     myserialcheck.loop();
 
-    // Save configuration
-    config_file_commands.save_config();
+
 
     // Handle web server requests (synchronous server)
     web_server.loop();
