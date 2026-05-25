@@ -157,6 +157,19 @@ public:
                       if (!f) { server.send(404, "text/plain", "Not found"); return; }
                       server.streamFile(f, "text/html");
                       f.close(); });
+
+        //get info
+        server.on("/info", HTTP_GET, []()
+                  {
+                      if (!ensure_html_route_auth()) return;
+                      String json = "{";
+                      json += "\"name\":\"" + get_esp_name() + "\",";
+                      json += "\"bt_mac\":\"" + get_bt_mac() + "\",";
+                      json += "\"eth_mac\":\"" + String(ETH.macAddress()) + "\",";
+                      json += "\"ip\":\"" + ETH.localIP().toString() + "\",";
+                      json += "\"version\":\"" + String(VERSION) + "\"";
+                      json += "}";
+                      server.send(200, "application/json", json); });
     }
     void script_web_server()
     {

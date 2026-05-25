@@ -78,7 +78,7 @@ public:
 		else if (step == 11)
 			query_parameters();
 		else if (step == 12)
-			set_write_power(max(27, antena[0].power)); // Write power must be at least 27dBm, otherwise tag write may fail. This is a reader limitation, not a tag one.
+			set_write_power(max(27, (int)antena[0].power)); // Write power must be at least 27dBm, otherwise tag write may fail. This is a reader limitation, not a tag one.
 		else if (step == 13)
 			set_rf_link();
 		else if (step == 14)
