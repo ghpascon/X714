@@ -43,6 +43,9 @@ void setup()
         Serial.println("Error initializing LittleFS!");
         fs_loaded = false;
     }
+    // Load configuration
+    if (fs_loaded)
+        config_file_commands.get_config();
 
     // Configure the Watchdog for both cores
     esp_task_wdt_config_t wdt_config = {
@@ -52,9 +55,6 @@ void setup()
     esp_task_wdt_init(&wdt_config);
     esp_task_wdt_add(NULL);
 
-    // Load configuration
-    if (fs_loaded)
-        config_file_commands.get_config();
 
     // Initialize modules
     connection.setup();

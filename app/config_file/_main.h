@@ -7,17 +7,6 @@ private:
 	// Buffer reutilizado para montar a string de configuração (reduz fragmentação)
 	String new_config;
 
-	// Escreve uma linha no arquivo de configuração
-	void writeFile(String to_write)
-	{
-		File file_config = LittleFS.open(config_file, "a");
-		if (!file_config)
-			return;
-
-		file_config.print("\n" + to_write);
-		file_config.close();
-	}
-
 	// Limpa o arquivo de configuração
 	void clearFile()
 	{
@@ -27,122 +16,152 @@ private:
 		file_config.close();
 	}
 
-	// Salva um parâmetro lido do arquivo
-	void save_parameter(String parameter)
+	// Parse boolean flexível (on/1/true/yes)
+	bool parseBool(String v)
 	{
+		v.trim();
+		v.toLowerCase();
+		return (v == "on" || v == "1" || v == "true" || v == "yes");
+	}
+
+	// Salva um parâmetro lido do arquivo (key/value separados)
+	void save_parameter(String key, String value)
+	{
+		// keys are already lowercase and trimmed
 		// ==================== Configuração da antena ====================
-		if (parameter.startsWith("antena:"))
+		if (key == "antena")
 		{
-			const String antena_data_prefix = ",";
-			int start_antena_data;
+			// form expected: <num>,<on|off>,<power>,<rssi>
+			int s1 = value.indexOf(',');
+			if (s1 < 0)
+				return;
+			int s2 = value.indexOf(',', s1 + 1);
+			if (s2 < 0)
+				return;
+			int s3 = value.indexOf(',', s2 + 1);
+			if (s3 < 0)
+				return;
 
-			parameter.replace("antena:", "");
+			String t1 = value.substring(0, s1);		 // antenna index
+			String t2 = value.substring(s1 + 1, s2); // active
+			String t3 = value.substring(s2 + 1, s3); // power
+			String t4 = value.substring(s3 + 1);	 // rssi
 
-			start_antena_data = parameter.indexOf(antena_data_prefix);
-			const int current_ant = parameter.substring(0, start_antena_data).toInt();
-			parameter = parameter.substring(start_antena_data + 1);
+			t1.trim();
+			t2.trim();
+			t3.trim();
+			t4.trim();
 
-			start_antena_data = parameter.indexOf(antena_data_prefix);
-			String current_active = parameter.substring(0, start_antena_data);
-			parameter = parameter.substring(start_antena_data + 1);
+			int current_ant = t1.toInt();
+			bool current_active = parseBool(t2);
+			int current_power = t3.toInt();
+			int current_rssi = t4.toInt();
 
-			start_antena_data = parameter.indexOf(antena_data_prefix);
-			byte current_power = parameter.substring(0, start_antena_data).toInt();
-			current_power = constrain(current_power, min_power, 27);
-			parameter = parameter.substring(start_antena_data + 1);
+			// enforce maximum of 27 as requested
+			int effective_max_power = max_power;
+			if (effective_max_power > 27)
+				effective_max_power = 27;
 
-			byte current_rssi = parameter.toInt();
+			current_power = constrain(current_power, (int)min_power, effective_max_power);
+			current_rssi = max(current_rssi, (int)min_rssi);
 
-			current_power = constrain(current_power, min_power, max_power);
-			current_rssi = max(current_rssi, min_rssi);
+			if (current_ant < 1 || current_ant > ant_qtd)
+				return;
 
 			antena_commands.set_antena(
 				current_ant,
-				(current_active == "on"),
-				current_power,
-				current_rssi);
+				current_active,
+				(byte)current_power,
+				(byte)current_rssi);
 		}
 		// ==================== Sessão ====================
-		else if (parameter.startsWith("session:"))
+		else if (key == "session")
 		{
-			parameter.replace("session:", "");
-			session = parameter.toInt();
-			if (session > max_session)
-				session = 0x00;
+			int v = value.toInt();
+			if (v > max_session || v < 0)
+				v = 0x00;
+			session = v;
 		}
 		// ==================== Modos gerais ====================
-		else if (parameter.startsWith("start_reading:"))
+		else if (key == "start_reading")
 		{
-			parameter.replace("start_reading:", "");
-			start_reading = (parameter == "on");
+			start_reading = parseBool(value);
 			read_on = start_reading;
 		}
-		else if (parameter.startsWith("gpi_start:"))
+		else if (key == "gpi_start")
 		{
-			parameter.replace("gpi_start:", "");
-			gpi_start = (parameter == "on");
+			gpi_start = parseBool(value);
 		}
-		else if (parameter.startsWith("gpi_stop_delay:"))
+		else if (key == "gpi_stop_delay")
 		{
-			parameter.replace("gpi_stop_delay:", "");
-			gpi_stop_delay = parameter.toInt();
+			int v = value.toInt();
+			if (v < 0)
+				v = 0;
+			gpi_stop_delay = v;
 		}
-		else if (parameter.startsWith("always_send:"))
+		else if (key == "always_send")
 		{
-			parameter.replace("always_send:", "");
-			always_send = (parameter == "on");
+			always_send = parseBool(value);
 		}
-		else if (parameter.startsWith("simple_send:"))
+		else if (key == "simple_send")
 		{
-			parameter.replace("simple_send:", "");
-			simple_send = (parameter == "on");
+			simple_send = parseBool(value);
 		}
-		else if (parameter.startsWith("hotspot_on:"))
+		else if (key == "hotspot_on")
 		{
-			parameter.replace("hotspot_on:", "");
-			hotspot_on = (parameter == "on");
+			hotspot_on = parseBool(value);
 		}
-		else if (parameter.startsWith("keyboard:"))
+		else if (key == "keyboard")
 		{
-			parameter.replace("keyboard:", "");
-			keyboard = (parameter == "on");
+			keyboard = parseBool(value);
 		}
-		else if (parameter.startsWith("buzzer_on:"))
+		else if (key == "buzzer_on")
 		{
-			buzzer_on = parameter.endsWith("on");
+			buzzer_on = parseBool(value);
 		}
-		else if (parameter.startsWith("decode_gtin:"))
+		else if (key == "decode_gtin")
 		{
-			decode_gtin = parameter.endsWith("on");
+			decode_gtin = parseBool(value);
 		}
-		else if (parameter.startsWith("dhcp_on:"))
+		else if (key == "dhcp_on")
 		{
-			dhcp_on = parameter.endsWith("on");
+			dhcp_on = parseBool(value);
 		}
-		else if (parameter.startsWith("static_ip:"))
+		else if (key == "static_ip")
 		{
-			static_ip = parameter.substring(parameter.indexOf(":") + 1);
+			static_ip = value;
 		}
-		else if (parameter.startsWith("gateway_ip:"))
+		else if (key == "gateway_ip")
 		{
-			gateway_ip = parameter.substring(parameter.indexOf(":") + 1);
+			gateway_ip = value;
 		}
-		else if (parameter.startsWith("subnet_mask:"))
+		else if (key == "subnet_mask")
 		{
-			subnet_mask = parameter.substring(parameter.indexOf(":") + 1);
+			subnet_mask = value;
 		}
 		// ==================== Webhook ====================
-		else if (parameter.startsWith("webhook_on:"))
+		else if (key == "webhook_on")
 		{
-			webhook_on = parameter.endsWith("on");
+			webhook_on = parseBool(value);
 		}
-		else if (parameter.startsWith("webhook_url:"))
+		else if (key == "webhook_url")
 		{
-			webhook_url = parameter.substring(parameter.indexOf(":") + 1);
+			webhook_url = value;
 		}
-		else if (parameter.startsWith("prefix:"))
+		else if (key == "prefix")
 		{
-			prefix = parameter.substring(parameter.indexOf(":") + 1);
+			// replace spaces with commas as requested
+			value.replace(" ", ",");
+			prefix = value;
+		}
+		// Protected Inventory
+		else if (key == "protected_inventory_enabled")
+		{
+			protected_inventory_enabled = parseBool(value);
+		}
+		else if (key == "protected_inventory_password")
+		{
+			protected_inventory_password = value;
 		}
 	}
 
@@ -222,18 +241,30 @@ public:
 
 		old_config = new_config; // atualiza cache
 
-		// Reescreve o arquivo
-		clearFile();
-
-		// Quebra em linhas e salva
-		int start = 0, idx;
-		while ((idx = new_config.indexOf('\n', start)) != -1)
+		// Na primeira chamada já tratada acima; agora gravar o novo conteúdo
+		// Sanitiza prefix antes de gravar (substitui espaços por vírgulas)
+		String to_write = new_config;
+		int pidx = to_write.indexOf("prefix:");
+		if (pidx >= 0)
 		{
-			String line = new_config.substring(start, idx);
-			if (line.length() > 0)
-				writeFile(line);
-			start = idx + 1;
+			int lineStart = pidx;
+			int lineEnd = to_write.indexOf('\n', lineStart);
+			if (lineEnd == -1)
+				lineEnd = to_write.length();
+			String prefixLine = to_write.substring(lineStart, lineEnd);
+			String prefixValue = prefixLine.substring(String("prefix:").length());
+			prefixValue.trim();
+			prefixValue.replace(" ", ",");
+			String newPrefixLine = "prefix:" + prefixValue;
+			to_write = to_write.substring(0, lineStart) + newPrefixLine + to_write.substring(lineEnd);
 		}
+
+		// Grava o arquivo de uma vez, para reduzir operações em flash
+		File file_config = LittleFS.open(config_file, "w");
+		if (!file_config)
+			return;
+		file_config.print(to_write);
+		file_config.close();
 	}
 
 	// Carrega a configuração do arquivo
@@ -246,11 +277,26 @@ public:
 		while (file_config.available())
 		{
 			String line = file_config.readStringUntil('\n');
-			line.toLowerCase();
-			line.replace(" ", "");
 			line.replace("\r", "");
-			line.replace("\n", "");
-			save_parameter(line);
+			line.trim();
+			if (line.length() == 0)
+				continue;
+
+			int sep = line.indexOf(':');
+			if (sep < 0)
+				continue;
+
+			String key = line.substring(0, sep);
+			String value = line.substring(sep + 1);
+			key.trim();
+			key.toLowerCase();
+			value.trim();
+
+			// garantir que prefix usa vírgulas em vez de espaços (redundante com save)
+			if (key == "prefix")
+				value.replace(" ", ",");
+
+			save_parameter(key, value);
 		}
 
 		file_config.close();
