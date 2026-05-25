@@ -167,7 +167,7 @@ public:
                       json += "\"bt_mac\":\"" + get_bt_mac() + "\",";
                       json += "\"eth_mac\":\"" + String(ETH.macAddress()) + "\",";
                       json += "\"ip\":\"" + ETH.localIP().toString() + "\",";
-                      json += "\"version\":\"" + String(VERSION) + "\"";
+                      json += "\"version\":\"" + String(PROGRAM_VERSION) + "\"";
                       json += "}";
                       server.send(200, "application/json", json); });
     }

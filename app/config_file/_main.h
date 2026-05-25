@@ -73,14 +73,12 @@ private:
 		// ==================== Modos gerais ====================
 		else if (parameter.startsWith("start_reading:"))
 		{
-			parameter.replace("start_reading:", "");
-			start_reading = (parameter == "on");
+			start_reading = parameter.endsWith("on");
 			read_on = start_reading;
 		}
 		else if (parameter.startsWith("gpi_start:"))
 		{
-			parameter.replace("gpi_start:", "");
-			gpi_start = (parameter == "on");
+			gpi_start = parameter.endsWith("on");
 		}
 		else if (parameter.startsWith("gpi_stop_delay:"))
 		{
@@ -89,23 +87,19 @@ private:
 		}
 		else if (parameter.startsWith("always_send:"))
 		{
-			parameter.replace("always_send:", "");
-			always_send = (parameter == "on");
+			always_send = parameter.endsWith("on");
 		}
 		else if (parameter.startsWith("simple_send:"))
 		{
-			parameter.replace("simple_send:", "");
-			simple_send = (parameter == "on");
+			simple_send = parameter.endsWith("on");
 		}
 		else if (parameter.startsWith("hotspot_on:"))
 		{
-			parameter.replace("hotspot_on:", "");
-			hotspot_on = (parameter == "on");
+			hotspot_on = parameter.endsWith("on");
 		}
 		else if (parameter.startsWith("keyboard:"))
 		{
-			parameter.replace("keyboard:", "");
-			keyboard = (parameter == "on");
+			keyboard = parameter.endsWith("on");
 		}
 		else if (parameter.startsWith("buzzer_on:"))
 		{
@@ -143,6 +137,16 @@ private:
 		else if (parameter.startsWith("prefix:"))
 		{
 			prefix = parameter.substring(parameter.indexOf(":") + 1);
+		}
+
+		// PROTECTED INVENTORY
+		else if (parameter.startsWith("protected_inventory_enabled:"))
+		{
+			protected_inventory_enabled = parameter.endsWith("on");
+		}
+		else if (parameter.startsWith("protected_inventory_password:"))
+		{
+			protected_inventory_password = parameter.substring(parameter.indexOf(":") + 1);
 		}
 	}
 

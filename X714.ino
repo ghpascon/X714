@@ -2,7 +2,7 @@
 #pragma GCC diagnostic ignored "-Wnarrowing"
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
-#include "version.h"
+#include "program_version.h"
 #include "pins.h"
 #include "helpers.h"
 #include "libs.h"
@@ -37,8 +37,9 @@ void core0Task(void *pvParameters)
 // ==================== Setup ====================
 void setup()
 {
+    Serial.begin(115200);
     // Initialize the file system
-    if (!LittleFS.begin())
+    if (!LittleFS.begin(false))
     {
         Serial.println("Error initializing LittleFS!");
         fs_loaded = false;

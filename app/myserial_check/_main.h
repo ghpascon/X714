@@ -285,7 +285,7 @@ public:
             myserial.write("#BT_MAC:" + get_bt_mac());
             myserial.write("#ETH_MAC:" + String(ETH.macAddress()));
             myserial.write("#IP:" + ETH.localIP().toString());
-            myserial.write("#VERSION:" + String(VERSION));
+            myserial.write("#VERSION:" + String(PROGRAM_VERSION));
         }
 
         // ================= Comandos de Configuração =================
