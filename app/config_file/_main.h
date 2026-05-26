@@ -26,6 +26,7 @@ private:
 	// Escreve todo o conteúdo de forma atômica usando arquivo temporário
 	bool writeAtomic(const String &content)
 	{
+		Serial.println("[config] Saving configuration...");
 		const char *tmpPath = "/config.tmp";
 		const char *mainPath = config_file.c_str();
 		const char *bak1 = "/config.bak";
@@ -150,6 +151,7 @@ private:
 	// Retorna true se o parâmetro foi reconhecido e aplicado
 	bool save_parameter(String parameter)
 	{
+		Serial.println("[config] Processing parameter: " + parameter);
 		bool handled = false;
 
 		// ==================== Configuração da antena ====================

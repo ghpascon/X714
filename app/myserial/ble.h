@@ -81,16 +81,16 @@ class ServerCallbacks : public BLEServerCallbacks
     void onConnect(BLEServer *pServer) override
     {
         btConnected = true;
-        Serial.println("Dispositivo conectado!");
+        Serial.println("[BLE] Device connected!");
     }
 
     void onDisconnect(BLEServer *pServer) override
     {
         btConnected = false;
-        Serial.println("Dispositivo desconectado!");
+        Serial.println("[BLE] Device disconnected!");
         // Reiniciar advertising imediatamente para reconexão
         BLEDevice::startAdvertising();
-        Serial.println("Advertising reiniciado após desconexão");
+        Serial.println("[BLE] Advertising restarted after disconnection");
     }
 };
 
