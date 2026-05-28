@@ -286,6 +286,7 @@ public:
             myserial.write("#ETH_MAC:" + String(ETH.macAddress()));
             myserial.write("#IP:" + ETH.localIP().toString());
             myserial.write("#VERSION:" + String(VERSION));
+            myserial.write("#POWER:" + pins.get_power_supply_state());
         }
 
         // ================= Comandos de Configuração =================

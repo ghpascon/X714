@@ -17,6 +17,8 @@ public:
 
 		pinMode(buzzer_pin, OUTPUT);
 		pinMode(indicator_pin, INPUT_PULLUP);
+
+		pinMode(POWER_PIN, INPUT_PULLDOWN);
 	}
 
 	void write_gpo(int index, bool state)
@@ -26,5 +28,10 @@ public:
 			return;
 
 		gpo[index] = state;
+	}
+
+	String get_power_supply_state()
+	{
+		return digitalRead(POWER_PIN) == HIGH ? "EXT" : "USB";
 	}
 };

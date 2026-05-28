@@ -6,11 +6,8 @@
 #include "pins.h"
 #include "helpers.h"
 #include <freertos/semphr.h>
-// Mutex para proteger operações de arquivo (LittleFS) - definido aqui
-SemaphoreHandle_t fs_mutex = NULL;
 #include "libs.h"
 #include "vars.h"
-
 
 // ==================== Core 0 Task (RGB + Pins) ====================
 void core0Task(void *pvParameters)
@@ -49,13 +46,6 @@ void setup()
     {
         Serial.println("Error initializing LittleFS!");
         fs_loaded = false;
-    }
-
-    // Cria mutex para operações com o sistema de arquivos
-    fs_mutex = xSemaphoreCreateMutex();
-    if (fs_mutex == NULL)
-    {
-        Serial.println("Error creating fs_mutex");
     }
 
     // Configure the Watchdog for both cores

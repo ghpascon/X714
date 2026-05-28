@@ -134,6 +134,11 @@
             <td><label>Versão</label></td>
             <td><label id="info-version">-</label></td>
           </tr>
+
+          <tr>
+            <td><label>Power</label></td>
+            <td><label id="info-power">-</label></td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -153,6 +158,7 @@
           document.getElementById("info-ip").innerText = data.ip || "-";
           document.getElementById("info-version").innerText =
             data.version || "-";
+          document.getElementById("info-power").innerText = data.power || "-";
         })
         .catch(function (error) {
           console.warn("Erro ao obter /info:", error);

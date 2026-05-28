@@ -33,15 +33,6 @@ private:
 		const char *bak2 = "/config.bak2";
 
 		bool locked = false;
-		if (fs_mutex)
-		{
-			if (xSemaphoreTake(fs_mutex, pdMS_TO_TICKS(2000)) != pdTRUE)
-			{
-				Serial.println("[config] Timeout ao bloquear FS para escrita");
-				return false;
-			}
-			locked = true;
-		}
 
 		// Prepara conteúdo com checksum (adler32)
 		uint32_t chk = adler32(content);
@@ -57,8 +48,6 @@ private:
 		if (!f)
 		{
 			Serial.println("[config] Falha ao abrir arquivo temporario para escrita");
-			if (locked)
-				xSemaphoreGive(fs_mutex);
 			return false;
 		}
 
@@ -67,8 +56,6 @@ private:
 			Serial.println("[config] Falha ao gravar conteudo no temporario");
 			f.close();
 			LittleFS.remove(tmpPath);
-			if (locked)
-				xSemaphoreGive(fs_mutex);
 			return false;
 		}
 		f.close();
@@ -121,17 +108,12 @@ private:
 					LittleFS.rename(bak1, mainPath);
 				}
 				LittleFS.remove(tmpPath);
-				if (locked)
-					xSemaphoreGive(fs_mutex);
 				return false;
 			}
 			f2.print(content);
 			f2.close();
 			LittleFS.remove(tmpPath);
 		}
-
-		if (locked)
-			xSemaphoreGive(fs_mutex);
 
 		return true;
 	}
@@ -412,16 +394,6 @@ public:
 	// Carrega a configuração do arquivo
 	void get_config()
 	{
-		bool locked = false;
-		if (fs_mutex)
-		{
-			if (xSemaphoreTake(fs_mutex, pdMS_TO_TICKS(2000)) != pdTRUE)
-			{
-				Serial.println("[config] Falha ao bloquear FS para leitura");
-				return;
-			}
-			locked = true;
-		}
 
 		bool triedRestore = false;
 		int successes = 0;
@@ -444,8 +416,6 @@ public:
 			}
 			if (!LittleFS.exists(config_file.c_str()))
 			{
-				if (locked)
-					xSemaphoreGive(fs_mutex);
 				return;
 			}
 		}
@@ -454,8 +424,6 @@ public:
 		if (!file_config)
 		{
 			Serial.println("[config] Falha ao abrir arquivo de configuracao");
-			if (locked)
-				xSemaphoreGive(fs_mutex);
 			return;
 		}
 
@@ -574,8 +542,5 @@ public:
 					successes++;
 			}
 		}
-
-		if (locked)
-			xSemaphoreGive(fs_mutex);
 	}
 };
