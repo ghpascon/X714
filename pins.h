@@ -1,3 +1,6 @@
+#ifndef PINS_H
+#define PINS_H
+
 #define ETH_MISO_PIN 21
 #define ETH_MOSI_PIN 35
 #define ETH_SCLK_PIN 45
@@ -20,8 +23,12 @@
 #define buzzer_pin 4
 #define indicator_pin 42
 
-#define EXTERNAL_LED_RED_PIN 6
-#define EXTERNAL_LED_GREEN_PIN 5
+#define EXTERNAL_LED_RED_PIN 5
+#define EXTERNAL_LED_GREEN_PIN 6
 #define EXTERNAL_LED_BLUE_PIN 7
 
 #define POWER_PIN 8
+
+const byte LED_ANT_PINS[ant_qtd] = {15, 16, 17, 1};
+
+#endif // PINS_H

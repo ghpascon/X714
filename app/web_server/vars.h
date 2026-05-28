@@ -5,7 +5,6 @@ WebServer server(80);
 
 extern READER reader_module;
 
-extern const int ant_qtd;
 extern ANTENA antena[];
 extern ANTENA_COMMANDS antena_commands;
 

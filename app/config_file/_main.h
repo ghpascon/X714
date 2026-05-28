@@ -32,7 +32,6 @@ private:
 		const char *bak1 = "/config.bak";
 		const char *bak2 = "/config.bak2";
 
-		bool locked = false;
 
 		// Prepara conteúdo com checksum (adler32)
 		uint32_t chk = adler32(content);

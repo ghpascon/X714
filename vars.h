@@ -2,7 +2,6 @@
 #include <freertos/semphr.h>
 
 // ==================== Antena ====================
-const int ant_qtd = 4;
 ANTENA antena[ant_qtd];
 ANTENA_COMMANDS antena_commands;
 const byte min_power = 1;

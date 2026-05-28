@@ -68,6 +68,9 @@ public:
 				return;
 		}
 
+		// SET ANT LED
+		pins.trigger_ant_led(current_ant);
+
 		// always_send: emite antes do check de duplicata
 		if (always_send)
 			display_current_tag(current_epc, current_tid, String(current_ant), String(current_rssi));

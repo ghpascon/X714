@@ -1,4 +1,3 @@
-extern const int ant_qtd;
 extern ANTENA antena[];
 
 extern const byte min_power;

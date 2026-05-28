@@ -2,6 +2,8 @@
 #pragma GCC diagnostic ignored "-Wnarrowing"
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
+#define ant_qtd 4
+
 #include "version.h"
 #include "pins.h"
 #include "helpers.h"

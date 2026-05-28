@@ -19,6 +19,11 @@ public:
 		pinMode(indicator_pin, INPUT_PULLUP);
 
 		pinMode(POWER_PIN, INPUT_PULLDOWN);
+
+		for (int i = 0; i < ant_qtd; i++)
+		{
+			pinMode(LED_ANT_PINS[i], OUTPUT);
+		}
 	}
 
 	void write_gpo(int index, bool state)

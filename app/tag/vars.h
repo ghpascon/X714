@@ -1,5 +1,4 @@
 
-extern const int ant_qtd;
 extern ANTENA antena[];
 
 extern PINS pins;

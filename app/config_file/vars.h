@@ -1,6 +1,5 @@
 const String config_file = "/config.txt";
 
-extern const int ant_qtd;
 extern ANTENA_COMMANDS antena_commands;
 extern ANTENA antena[];
 

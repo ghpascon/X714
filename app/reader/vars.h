@@ -7,7 +7,6 @@ byte step = 0;
 bool setup_done = false;
 
 // variaveis externas
-extern const int ant_qtd;
 extern ANTENA antena[];
 extern ANTENA_COMMANDS antena_commands;
 extern bool read_on;
