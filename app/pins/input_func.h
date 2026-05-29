@@ -1,4 +1,4 @@
-class input_func: public output_func
+class input_func : public output_func
 {
 public:
 	void check_inputs()
@@ -102,9 +102,7 @@ private:
 			return;
 		}
 		if (millis() - time < 500)
-		{
-			myserial.write("#TEST_MODE");
-			test_all_outputs();
-		}
+			return;
+		test_all_outputs();
 	}
 };
