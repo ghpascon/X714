@@ -11,7 +11,6 @@ public:
 
 	void set_gpos()
 	{
-		static bool prev_gpo_output[gpo_qtd] = {};
 		for (int i = 0; i < gpo_qtd; i++)
 		{
 			bool want_output = gpo[i];
@@ -33,8 +32,7 @@ public:
 			return;
 		const int buzzer_time_on = 200;
 		const int indicator_time_on = 1000;
-		static bool prev_buzzer_state = false;
-		static bool prev_indicator_output = false;
+		// prev_buzzer_state and prev_indicator_output are now members
 
 		bool buzzer_should_be_on = (now - buzzer_time < (unsigned long)buzzer_time_on) && buzzer_on;
 		if (buzzer_should_be_on != prev_buzzer_state)
@@ -57,7 +55,6 @@ public:
 	void set_ant_leds()
 	{
 		const unsigned long now = millis();
-		static bool prev_led_state[ant_qtd] = {};
 		for (int i = 0; i < ant_qtd; i++)
 		{
 			bool desired = setup_done ? (now - last_ant_led_update[i] < (unsigned long)ant_led_time) : false;
@@ -76,7 +73,55 @@ public:
 		last_ant_led_update[ant_index - 1] = millis();
 	}
 
+	void test_all_outputs(int time = 500)
+	{
+		// Activate all GPOs (open-drain: drive LOW to activate)
+		for (int i = 0; i < gpo_qtd; i++)
+		{
+			pinMode(gpo_pin[i], OUTPUT);
+		}
+
+		// Activate buzzer and indicator
+		digitalWrite(buzzer_pin, HIGH);
+		pinMode(indicator_pin, OUTPUT);
+
+		// Activate antenna LEDs
+		for (int i = 0; i < ant_qtd; i++)
+		{
+			digitalWrite(LED_ANT_PINS[i], HIGH);
+		}
+
+		delay(time);
+
+		// Deactivate all GPOs
+		for (int i = 0; i < gpo_qtd; i++)
+		{
+			gpo[i] = false;
+			prev_gpo_output[i] = false;
+			pinMode(gpo_pin[i], INPUT_PULLUP);
+		}
+
+		// Deactivate buzzer and indicator
+		buzzer_on = false;
+		prev_buzzer_state = false;
+		digitalWrite(buzzer_pin, LOW);
+		prev_indicator_output = false;
+		pinMode(indicator_pin, INPUT_PULLUP);
+
+		// Deactivate antenna LEDs and reset timers
+		for (int i = 0; i < ant_qtd; i++)
+		{
+			prev_led_state[i] = false;
+			digitalWrite(LED_ANT_PINS[i], LOW);
+			last_ant_led_update[i] = 0;
+		}
+	}
+
 private:
+	bool prev_gpo_output[gpo_qtd] = {};
+	bool prev_led_state[ant_qtd] = {};
+	bool prev_buzzer_state = false;
+	bool prev_indicator_output = false;
 	unsigned long last_ant_led_update[ant_qtd] = {};
 	const int ant_led_time = 200;
 };

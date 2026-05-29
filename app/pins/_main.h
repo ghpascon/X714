@@ -1,8 +1,8 @@
 #include "vars.h"
-#include "input_func.h"
 #include "output_func.h"
+#include "input_func.h"
 
-class PINS : public input_func, public output_func
+class PINS : public input_func
 {
 public:
 	void setup()
@@ -24,6 +24,8 @@ public:
 		{
 			pinMode(LED_ANT_PINS[i], OUTPUT);
 		}
+
+		pinMode(TEST_PIN, INPUT_PULLUP);
 	}
 
 	void write_gpo(int index, bool state)

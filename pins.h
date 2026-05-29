@@ -31,4 +31,6 @@
 
 const byte LED_ANT_PINS[ant_qtd] = {15, 16, 17, 1};
 
+#define TEST_PIN 0
+
 #endif // PINS_H

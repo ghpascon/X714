@@ -1,9 +1,8 @@
-class input_func
+class input_func: public output_func
 {
 public:
 	void check_inputs()
 	{
-
 		static unsigned long current_in_1_time = 0;
 		input_debounce(in_1, !digitalRead(in_1_pin), current_in_1_time);
 
@@ -14,6 +13,7 @@ public:
 		input_debounce(in_3, !digitalRead(in_3_pin), current_in_3_time);
 
 		gpi_state();
+		check_test_pin();
 	}
 
 	void input_debounce(bool &state, bool current_state, unsigned long &last_time, int debounce_time = 50)
@@ -89,6 +89,22 @@ public:
 		{
 			last_in_3 = in_3;
 			myserial.write("#IN_3:" + String(in_3 ? "ON" : "OFF"));
+		}
+	}
+
+private:
+	void check_test_pin()
+	{
+		static unsigned long time = 0;
+		if (digitalRead(TEST_PIN))
+		{
+			time = millis();
+			return;
+		}
+		if (millis() - time < 500)
+		{
+			myserial.write("#TEST_MODE");
+			test_all_outputs();
 		}
 	}
 };
