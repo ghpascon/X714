@@ -115,19 +115,75 @@ private:
 
 		if (status == "00")
 		{
-			if (reader_cmd == "01" && cmd.substring(6, 8) == "f8")
-			{
-				myserial.write("#ANT_ERROR: ");
-			}
-
+			// SETUP
 			if (reader_cmd == "21")
 			{
-				if (cmd.substring(12, 14) == "71")
+				if (cmd.substring(13, 14) == "1")
 					one_ant = true;
 				else
 					one_ant = false;
 				myserial.write("#ONE_ANT:" + String(one_ant));
+				step = 1;
 			}
+
+			else if (reader_cmd == "24")
+				step = 2;
+
+			else if (reader_cmd == "22")
+				step = 3;
+
+			else if (reader_cmd == "76")
+				step = 4;
+
+			else if (reader_cmd == "75")
+				step = 5;
+
+			else if (reader_cmd == "ea")
+			{
+				if (step == 5)
+					step = 6;
+				else if (step == 6)
+					step = 7;
+				else if (step == 11)
+					step = 12;
+			}
+
+			else if (reader_cmd == "66")
+				step = 8;
+
+			else if (reader_cmd == "25")
+				step = 9;
+
+			else if (reader_cmd == "48")
+				step = 10;
+
+			else if (reader_cmd == "7b")
+				step = 11;
+
+			else if (reader_cmd == "79")
+				step = 13;
+
+			else if (reader_cmd == "7f")
+			{
+				if (step == 13)
+					step = 14;
+				else if (step == 14)
+					step = 15;
+			}
+
+			else if (reader_cmd == "3f")
+				step = 16;
+
+			else if (reader_cmd == "2f")
+				step = 17;
+
+			// ACTIONS
+
+			else if (reader_cmd == "01" && cmd.substring(6, 8) == "f8")
+			{
+				myserial.write("#ANT_ERROR: ");
+			}
+
 			else if (reader_cmd == "06")
 			{
 				if (cmd.substring(6, 8) == "00")
@@ -165,12 +221,6 @@ private:
 				{
 					myserial.write("#TAG_PROTECTED:ERROR");
 				}
-			}
-
-			if (!setup_done)
-			{
-				step++;
-				myserial.write("#STEP:" + String(step));
 			}
 		}
 		else

@@ -53,6 +53,12 @@ public:
 
 	void config_reader()
 	{
+		static byte last_step = 0;
+		if (last_step != step)
+		{
+			last_step = step;
+			myserial.write("#STEP:" + String(step));
+		}
 		if (step == 0)
 			start_reader();
 		else if (step == 1)
@@ -86,9 +92,12 @@ public:
 		else if (step == 15)
 			set_active_ant();
 		else if (step == 16)
-			set_ant_power();
-		else if (step == 17)
-			set_ant_power_all();
+		{
+			if (one_ant)
+				set_ant_power();
+			else
+				set_ant_power_all();
+		}
 		else
 		{
 			myserial.write("#SETUP_DONE");
