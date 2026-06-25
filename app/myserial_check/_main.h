@@ -479,6 +479,47 @@ public:
             pins.write_gpo(gpo_index, state);
             myserial.write("#GPO:" + String(gpo_index) + "," + (state ? "ON" : "OFF"));
         }
+
+        // ================= Network Commands =================
+
+        else if (cmd.startsWith("#dhcp:"))
+        {
+            dhcp_on = (cmd.endsWith("on") || cmd.endsWith("true"));
+            connection.setup();
+            myserial.write("#DHCP:" + String(dhcp_on ? "ENABLED" : "DISABLED"));
+        }
+
+        else if (cmd.startsWith("#static_ip:"))
+        {
+            static_ip = cmd.substring(11);
+            connection.setup();
+            myserial.write("#STATIC_IP:" + static_ip);
+        }
+        else if (cmd.startsWith("#gateway_ip:"))
+        {
+            gateway_ip = cmd.substring(13);
+            connection.setup();
+            myserial.write("#GATEWAY_IP:" + gateway_ip);
+        }
+        else if (cmd.startsWith("#subnet_mask:"))
+        {
+            subnet_mask = cmd.substring(13);
+            connection.setup();
+            myserial.write("#SUBNET_MASK:" + subnet_mask);
+        }
+
+        // ================= Webhook Commands =================
+        else if (cmd.startsWith("#webhook:"))
+        {
+            webhook_on = (cmd.endsWith("on") || cmd.endsWith("true"));
+            myserial.write("#WEBHOOK:" + String(webhook_on ? "ENABLED" : "DISABLED"));
+        }
+        else if (cmd.startsWith("#webhook_url:"))
+        {
+            webhook_url = cmd.substring(13);
+            myserial.write("#WEBHOOK_URL:" + webhook_url);
+        }
+
         // ================= Fallback =================
         else
         {

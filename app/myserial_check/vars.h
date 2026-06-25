@@ -34,3 +34,12 @@ extern bool decode_gtin;
 extern String prefix;
 
 extern PINS pins;
+
+CONNECTION connection;
+extern bool dhcp_on;
+extern String static_ip;
+extern String gateway_ip;
+extern String subnet_mask;
+
+extern bool webhook_on;
+extern String webhook_url;
