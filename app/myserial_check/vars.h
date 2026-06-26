@@ -35,7 +35,7 @@ extern String prefix;
 
 extern PINS pins;
 
-CONNECTION connection;
+extern CONNECTION connection;
 extern bool dhcp_on;
 extern String static_ip;
 extern String gateway_ip;

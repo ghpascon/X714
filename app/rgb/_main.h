@@ -15,7 +15,7 @@ public:
 	void state()
 	{
 		static String last_state = "";
-		String state = String(setup_done) + String(read_on) + String(eth_connected);
+		String state = String(setup_done) + String(read_on) + String(eth_connected) + String(btConnected);
 		if (state == last_state)
 			return;
 		last_state = state;
@@ -32,7 +32,7 @@ public:
 
 		// IDLE
 		else if (!read_on)
-			if (eth_connected)
+			if (eth_connected || btConnected)
 			{
 				leds[0] = CRGB(0x00, 0x00, led_brigthness);
 				digitalWrite(EXTERNAL_LED_RED_PIN, HIGH);
@@ -48,7 +48,7 @@ public:
 			}
 
 		// READING
-		else if (eth_connected)
+		else if (eth_connected || btConnected)
 		{
 			leds[0] = CRGB(0x00, led_brigthness, led_brigthness);
 			digitalWrite(EXTERNAL_LED_RED_PIN, HIGH);
