@@ -43,11 +43,26 @@ void core0Task(void *pvParameters)
 void setup()
 {
     Serial.begin(115200);
-    // Initialize the file system
-    if (!LittleFS.begin(false))
+    // Initialize the file system (tenta montar; se falhar, tenta formatar)
+    Serial.println("[fs] Montando LittleFS...");
+    if (LittleFS.begin(false))
     {
-        Serial.println("Error initializing LittleFS!");
-        fs_loaded = false;
+        Serial.println("[fs] LittleFS montado com sucesso");
+        fs_loaded = true;
+    }
+    else
+    {
+        Serial.println("[fs] Falha ao montar LittleFS, tentando formatar e montar...");
+        if (LittleFS.begin(true))
+        {
+            Serial.println("[fs] LittleFS formatado e montado com sucesso");
+            fs_loaded = true;
+        }
+        else
+        {
+            Serial.println("[fs] Erro: LittleFS nao montado apos tentativas. Recursos de arquivo desabilitados.");
+            fs_loaded = false;
+        }
     }
 
     // Configure the Watchdog for both cores

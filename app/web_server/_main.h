@@ -39,11 +39,18 @@ public:
             return;
         config_web_server();
         script_web_server();
-        if (LittleFS.begin())
+
+        // Only enable serving static files if filesystem is mounted
+        if (fs_loaded)
         {
             style_web_server();
             routes_web_server();
         }
+        else
+        {
+            Serial.println("[web] Filesystem nao montado; rotas estaticas desabilitadas");
+        }
+
         server.begin();
     }
 

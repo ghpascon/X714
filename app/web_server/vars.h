@@ -52,3 +52,5 @@ extern String prefix;
 // Protected Inventory
 extern bool protected_inventory_enabled;
 extern String protected_inventory_password;
+
+extern bool fs_loaded;

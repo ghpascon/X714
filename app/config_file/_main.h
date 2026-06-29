@@ -32,7 +32,6 @@ private:
 		const char *bak1 = "/config.bak";
 		const char *bak2 = "/config.bak2";
 
-
 		// Prepara conteúdo com checksum (adler32)
 		uint32_t chk = adler32(content);
 		char chkbuf[12];
@@ -384,6 +383,11 @@ public:
 		old_config = new_config; // atualiza cache
 
 		// Reescreve o arquivo de forma atômica
+		if (!fs_loaded)
+		{
+			Serial.println("[config] Filesystem nao montado; ignorando tentativa de salvar configuracao");
+			return;
+		}
 		if (!writeAtomic(new_config))
 		{
 			Serial.println("[config] Falha ao salvar configuracao");
@@ -393,6 +397,12 @@ public:
 	// Carrega a configuração do arquivo
 	void get_config()
 	{
+		// Se filesystem nao estiver montado, nao tenta ler
+		if (!fs_loaded)
+		{
+			Serial.println("[config] Filesystem nao montado; carregamento de configuracao ignorado");
+			return;
+		}
 
 		bool triedRestore = false;
 		int successes = 0;
@@ -415,6 +425,13 @@ public:
 			}
 			if (!LittleFS.exists(config_file.c_str()))
 			{
+				// Se nao existe nenhum arquivo de configuracao, cria um padrao
+				Serial.println("[config] Nenhuma configuracao encontrada; criando configuracao padrao");
+				String defaults = "session:0\nstart_reading:off\n";
+				if (!writeAtomic(defaults))
+				{
+					Serial.println("[config] Falha ao criar arquivo de configuracao padrao");
+				}
 				return;
 			}
 		}

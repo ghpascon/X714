@@ -101,6 +101,13 @@
       </button>
     </div>
     <div class="container1">
+      <label>Firmware / FS update</label>
+      <br />
+      <button class="button_links" id="btn-fw">Upload Firmware</button>
+      <button class="button_links" id="btn-fs">Upload FS</button>
+      <input type="file" id="file-input" style="display: none" />
+    </div>
+    <div class="container1">
       <table class="table" id="info_table">
         <thead>
           <tr>
@@ -145,6 +152,30 @@
   </body>
 
   <script>
+    // Upload handlers for firmware and filesystem
+    document.getElementById("btn-fw").addEventListener("click", function () {
+      doUpload("/update_firmware");
+    });
+    document.getElementById("btn-fs").addEventListener("click", function () {
+      doUpload("/update_fs");
+    });
+
+    function doUpload(endpoint) {
+      const input = document.getElementById("file-input");
+      input.value = null;
+      input.onchange = function () {
+        const file = input.files[0];
+        if (!file) return;
+        const form = new FormData();
+        form.append("firmware", file);
+        fetch(endpoint, { method: "POST", body: form })
+          .then((r) => r.text())
+          .then((t) => alert("Resposta: " + t))
+          .catch((e) => alert("Erro: " + e));
+      };
+      input.click();
+    }
+
     function update_info() {
       fetch("/info", { credentials: "same-origin" })
         .then(function (response) {
