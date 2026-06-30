@@ -25,6 +25,18 @@ bool bt_enabled = false;
 BLEService *pHIDService = nullptr;
 BLECharacteristic *pHIDInput = nullptr;
 
+void start_ble_advertising()
+{
+    if (!bt_enabled || pAdvertising == nullptr)
+        return;
+
+    if (!pAdvertising->isAdvertising())
+    {
+        pAdvertising->start();
+        Serial.println("[BLE] Advertising active");
+    }
+}
+
 // Report Map para teclado padrão (6KRO)
 static const uint8_t reportMap[] = {
     0x05, 0x01, // Usage Page (Generic Desktop)
@@ -88,9 +100,8 @@ class ServerCallbacks : public BLEServerCallbacks
     {
         btConnected = false;
         Serial.println("[BLE] Device disconnected!");
-        // Reiniciar advertising imediatamente para reconexão
-        BLEDevice::startAdvertising();
-        Serial.println("[BLE] Advertising restarted after disconnection");
+        // Reinicia advertising de forma segura para aceitar reconexao
+        start_ble_advertising();
     }
 };
 
@@ -98,6 +109,7 @@ class ServerCallbacks : public BLEServerCallbacks
 void setup_bt()
 {
     BLEDevice::init(get_esp_name().c_str());
+    BLEDevice::setMTU(185);
 
     // Limpa ponteiros antigos
     pServer = nullptr;
@@ -140,8 +152,12 @@ void setup_bt()
     pAdvertising->addServiceUUID(SERVICE_UUID);
     pAdvertising->addServiceUUID(BLE_HID_SERVICE_UUID);
     pAdvertising->setScanResponse(true);
-    pAdvertising->start();
+    // Parametros comuns que melhoram compatibilidade com centrais desktop/mobile
+    pAdvertising->setMinPreferred(0x06);
+    pAdvertising->setMinPreferred(0x12);
+
     bt_enabled = true;
+    start_ble_advertising();
 }
 
 // ==================== Loop ====================
@@ -162,7 +178,7 @@ void loop_bt()
     // check_connection
     if (!btConnected && pAdvertising && !pAdvertising->isAdvertising())
     {
-        pAdvertising->start();
+        start_ble_advertising();
     }
 }
 
