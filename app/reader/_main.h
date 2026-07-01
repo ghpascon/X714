@@ -101,6 +101,8 @@ public:
 		else
 		{
 			myserial.write("#SETUP_DONE");
+			myserial.write("#NAME:" + get_esp_name());
+			myserial.write("#VERSION:" + String(VERSION));
 			setup_done = true;
 		}
 	}
