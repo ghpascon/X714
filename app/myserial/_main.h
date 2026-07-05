@@ -28,13 +28,12 @@ public:
 
     void stop_bt_for_network(const String &label)
     {
-        if (!bt_enabled)
+        const bool was_bt_enabled = bt_enabled;
+        if (!was_bt_enabled)
             return;
 
         stop_bt();
-
-        if (!bt_enabled)
-            write("BLE stopped due to " + label + " connection");
+        write("BLE stopped due to " + label + " connection");
     }
 
     void connection_state_changed()
