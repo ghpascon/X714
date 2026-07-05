@@ -11,10 +11,11 @@ void WiFiEvent(arduino_event_id_t event)
         eth_state = "connected";
         break;
     case ARDUINO_EVENT_ETH_GOT_IP:
+        eth_ip = ETH.localIP().toString();
         Serial.print("ETH MAC: ");
         Serial.print(ETH.macAddress());
         Serial.print(", IPv4: ");
-        Serial.print(ETH.localIP());
+        Serial.print(eth_ip);
         if (ETH.fullDuplex())
         {
             Serial.print(", FULL_DUPLEX");
@@ -24,19 +25,19 @@ void WiFiEvent(arduino_event_id_t event)
         Serial.println("Mbps");
 
         eth_state = "got_ip";
-
-        eth_ip = ETH.localIP().toString();
         eth_connected = true;
         break;
     case ARDUINO_EVENT_ETH_DISCONNECTED:
         Serial.println("ETH Disconnected");
         eth_state = "disconnected";
         eth_connected = false;
+        eth_ip = "";
         break;
     case ARDUINO_EVENT_ETH_STOP:
         Serial.println("ETH Stopped");
         eth_state = "stopped";
         eth_connected = false;
+        eth_ip = "";
         break;
     case ARDUINO_EVENT_WIFI_STA_GOT_IP:
         Serial.print("WiFi STA Connected, IPv4: ");

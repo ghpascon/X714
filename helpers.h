@@ -1,10 +1,13 @@
 #include <BLEDevice.h>
 #include <BLEUtils.h>
+#include <WiFi.h>
 
 // ==================== Forward declarations for connectivity ====================
 extern bool eth_connected;
 extern bool wifi_connected;
 extern bool btConnected;
+// Cached Ethernet IP updated by connection callbacks.
+extern String eth_ip;
 
 // Returns true when any network connection is active.
 // When check_bt == false: ETH || WIFI
@@ -14,6 +17,15 @@ bool is_connected(bool check_bt = false)
     if (check_bt)
         return eth_connected || wifi_connected || btConnected;
     return eth_connected || wifi_connected;
+}
+
+String get_connected_ip()
+{
+    if (eth_connected)
+        return eth_ip;
+    if (wifi_connected)
+        return WiFi.localIP().toString();
+    return "";
 }
 
 String get_esp_name()

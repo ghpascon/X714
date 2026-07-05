@@ -186,7 +186,7 @@ public:
                       json += "\"name\":\"" + get_esp_name() + "\",";
                       json += "\"bt_mac\":\"" + get_bt_mac() + "\",";
                       json += "\"eth_mac\":\"" + String(ETH.macAddress()) + "\",";
-                      json += "\"ip\":\"" + ETH.localIP().toString() + "\",";
+                      json += "\"ip\":\"" + get_connected_ip() + "\",";
                       json += "\"version\":\"" + String(VERSION) + "\",";
                       json += "\"power\":\"" + pins.get_power_supply_state() + "\"";
                       json += "}";
