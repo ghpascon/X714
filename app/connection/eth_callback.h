@@ -32,11 +32,13 @@ void WiFiEvent(arduino_event_id_t event)
         Serial.println("ETH Disconnected");
         eth_state = "disconnected";
         eth_connected = false;
+        eth_ip = "";
         break;
     case ARDUINO_EVENT_ETH_STOP:
         Serial.println("ETH Stopped");
         eth_state = "stopped";
         eth_connected = false;
+        eth_ip = "";
         break;
     case ARDUINO_EVENT_WIFI_STA_GOT_IP:
         Serial.print("WiFi STA Connected, IPv4: ");

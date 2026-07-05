@@ -23,21 +23,36 @@ public:
     void loop()
     {
         loop_bt();
-        eth_state_changed();
+        connection_state_changed();
     }
 
-    void eth_state_changed()
+    void stop_bt_for_network(const String &label)
     {
-        static String last_state = "";
-        if (eth_state != last_state)
+        if (pServer == nullptr)
+            return;
+        stop_bt();
+        write("BLE stopped due to " + label + " connection");
+    }
+
+    void connection_state_changed()
+    {
+        static String last_eth_state = "";
+        static bool last_wifi_connected = false;
+
+        if (eth_state != last_eth_state)
         {
             write("Ethernet state: " + eth_state);
-            if (eth_state == "got_ip" && pServer != nullptr)
-            {
-                stop_bt();
-                write("BLE stopped due to Ethernet connection");
-            }
-            last_state = eth_state;
+            if (eth_state == "got_ip")
+                stop_bt_for_network("Ethernet");
+            last_eth_state = eth_state;
+        }
+
+        if (wifi_connected != last_wifi_connected)
+        {
+            write("WiFi state: " + String(wifi_connected ? "connected" : "disconnected"));
+            if (wifi_connected)
+                stop_bt_for_network("WiFi");
+            last_wifi_connected = wifi_connected;
         }
     }
 
@@ -48,7 +63,7 @@ public:
         if (!all && simple_send)
             return;
 
-        if (eth_connected)
+        if (is_connected())
             connection.telnet_write(data);
         if (btConnected)
             write_bt(data);

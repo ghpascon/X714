@@ -284,7 +284,7 @@ public:
             myserial.write("#NAME:" + get_esp_name());
             myserial.write("#BT_MAC:" + get_bt_mac());
             myserial.write("#ETH_MAC:" + String(ETH.macAddress()));
-            myserial.write("#IP:" + ETH.localIP().toString());
+            myserial.write("#IP:" + get_connected_ip());
             myserial.write("#VERSION:" + String(VERSION));
             myserial.write("#POWER:" + pins.get_power_supply_state());
         }
