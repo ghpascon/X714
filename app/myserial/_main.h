@@ -30,8 +30,11 @@ public:
     {
         if (!bt_enabled)
             return;
+
         stop_bt();
-        write("BLE stopped due to " + label + " connection");
+
+        if (!bt_enabled)
+            write("BLE stopped due to " + label + " connection");
     }
 
     void connection_state_changed()
