@@ -60,6 +60,11 @@ bool btConnected = false;
 bool eth_connected = false;
 String eth_state = "";
 
+// ==================== Wi-Fi Configuration ====================
+bool wifi_connected = false;
+String wifi_ssid = "";
+String wifi_password = "";
+
 // ==================== Ethernet Configuration ====================
 bool dhcp_on = false;
 String static_ip = "192.168.1.101";

@@ -3,9 +3,50 @@
   <head>
     <title>X714 HOME</title>
     <link rel="stylesheet" type="text/css" href="/style.css" />
+    <style>
+      #loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.75);
+        z-index: 1000;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      #loading-overlay.visible {
+        display: flex;
+      }
+      .spinner {
+        width: 80px;
+        height: 80px;
+        border: 10px solid #333333;
+        border-top: 10px solid #ffb41f;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 30px;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      .loading-label {
+        font-family: Arial, sans-serif;
+        font-size: 45px;
+        color: #ffb41f;
+      }
+    </style>
   </head>
 
   <body>
+    <div id="loading-overlay">
+      <div class="spinner"></div>
+      <label class="loading-label">UPLOADING...</label>
+    </div>
+
     <div class="container1">
       <label class="SMTX">&#176; X714 &#172;</label>
     </div>
@@ -59,6 +100,17 @@
     <div class="container1">
       <button
         class="button_links"
+        onclick="window.location.href = '/wifi_config'"
+      >
+        WIFI CONFIG
+      </button>
+    </div>
+
+    <br />
+
+    <div class="container1">
+      <button
+        class="button_links"
         onclick="window.location.href = '/webhook_config'"
       >
         WEBHOOK CONFIG
@@ -100,6 +152,15 @@
         GPO
       </button>
     </div>
+
+    <br />
+
+    <div class="container1">
+      <button class="button_links" onclick="doRestart()">
+        RESTART
+      </button>
+    </div>
+
     <div class="container1">
       <label>Firmware / FS update</label>
       <br />
@@ -152,6 +213,16 @@
   </body>
 
   <script>
+    var loadingOverlay = document.getElementById("loading-overlay");
+
+    function showLoading() {
+      loadingOverlay.classList.add("visible");
+    }
+
+    function hideLoading() {
+      loadingOverlay.classList.remove("visible");
+    }
+
     // Upload handlers for firmware and filesystem
     document.getElementById("btn-fw").addEventListener("click", function () {
       doUpload("/update_firmware");
@@ -168,12 +239,27 @@
         if (!file) return;
         const form = new FormData();
         form.append("firmware", file);
+        showLoading();
         fetch(endpoint, { method: "POST", body: form })
           .then((r) => r.text())
-          .then((t) => alert("Resposta: " + t))
-          .catch((e) => alert("Erro: " + e));
+          .then((t) => {
+            hideLoading();
+            alert("Resposta: " + t);
+          })
+          .catch((e) => {
+            hideLoading();
+            alert("Erro: " + e);
+          });
       };
       input.click();
+    }
+
+    function doRestart() {
+      if (!confirm("Restart the device?")) return;
+      fetch("/restart", { method: "POST" })
+        .then((r) => r.text())
+        .then((t) => alert("Resposta: " + t))
+        .catch((e) => alert("Erro: " + e));
     }
 
     function update_info() {

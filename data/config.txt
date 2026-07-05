@@ -21,3 +21,5 @@ webhook_url:http://192.168.1.10:5001
 prefix:
 protected_inventory_enabled:off
 protected_inventory_password:00000000
+wifi_ssid:
+wifi_password:

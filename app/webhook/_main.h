@@ -5,7 +5,6 @@
 
 extern bool webhook_on;
 extern String webhook_url;
-extern bool eth_connected;
 extern TAG_COMMANDS tag_commands;
 extern MySerial myserial;
 
@@ -103,7 +102,7 @@ private:
     void tick()
     {
         const unsigned long period_ms = 10000; // intervalo de envio
-        if (!webhook_on || !eth_connected || webhook_url.length() == 0)
+        if (!webhook_on || !is_connected() || webhook_url.length() == 0)
             return;
         if (millis() - last_post < period_ms)
             return;

@@ -38,6 +38,15 @@ void WiFiEvent(arduino_event_id_t event)
         eth_state = "stopped";
         eth_connected = false;
         break;
+    case ARDUINO_EVENT_WIFI_STA_GOT_IP:
+        Serial.print("WiFi STA Connected, IPv4: ");
+        Serial.println(WiFi.localIP());
+        wifi_connected = true;
+        break;
+    case ARDUINO_EVENT_WIFI_STA_DISCONNECTED:
+        Serial.println("WiFi STA Disconnected");
+        wifi_connected = false;
+        break;
     default:
         break;
     }

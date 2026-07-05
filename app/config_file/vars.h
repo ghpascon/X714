@@ -35,4 +35,8 @@ extern String prefix;
 extern bool protected_inventory_enabled;
 extern String protected_inventory_password;
 
+// ==================== Wi-Fi ====================
+extern String wifi_ssid;
+extern String wifi_password;
+
 extern bool fs_loaded;

@@ -1,6 +1,21 @@
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 
+// ==================== Forward declarations for connectivity ====================
+extern bool eth_connected;
+extern bool wifi_connected;
+extern bool btConnected;
+
+// Returns true when any network connection is active.
+// When check_bt == false: ETH || WIFI
+// When check_bt == true : ETH || WIFI || BT
+bool is_connected(bool check_bt = false)
+{
+    if (check_bt)
+        return eth_connected || wifi_connected || btConnected;
+    return eth_connected || wifi_connected;
+}
+
 String get_esp_name()
 {
     uint64_t chipid = ESP.getEfuseMac();

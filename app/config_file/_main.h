@@ -288,7 +288,7 @@ private:
 			return true;
 		}
 
-		// PROTECTED INVENTORY
+		// Protected Inventory
 		else if (parameter.startsWith("protected_inventory_enabled:"))
 		{
 			protected_inventory_enabled = parameter.endsWith("on");
@@ -299,6 +299,22 @@ private:
 		{
 			protected_inventory_password = parameter.substring(parameter.indexOf(":") + 1);
 			protected_inventory_password = trimStr(protected_inventory_password);
+			handled = true;
+			return true;
+		}
+
+		// ==================== Wi-Fi ====================
+		else if (parameter.startsWith("wifi_ssid:"))
+		{
+			wifi_ssid = parameter.substring(parameter.indexOf(":") + 1);
+			wifi_ssid = trimStr(wifi_ssid);
+			handled = true;
+			return true;
+		}
+		else if (parameter.startsWith("wifi_password:"))
+		{
+			wifi_password = parameter.substring(parameter.indexOf(":") + 1);
+			wifi_password = trimStr(wifi_password);
 			handled = true;
 			return true;
 		}
@@ -367,6 +383,9 @@ public:
 		// Protected Inventory
 		new_config += "protected_inventory_enabled:" + String(protected_inventory_enabled ? "on" : "off") + "\n";
 		new_config += "protected_inventory_password:" + protected_inventory_password + "\n";
+		// Wi-Fi
+		new_config += "wifi_ssid:" + wifi_ssid + "\n";
+		new_config += "wifi_password:" + wifi_password + "\n";
 
 		// Na primeira chamada, apenas inicializa a referência e não salva
 		if (first_time)
