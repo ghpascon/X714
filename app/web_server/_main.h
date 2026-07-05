@@ -9,6 +9,7 @@
 #include "script_webhook_config.h"
 #include "script_prefix.h"
 #include "script_protected_inventory.h"
+#include "script_wifi_config.h"
 
 static const char *WEB_AUTH_USER = "smartx";
 static const char *WEB_AUTH_PASSWORD = "smartx12345";
@@ -35,7 +36,7 @@ class WEB_SERVER
 public:
     void setup()
     {
-        if (!hotspot_on)
+        if (!hotspot_on && wifi_ssid.length() == 0)
             return;
         config_web_server();
         script_web_server();
@@ -56,12 +57,24 @@ public:
 
     void config_web_server()
     {
-        const String ssid = get_esp_name();
-        const char *password = "smartx12345";
-        WiFi.disconnect(true);
-        WiFi.mode(WIFI_AP);
-        WiFi.setTxPower(WIFI_POWER_19_5dBm);
-        WiFi.softAP(ssid.c_str(), password, 6, false, 2);
+        if (wifi_ssid.length() > 0)
+        {
+            // Modo Station: conecta à rede Wi-Fi configurada
+            Serial.println("[wifi] Iniciando modo Station com SSID: " + wifi_ssid);
+            WiFi.disconnect(true);
+            WiFi.mode(WIFI_STA);
+            WiFi.begin(wifi_ssid.c_str(), wifi_password.c_str());
+        }
+        else
+        {
+            // Modo AP: inicia o hotspot
+            const String ssid = get_esp_name();
+            const char *password = "smartx12345";
+            WiFi.disconnect(true);
+            WiFi.mode(WIFI_AP);
+            WiFi.setTxPower(WIFI_POWER_19_5dBm);
+            WiFi.softAP(ssid.c_str(), password, 6, false, 2);
+        }
     }
 
     void style_web_server()
@@ -191,10 +204,24 @@ public:
         webhook_config_script();
         prefix_script();
         protected_inventory_script();
+        wifi_config_script();
     }
 
     void loop()
     {
         server.handleClient();
+
+        // Reconecta ao Wi-Fi em modo Station se a conexão cair
+        if (wifi_ssid.length() > 0 && !wifi_connected)
+        {
+            static unsigned long last_reconnect = 0;
+            const unsigned long reconnect_interval = 30000; // 30 segundos
+            if (millis() - last_reconnect > reconnect_interval)
+            {
+                last_reconnect = millis();
+                Serial.println("[wifi] Tentando reconectar ao Wi-Fi...");
+                WiFi.reconnect();
+            }
+        }
     }
 };
