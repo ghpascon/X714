@@ -63,7 +63,7 @@ public:
         if (!all && simple_send)
             return;
 
-        if (is_connected())
+        if (is_connected(false))
             connection.telnet_write(data);
         if (btConnected)
             write_bt(data);
