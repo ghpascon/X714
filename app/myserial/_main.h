@@ -28,7 +28,7 @@ public:
 
     void stop_bt_for_network(const String &label)
     {
-        if (pServer == nullptr)
+        if (!bt_enabled)
             return;
         stop_bt();
         write("BLE stopped due to " + label + " connection");

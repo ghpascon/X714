@@ -6,6 +6,7 @@
 extern bool eth_connected;
 extern bool wifi_connected;
 extern bool btConnected;
+// Cached Ethernet IP updated by connection callbacks.
 extern String eth_ip;
 
 // Returns true when any network connection is active.
