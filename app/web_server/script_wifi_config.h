@@ -10,6 +10,7 @@ void wifi_config_script()
 
     server.on("/get_wifi_config", HTTP_GET, []()
               {
+                  // Password is returned for the edit form only (local-network access)
                   String json = "{";
                   json += "\"wifi_ssid\":\"" + wifi_ssid + "\",";
                   json += "\"wifi_password\":\"" + wifi_password + "\"";
@@ -26,6 +27,14 @@ void wifi_config_script()
                   {
                       wifi_password = server.arg("wifi_password");
                   }
+                  // Apply new Wi-Fi credentials immediately
+                  if (wifi_ssid.length() > 0)
+                  {
+                      WiFi.disconnect(true);
+                      WiFi.mode(WIFI_STA);
+                      WiFi.begin(wifi_ssid.c_str(), wifi_password.c_str());
+                  }
+                  // Configuration is persisted automatically by save_config() in the main loop
                   server.sendHeader("Location", "/wifi_config");
                   server.send(303); });
 

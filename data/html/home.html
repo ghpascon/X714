@@ -255,7 +255,7 @@
     }
 
     function doRestart() {
-      if (!confirm("Reiniciar o dispositivo?")) return;
+      if (!confirm("Restart the device?")) return;
       fetch("/restart", { method: "POST" })
         .then((r) => r.text())
         .then((t) => alert("Resposta: " + t))
