@@ -121,6 +121,7 @@ private:
         bool all_ok = true;
         for (int offset = 0; offset < total; offset += batch_size)
         {
+            esp_task_wdt_reset();
             int cnt = min(batch_size, total - offset);
             payload = "[";
 
