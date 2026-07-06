@@ -96,18 +96,18 @@ private:
 	void check_test_pin()
 	{
 		static unsigned long time = 0;
-		static bool credentials_reset = false;
+		static bool has_cleared_credentials = false;
 		if (digitalRead(TEST_PIN))
 		{
 			time = millis();
-			credentials_reset = false;
+			has_cleared_credentials = false;
 			return;
 		}
 		if (millis() - time < 500)
 			return;
-		if (credentials_reset)
+		if (has_cleared_credentials)
 			return;
-		credentials_reset = true;
+		has_cleared_credentials = true;
 		wifi_ssid = "";
 		wifi_password = "";
 		test_all_outputs();
