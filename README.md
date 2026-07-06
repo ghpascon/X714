@@ -81,7 +81,7 @@ O X714 oferece **máxima flexibilidade** com múltiplos protocolos de comunicaç
 - Suporte a HTTP e HTTPS
 - Payload JSON estruturado com eventos de tag e keep-alive
 - Configuração via interface web (URL, período, nome do dispositivo)
-- Batching inteligente (até 50 tags por requisição)
+- Batching inteligente (até 30 tags por requisição)
 
 #### **Interface Web Embarcada**
 
@@ -244,7 +244,7 @@ Além das formas de comunicação, o X714 possui um servidor web completo acess�
    - Digite na barra de endereços: **`192.168.4.1`**
    - Pressione Enter
    - Quando solicitado, faça login com:
-     - Usuário: **`admin`**
+   - Usuário: **`smartx`**
      - Senha: **`smartx12345`**
 
 4. **Pronto!**

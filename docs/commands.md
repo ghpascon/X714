@@ -16,36 +16,36 @@ Os comandos podem ser enviados individualmente ou em lote, utilizando o separado
 
 ### Conectividade e Status
 
-| Comando | Descrição | Resposta |
-|---------|-----------|----------|
-| `#ping` ou `ping` | Testa conectividade | `#PONG` |
-| `#get_state` | Obtém estado atual de leitura | `#READING` ou `#IDLE` |
-| `#get_info` | Informações do dispositivo | `#NAME:`, `#BT_MAC:`, `#ETH_MAC:`, `#IP:` |
-| `#get_serial` | Serial do dispositivo | `#SERIAL:[serial]` |
-| `#restart` | Reinicia o dispositivo | - |
+| Comando           | Descrição                     | Resposta                                  |
+| ----------------- | ----------------------------- | ----------------------------------------- |
+| `#ping` ou `ping` | Testa conectividade           | `#PONG`                                   |
+| `#get_state`      | Obtém estado atual de leitura | `#READING` ou `#IDLE`                     |
+| `#get_info`       | Informações do dispositivo    | `#NAME:`, `#BT_MAC:`, `#ETH_MAC:`, `#IP:` |
+| `#get_serial`     | Serial do dispositivo         | `#SERIAL:[serial]`                        |
+| `#restart`        | Reinicia o dispositivo        | -                                         |
 
 ### Controle de Leitura
 
-| Comando | Descrição | Resposta |
-|---------|-----------|----------|
-| `#read:on` ou `readtag on` | Inicia leitura de tags | `#READ:ON` |
-| `#read:off` ou `readtag off` | Para leitura de tags | `#READ:OFF` |
-| `initreadtag:on` | Inicia leitura automaticamente | - |
-| `initreadtag:off` | Desabilita leitura automática | - |
+| Comando                      | Descrição                      | Resposta    |
+| ---------------------------- | ------------------------------ | ----------- |
+| `#read:on` ou `readtag on`   | Inicia leitura de tags         | `#READ:ON`  |
+| `#read:off` ou `readtag off` | Para leitura de tags           | `#READ:OFF` |
+| `initreadtag:on`             | Inicia leitura automaticamente | -           |
+| `initreadtag:off`            | Desabilita leitura automática  | -           |
 
 ### Gerenciamento de Tags
 
-| Comando | Descrição | Resposta |
-|---------|-----------|----------|
-| `#get_tags` | Lista epcs detectados | Lista de epcs |
+| Comando         | Descrição                           | Resposta               |
+| --------------- | ----------------------------------- | ---------------------- |
+| `#get_tags`     | Lista epcs detectados               | Lista de epcs          |
 | `#get_tags_all` | Lista todas as informações das tags | Lista completa de tags |
-| `#clear` | Limpa buffer de tags | - |
+| `#clear`        | Limpa buffer de tags                | -                      |
 
 ### Escrita de Tags
 
-| Comando | Descrição | Formato |
-|---------|-----------|---------|
-| `#write:[EPC];[PASSWORD]` | Escreve EPC sem filtro | `#write:000102030405060708090A0B;12345678` |
+| Comando                                | Descrição                     | Formato                                                                 |
+| -------------------------------------- | ----------------------------- | ----------------------------------------------------------------------- |
+| `#write:[EPC];[PASSWORD]`              | Escreve EPC sem filtro        | `#write:000102030405060708090A0B;12345678`                              |
 | `#write:[EPC];[PASSWORD];EPC;[TARGET]` | Escreve EPC com filtro no epc | `#write:000102030405060708090A0B;12345678;epc;AABBCCDDEEFF001122334455` |
 | `#write:[EPC];[PASSWORD];TID;[TARGET]` | Escreve EPC com filtro no tid | `#write:000102030405060708090A0B;12345678;tid;E28012341234123412341234` |
 
@@ -58,11 +58,11 @@ Os comandos podem ser enviados individualmente ou em lote, utilizando o separado
 
 ### Gerenciamento Avançado de Tags
 
-| Comando | Descrição | Formato |
-|---------|-----------|---------|
-| `#change_password:[EPC];[NEW_PWD];[OLD_PWD]` | Altera senha de tag específica | `#change_password:000102030405060708090A0B;ABCD1234;00000000` |
-| `#protected_mode:[EPC];[PASSWORD];[ENABLE]` | Ativa/desativa modo protegido para tag específica | `#protected_mode:000102030405060708090A0B;12345678;on` |
-| `#protected_inventory:[ENABLE];[PASSWORD]` | Ativa/desativa inventário protegido global | `#protected_inventory:on;12345678` |
+| Comando                                      | Descrição                                         | Formato                                                       |
+| -------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------- |
+| `#change_password:[EPC];[NEW_PWD];[OLD_PWD]` | Altera senha de tag específica                    | `#change_password:000102030405060708090A0B;ABCD1234;00000000` |
+| `#protected_mode:[EPC];[PASSWORD];[ENABLE]`  | Ativa/desativa modo protegido para tag específica | `#protected_mode:000102030405060708090A0B;12345678;on`        |
+| `#protected_inventory:[ENABLE];[PASSWORD]`   | Ativa/desativa inventário protegido global        | `#protected_inventory:on;12345678`                            |
 
 **Parâmetros avançados:**
 
@@ -85,13 +85,13 @@ Os comandos podem ser enviados individualmente ou em lote, utilizando o separado
 
 ## Configuração de Potência e Sessão
 
-| Comando | Descrição | Faixa/Valores |
-|---------|-----------|---------------|
-| `#read_power:[VALOR]` ou `readpower:[VALOR]` | Define potência de leitura | Conforme especificação |
-| `#get_power` | Obtém potência atual | `#POWER:[valor]` |
-| `#session:[VALOR]` ou `gen2session:[VALOR]` | Define sessão Gen2 | 0 ao máximo configurado |
-| `#get_session` | Obtém sessão atual | `#SESSION:[valor]` |
-| `#password[...]` | Altera senha do reader | Conforme protocolo |
+| Comando                                      | Descrição                  | Faixa/Valores           |
+| -------------------------------------------- | -------------------------- | ----------------------- |
+| `#read_power:[VALOR]` ou `readpower:[VALOR]` | Define potência de leitura | Conforme especificação  |
+| `#get_power`                                 | Obtém potência atual       | `#POWER:[valor]`        |
+| `#session:[VALOR]` ou `gen2session:[VALOR]`  | Define sessão Gen2         | 0 ao máximo configurado |
+| `#get_session`                               | Obtém sessão atual         | `#SESSION:[valor]`      |
+| `#password[...]`                             | Altera senha do reader     | Conforme protocolo      |
 
 ---
 
@@ -99,28 +99,43 @@ Os comandos podem ser enviados individualmente ou em lote, utilizando o separado
 
 ### Modo de Operação
 
-| Comando | Descrição | Valores |
-|---------|-----------|---------|
-| `readmode hid` | Modo teclado (HID) | - |
-| `readmode normal` | Modo normal | - |
-| `#buzzer:on` | Habilita buzzer | `#BUZZER:ON` |
-| `#buzzer:off` | Desabilita buzzer | `#BUZZER:OFF` |
-| `#decode_gtin:on` | Habilita decodificação GTIN | - |
-| `#decode_gtin:off` | Desabilita decodificação GTIN | - |
+| Comando            | Descrição                     | Valores       |
+| ------------------ | ----------------------------- | ------------- |
+| `readmode hid`     | Modo teclado (HID)            | -             |
+| `readmode normal`  | Modo normal                   | -             |
+| `#buzzer:on`       | Habilita buzzer               | `#BUZZER:ON`  |
+| `#buzzer:off`      | Desabilita buzzer             | `#BUZZER:OFF` |
+| `#decode_gtin:on`  | Habilita decodificação GTIN   | -             |
+| `#decode_gtin:off` | Desabilita decodificação GTIN | -             |
 
 ### Configuração de Rede
 
-| Comando | Descrição | Valores |
-|---------|-----------|---------|
-| `#hotspot:on` | Habilita modo hotspot | - |
-| `#hotspot:off` | Desabilita modo hotspot | - |
+| Comando                     | Descrição                                                                | Valores           |
+| --------------------------- | ------------------------------------------------------------------------ | ----------------- |
+| `#hotspot:on`               | Habilita modo hotspot (Access Point)                                     | -                 |
+| `#hotspot:off`              | Desabilita modo hotspot (usa Station se `wifi_ssid` estiver configurado) | -                 |
+| `#wifi_ssid:[SSID]`         | Define SSID para modo Station (deixe vazio para usar hotspot)            | -                 |
+| `#wifi_password:[PASSWORD]` | Define senha do Wi‑Fi para modo Station                                  | -                 |
+| `#dhcp:on`                  | Habilita DHCP (obter IP automaticamente)                                 | -                 |
+| `#dhcp:off`                 | Desabilita DHCP (usar configurações estáticas)                           | -                 |
+| `#static_ip:[IP]`           | Define IP estático (quando DHCP desabilitado)                            | Ex: 192.168.1.101 |
+| `#gateway_ip:[IP]`          | Define gateway                                                           | Ex: 192.168.1.1   |
+| `#subnet_mask:[MASK]`       | Define máscara de sub-rede                                               | Ex: 255.255.255.0 |
+
+### Webhook (Integração)
+
+| Comando              | Descrição                             | Valores                       |
+| -------------------- | ------------------------------------- | ----------------------------- |
+| `#webhook:on`        | Habilita envio por webhook            | -                             |
+| `#webhook:off`       | Desabilita envio por webhook          | -                             |
+| `#webhook_url:[URL]` | Define URL do webhook (HTTP ou HTTPS) | Ex: http://server:5001/events |
 
 ### Configuração de Prefixo
 
-| Comando | Descrição | Exemplo |
-|---------|-----------|---------|
-| `#prefix:[VALOR]` | Define prefixo para tags | `#prefix:TAG_` |
-| `#get_prefix` | Obtém prefixo atual | `#PREFIX:[valor]` |
+| Comando                    | Descrição                            | Exemplo                                                                  |
+| -------------------------- | ------------------------------------ | ------------------------------------------------------------------------ |
+| `#prefix:[VALOR]`          | Define prefixo para tags             | `#prefix:TAG_`                                                           |
+| `#get_prefix`              | Obtém prefixo atual                  | `#PREFIX:[valor]`                                                        |
 | `#get_protected_inventory` | Obtém status do inventário protegido | `#PROTECTED_INVENTORY:[status]`, `#PROTECTED_INVENTORY_PASSWORD:[senha]` |
 
 ---
@@ -133,20 +148,20 @@ Permite configurar múltiplas opções simultaneamente usando o separador `|`.
 
 **Comandos disponíveis no set_cmd:**
 
-| Comando | Descrição | Exemplo |
-|---------|-----------|---------|
-| `set_ant:[N],[ATIVO],[POTÊNCIA],[RSSI]` | Configura antena específica | `set_ant:1,on,30,25` |
-| `session:[VALOR]` | Define sessão | `session:1` |
-| `read_power:[VALOR]` | Potência de leitura | `read_power:30` |
-| `write_power:[VALOR]` | Potência de escrita | `write_power:30` |
-| `buzzer:on/off` | Controle do buzzer | `buzzer:on` |
-| `gpi_stop_delay:[MS]` | Delay de parada GPI | `gpi_stop_delay:1000` |
-| `decode_gtin:on/off` | Decodificação GTIN | `decode_gtin:on` |
-| `start_reading:on/off` | Leitura automática | `start_reading:on` |
-| `gpi_start:on/off` | Início por GPI | `gpi_start:on` |
-| `always_send:on/off` | Envio contínuo | `always_send:on` |
-| `simple_send:on/off` | Envio simplificado | `simple_send:on` |
-| `keyboard:on/off` | Modo teclado | `keyboard:on` |
+| Comando                                 | Descrição                   | Exemplo               |
+| --------------------------------------- | --------------------------- | --------------------- |
+| `set_ant:[N],[ATIVO],[POTÊNCIA],[RSSI]` | Configura antena específica | `set_ant:1,on,30,25`  |
+| `session:[VALOR]`                       | Define sessão               | `session:1`           |
+| `read_power:[VALOR]`                    | Potência de leitura         | `read_power:30`       |
+| `write_power:[VALOR]`                   | Potência de escrita         | `write_power:30`      |
+| `buzzer:on/off`                         | Controle do buzzer          | `buzzer:on`           |
+| `gpi_stop_delay:[MS]`                   | Delay de parada GPI         | `gpi_stop_delay:1000` |
+| `decode_gtin:on/off`                    | Decodificação GTIN          | `decode_gtin:on`      |
+| `start_reading:on/off`                  | Leitura automática          | `start_reading:on`    |
+| `gpi_start:on/off`                      | Início por GPI              | `gpi_start:on`        |
+| `always_send:on/off`                    | Envio contínuo              | `always_send:on`      |
+| `simple_send:on/off`                    | Envio simplificado          | `simple_send:on`      |
+| `keyboard:on/off`                       | Modo teclado                | `keyboard:on`         |
 
 **Exemplo de uso:**
 
@@ -183,27 +198,36 @@ Permite configurar múltiplas opções simultaneamente usando o separador `|`.
 
 ## Códigos de Resposta
 
-| Resposta | Significado |
-|----------|-------------|
-| `#PONG` | Resposta ao ping |
-| `#READ:ON/OFF` | Estado de leitura alterado |
-| `#READING/#IDLE` | Estado atual de leitura |
-| `#BUZZER:ON/OFF` | Estado do buzzer |
-| `#CHANGE_PASSWORD:OK` | Senha alterada com sucesso |
-| `#PROTECTED_MODE:ENABLED` | Modo protegido ativado para tag específica |
-| `#PROTECTED_MODE:DISABLED` | Modo protegido desativado para tag específica |
-| `#PROTECTED_INVENTORY:ENABLED` | Inventário protegido ativado globalmente |
-| `#PROTECTED_INVENTORY:DISABLED` | Inventário protegido desativado globalmente |
-| `#PROTECTED_INVENTORY_PASSWORD:[senha]` | Senha atual do inventário protegido |
-| `#INVALID_CMD` | Comando não reconhecido |
-| `#ERROR:[DESCRIÇÃO]` | Erro na execução (parâmetros inválidos, etc.) |
-| `#SET_CMD:OK/NOK` | Resultado da configuração |
+| Resposta                                | Significado                                   |
+| --------------------------------------- | --------------------------------------------- |
+| `#PONG`                                 | Resposta ao ping                              |
+| `#READ:ON/OFF`                          | Estado de leitura alterado                    |
+| `#READING/#IDLE`                        | Estado atual de leitura                       |
+| `#BUZZER:ON/OFF`                        | Estado do buzzer                              |
+| `#CHANGE_PASSWORD:OK`                   | Senha alterada com sucesso                    |
+| `#PROTECTED_MODE:ENABLED`               | Modo protegido ativado para tag específica    |
+| `#PROTECTED_MODE:DISABLED`              | Modo protegido desativado para tag específica |
+| `#PROTECTED_INVENTORY:ENABLED`          | Inventário protegido ativado globalmente      |
+| `#PROTECTED_INVENTORY:DISABLED`         | Inventário protegido desativado globalmente   |
+| `#PROTECTED_INVENTORY_PASSWORD:[senha]` | Senha atual do inventário protegido           |
+| `#INVALID_CMD`                          | Comando não reconhecido                       |
+| `#ERROR:[DESCRIÇÃO]`                    | Erro na execução (parâmetros inválidos, etc.) |
+| `#SET_CMD:OK/NOK`                       | Resultado da configuração                     |
+| `#HOTSPOT:ON/OFF`                       | Estado do modo hotspot (AP)                   |
+| `#DHCP:ENABLED/DISABLED`                | Estado do DHCP                                |
+| `#STATIC_IP:[ip]`                       | Endereço IP estático configurado              |
+| `#GATEWAY_IP:[ip]`                      | Gateway configurado                           |
+| `#SUBNET_MASK:[mask]`                   | Máscara de sub-rede configurada               |
+| `#WIFI_SSID:[ssid]`                     | SSID configurado para modo Station            |
+| `#WIFI_PASSWORD:[password]`             | Senha WiFi configurada                        |
+| `#WEBHOOK:ENABLED/DISABLED`             | Estado do envio por webhook                   |
+| `#WEBHOOK_URL:[url]`                    | URL do webhook configurada                    |
 
 ---
 
 ## Notas Importantes
 
-1. **Comandos são case-sensitive** - mantenha a capitalização exata
+1. **Comandos não são case-sensitive** - o parser converte o comando para minúsculas; parâmetros são preservados.
 2. **Valores hexadecimais** devem usar caracteres 0-9, A-F (maiúsculos ou minúsculos)
 3. **Separadores** para múltiplos comandos: `|` (pipe)
 4. **Separadores** para parâmetros: `;` (ponto e vírgula) ou `:` (dois pontos)
