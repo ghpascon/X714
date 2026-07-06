@@ -96,13 +96,20 @@ private:
 	void check_test_pin()
 	{
 		static unsigned long time = 0;
+		static bool triggered = false;
 		if (digitalRead(TEST_PIN))
 		{
 			time = millis();
+			triggered = false;
 			return;
 		}
 		if (millis() - time < 500)
 			return;
+		if (triggered)
+			return;
+		triggered = true;
+		wifi_ssid = "";
+		wifi_password = "";
 		test_all_outputs();
 	}
 };

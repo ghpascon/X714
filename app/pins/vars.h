@@ -15,3 +15,5 @@ extern MySerial myserial;
 extern bool buzzer_on;
 
 extern bool setup_done;
+extern String wifi_ssid;
+extern String wifi_password;
