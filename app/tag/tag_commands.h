@@ -80,7 +80,7 @@ public:
 			return; // TID duplicado ou store cheio
 
 		if (buzzer_on)
-			pins.buzzer_time = millis();
+			pins.turn_on_buzzer();
 
 		if (!always_send)
 		{

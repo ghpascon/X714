@@ -124,8 +124,6 @@ public:
         {
             cmd = connection.check_telnet();
         }
-        cmd.toLowerCase();
-        cmd.replace("  ", " ");
 
         return cmd;
     }

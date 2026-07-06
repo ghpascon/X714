@@ -33,6 +33,7 @@ int send_payload(const String &body)
         if (http.begin(client, webhook_url))
         {
             http.addHeader("Content-Type", "application/json");
+            http.setConnectTimeout(5000);
             http.setTimeout(5000);
 
             httpCode = http.POST(body);
@@ -55,6 +56,7 @@ int send_payload(const String &body)
         {
             http.addHeader("Content-Type", "application/json");
             http.addHeader("Connection", "close");
+            http.setConnectTimeout(5000);
             http.setTimeout(5000);
             http.useHTTP10(true);
             http.setReuse(false);

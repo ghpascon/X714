@@ -220,6 +220,8 @@ private:
 public:
     void check_commands(String cmd)
     {
+        String original_cmd = cmd; // Keep the original command
+        cmd.toLowerCase();
         cmd.trim();
         if (cmd.length() == 0)
             return;
@@ -507,6 +509,19 @@ public:
             connection.setup();
             myserial.write("#SUBNET_MASK:" + subnet_mask);
         }
+        // ================= WiFi Commands =================
+        else if (cmd.startsWith("#wifi_ssid:"))
+        {
+            wifi_ssid = original_cmd.substring(original_cmd.indexOf(':') + 1);
+            connection.setup();
+            myserial.write("#WIFI_SSID:" + wifi_ssid);
+        }
+        else if (cmd.startsWith("#wifi_password:"))
+        {
+            wifi_password = original_cmd.substring(original_cmd.indexOf(':') + 1);
+            connection.setup();
+            myserial.write("#WIFI_PASSWORD:" + wifi_password);
+        }
 
         // ================= Webhook Commands =================
         else if (cmd.startsWith("#webhook:"))
@@ -516,7 +531,7 @@ public:
         }
         else if (cmd.startsWith("#webhook_url:"))
         {
-            webhook_url = cmd.substring(13);
+            webhook_url = original_cmd.substring(original_cmd.indexOf(':') + 1);
             myserial.write("#WEBHOOK_URL:" + webhook_url);
         }
 

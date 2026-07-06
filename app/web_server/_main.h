@@ -191,6 +191,14 @@ public:
                       json += "\"power\":\"" + pins.get_power_supply_state() + "\"";
                       json += "}";
                       server.send(200, "application/json", json); });
+
+        server.on("/wifi_config", HTTP_GET, []()
+                  {
+                  if (!ensure_html_route_auth()) return;
+                  File f = LittleFS.open("/html/wifi_config.html", "r");
+                  if (!f) { server.send(404, "text/plain", "Not found"); return; }
+                  server.streamFile(f, "text/html");
+                  f.close(); });
     }
     void script_web_server()
     {

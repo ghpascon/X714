@@ -1,12 +1,5 @@
 void wifi_config_script()
 {
-    server.on("/wifi_config", HTTP_GET, []()
-              {
-                  if (!ensure_html_route_auth()) return;
-                  File f = LittleFS.open("/html/wifi_config.html", "r");
-                  if (!f) { server.send(404, "text/plain", "Not found"); return; }
-                  server.streamFile(f, "text/html");
-                  f.close(); });
 
     server.on("/get_wifi_config", HTTP_GET, []()
               {

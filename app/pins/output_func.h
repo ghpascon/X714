@@ -1,7 +1,7 @@
 class output_func
 {
 public:
-	unsigned long buzzer_time = millis();
+	bool buzzer_need_on = false;
 	void set_outputs()
 	{
 		set_gpos();
@@ -25,11 +25,22 @@ public:
 		}
 	}
 
+	void turn_on_buzzer()
+	{
+		buzzer_need_on = true;
+	}
+
 	void set_buzzer()
 	{
 		const unsigned long now = millis();
+		static unsigned long buzzer_time = millis();
 		if (now < 2000)
 			return;
+		if (buzzer_need_on)
+		{
+			buzzer_time = now;
+			buzzer_need_on = false;
+		}
 		const int buzzer_time_on = 200;
 		const int indicator_time_on = 1000;
 		// prev_buzzer_state and prev_indicator_output are now members
