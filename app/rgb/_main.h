@@ -6,7 +6,7 @@ class LED_RGB
 public:
 	void setup()
 	{
-		FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
+		FastLED.addLeds<NEOPIXEL, RGB_DATA_PIN>(leds, NUM_LEDS);
 		pinMode(EXTERNAL_LED_RED_PIN, OUTPUT);
 		pinMode(EXTERNAL_LED_GREEN_PIN, OUTPUT);
 		pinMode(EXTERNAL_LED_BLUE_PIN, OUTPUT);
