@@ -17,6 +17,8 @@ extern byte session;
 
 bool answer_rec = true;
 
+// comando que estamos esperando resposta (-1 = nenhum)
+int expected_response_cmd = -1;
 // config
 extern CONFIG_FILE config_file_commands;
 

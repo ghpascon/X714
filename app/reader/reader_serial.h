@@ -41,7 +41,11 @@ public:
 				}
 
 				frame_start_ms = now;
-				answer_rec = true;
+				// somente marca que temos resposta disponível quando não estivermos aguardando
+				// um comando específico; caso estejamos aguardando, só aceitaremos
+				// como resposta o frame que corresponder ao comando esperado
+				if (expected_response_cmd == -1)
+					answer_rec = true;
 			}
 
 			rx_buffer[rx_size++] = current;
@@ -51,7 +55,17 @@ public:
 			{
 				if (is_valid_frame(rx_buffer, rx_size))
 				{
+					// identifica qual comando o frame contém (terceiro byte)
+					int frame_cmd = (int)rx_buffer[2];
 					cmd_handler(bytes_to_hex_string(rx_buffer, rx_size));
+
+					// se não estamos aguardando resposta específica, ou se o frame
+					// corresponde ao comando que esperamos, então desbloqueamos
+					if (expected_response_cmd == -1 || frame_cmd == expected_response_cmd)
+					{
+						expected_response_cmd = -1;
+						answer_rec = true;
+					}
 				}
 
 				// Invalid frame is silently discarded.

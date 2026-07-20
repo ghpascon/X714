@@ -35,6 +35,16 @@ public:
 		if (wait_answer)
 		{
 			answer_rec = false;
+			// registra qual comando estamos esperando resposta (índice 2 no frame)
+			if (lenght >= 3)
+				expected_response_cmd = (int)values[2];
+			else
+				expected_response_cmd = -1;
+		}
+		else
+		{
+			// sem espera explícita
+			expected_response_cmd = -1;
 		}
 	}
 };
