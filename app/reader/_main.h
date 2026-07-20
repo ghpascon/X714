@@ -147,6 +147,13 @@ public:
 
 	void read_on_functions()
 	{
-		read_on_command();
+		static unsigned long last_read_on_time = 0;
+		const unsigned long read_on_interval = 50;
+		unsigned long now = millis();
+		if (now - last_read_on_time >= read_on_interval)
+		{
+			last_read_on_time = now;
+			read_on_command();
+		}
 	}
 };
