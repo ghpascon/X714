@@ -4,14 +4,14 @@ public:
 	void check_serial()
 	{
 		const unsigned long timeout_serial_rec = 100;
-		const unsigned long full_cmd_timeout = 3000;
+		const unsigned long full_cmd_timeout = 2000;
 		// Safety net: if a command expecting a response got NO bytes at all
 		// (rx_size stays 0), unblock after this delay. The 100ms inter-byte
 		// timeout cannot fire when rx_size==0, so without this the system
 		// would wait for check_timeout (1s) or check_reader_connection (5s).
-		const unsigned long no_response_timeout = 800;
+		const unsigned long no_response_timeout = 200;
 		unsigned long now = millis();
-		const int max_frames_per_call = 20;
+		const int max_frames_per_call = 500;
 		int frames_processed = 0;
 
 		if (rx_size > 0)

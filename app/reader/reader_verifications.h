@@ -27,8 +27,10 @@ public:
 
 	void check_timeout(bool force = false)
 	{
-		const int answer_timeout = 300;
+		const int answer_timeout = 200;
 		static unsigned long current_answer_timeout = 0;
+		if (setup_done && read_on && (millis() - current_answer_timeout > answer_timeout))
+			answer_rec = true;
 		if (answer_rec)
 			current_answer_timeout = millis();
 
@@ -49,13 +51,14 @@ public:
 
 	void try_change_baudrate()
 	{
+		const int max_reconnect_attempts = 3;
 		// If the reader has already exchanged valid frames at 115200, the
 		// disconnection is transient — not a baudrate mismatch.
 		// Reinitialise Serial2 at the current baud and let normal setup retry.
 		// After several failed reconnects, restart the ESP32 as a last resort.
 		if (had_valid_frame)
 		{
-			if (reconnect_count > 5)
+			if (reconnect_count > max_reconnect_attempts)
 			{
 				myserial.write("#RECONNECT_FAILED: restart");
 				delay(100);
@@ -63,7 +66,7 @@ public:
 			}
 
 			reconnect_count++;
-			myserial.write("#RECONNECT_115200 (" + String(reconnect_count) + "/5)");
+			myserial.write("#RECONNECT_115200 (" + String(reconnect_count) + "/" + String(max_reconnect_attempts) + ")");
 			Serial2.end();
 			delay(50);
 			Serial2.begin(115200, SERIAL_8N1, rx_reader_module, tx_reader_module);
