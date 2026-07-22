@@ -3,37 +3,32 @@ class serial_reader : public commands_reader
 public:
 	void check_serial()
 	{
-		const unsigned long timeout_serial_rec = 100;
-		const unsigned long full_cmd_timeout = 2000;
-		// Safety net: if a command expecting a response got NO bytes at all
-		// (rx_size stays 0), unblock after this delay. The 100ms inter-byte
-		// timeout cannot fire when rx_size==0, so without this the system
-		// would wait for check_timeout (1s) or check_reader_connection (5s).
-		const unsigned long no_response_timeout = 500;
 		unsigned long now = millis();
-		const int max_frames_per_call = 100;
-		int frames_processed = 0;
+
+		// Unblock after 20ms silence when in read_on (multi-frame response)
+		if (last_valid_frame_ms > 0 && (now - last_valid_frame_ms) > 20)
+		{
+			answer_rec = true;
+			last_valid_frame_ms = 0;
+			last_wait_cmd_sent_ms = 0;
+		}
 
 		if (rx_size > 0)
 		{
-			const bool timeout_between_bytes = (now - last_byte_ms) > timeout_serial_rec;
-			const bool timeout_full_frame = (now - frame_start_ms) > full_cmd_timeout;
-			if (timeout_between_bytes || timeout_full_frame)
+			const bool byte_gap = (now - last_byte_ms) > 100;
+			const bool frame_timeout = (now - frame_start_ms) > 2000;
+			if (byte_gap || frame_timeout)
 			{
 				// 100ms inter-byte gap: only unblock during normal operation.
 				// During setup a 100ms gap could cause a retransmit that
 				// produces a duplicate response for step-relative cmds (ea/7f),
 				// which would skip a setup step.
-				//
-				// 3s full-frame timeout: always unblock. After 3 seconds any
-				// pending response is certainly lost; retrying is safe even
-				// during setup because the original command was never answered.
-				if (timeout_full_frame || (timeout_between_bytes && setup_done))
+				if (frame_timeout || (byte_gap && setup_done))
 				{
 					answer_rec = true;
 					expected_setup_ack_cmd = 0x00;
 					last_wait_cmd_sent_ms = 0;
-					cmd_sent_ms = 0;
+					last_valid_frame_ms = 0;
 				}
 				rx_size = 0;
 				expected_size = 0;
@@ -41,16 +36,12 @@ public:
 				last_byte_ms = 0;
 			}
 		}
-		else if (!answer_rec && last_wait_cmd_sent_ms > 0 && (now - last_wait_cmd_sent_ms) > no_response_timeout)
+		else if (!answer_rec && last_valid_frame_ms == 0 && last_wait_cmd_sent_ms > 0 && (now - last_wait_cmd_sent_ms) > 500)
 		{
-			// Reader sent zero bytes in response to a command. Unblock so the
-			// caller can retry rather than waiting for a 5s reconnect cycle.
+			// No bytes received at all — unblock so caller can retry
 			answer_rec = true;
 			expected_setup_ack_cmd = 0x00;
 			last_wait_cmd_sent_ms = 0;
-			cmd_sent_ms = 0;
-			// Retransmit happens naturally: step hasn't changed, so config_reader()
-			// will re-send the same command on the next loop.
 		}
 
 		while (Serial2.available())
@@ -61,14 +52,11 @@ public:
 			if (rx_size == 0)
 			{
 				expected_size = ((int)current) + 1;
-
-				// Minimum frame: [len][status][cmd][crc1][crc2]
 				if (expected_size < 5 || expected_size > (int)sizeof(rx_buffer))
 				{
 					expected_size = 0;
 					continue;
 				}
-
 				frame_start_ms = now;
 			}
 
@@ -81,37 +69,33 @@ public:
 				{
 					const byte frame_cmd = rx_buffer[2];
 					const bool waiting_setup_ack = (!setup_done && !answer_rec && expected_setup_ack_cmd != 0x00);
-					const bool setup_ack_matched = waiting_setup_ack && (frame_cmd == expected_setup_ack_cmd);
 
 					cmd_handler(bytes_to_hex_string(rx_buffer, rx_size));
 
 					if (waiting_setup_ack)
 					{
-						// During setup, do not unblock on inventory frames (cmd 0x01)
-						// or unrelated responses. Only the expected command may
-						// release the setup pipeline.
-						if (setup_ack_matched)
+						if (frame_cmd == expected_setup_ack_cmd)
 						{
 							answer_rec = true;
 							expected_setup_ack_cmd = 0x00;
 							last_wait_cmd_sent_ms = 0;
-							cmd_sent_ms = 0;
 						}
+					}
+					else if (read_on)
+					{
+						// read_on can return multiple tag frames — defer answer_rec
+						// until 20ms of silence confirms the burst is complete.
+						last_valid_frame_ms = now;
+						last_wait_cmd_sent_ms = 0;
 					}
 					else
 					{
 						answer_rec = true;
 						last_wait_cmd_sent_ms = 0;
-						cmd_sent_ms = 0;
 					}
 				}
-
-				// Invalid frame is silently discarded.
 				rx_size = 0;
 				expected_size = 0;
-				frames_processed++;
-				if (frames_processed >= max_frames_per_call)
-					break;
 			}
 		}
 	}
@@ -124,9 +108,7 @@ public:
 		last_byte_ms = 0;
 		expected_setup_ack_cmd = 0x00;
 		last_wait_cmd_sent_ms = 0;
-		cmd_sent_ms = 0; // cancel any pending no-response watchdog
-		// Also drain the hardware UART FIFO so stale bytes
-		// can't corrupt the next incoming frame.
+		last_valid_frame_ms = 0;
 		while (Serial2.available())
 			Serial2.read();
 	}
@@ -182,7 +164,6 @@ private:
 
 	void cmd_handler(String cmd)
 	{
-		answer_rec = true; // default: unblock the caller unless a setup step guard overrides it
 		if (cmd.length() < 10)
 			return;
 

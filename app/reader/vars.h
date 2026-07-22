@@ -38,6 +38,7 @@ bool had_valid_frame = false; // set once setup completes at 115200; prevents un
 byte reconnect_count = 0;     // counts reconnect attempts when had_valid_frame; reset on successful setup
 byte expected_setup_ack_cmd = 0x00;
 unsigned long last_wait_cmd_sent_ms = 0;
+unsigned long last_valid_frame_ms = 0; // last frame received in multi-response mode (read_on)
 unsigned long setup_transition_until_ms = 0;
 
 extern const bool debug_mode;

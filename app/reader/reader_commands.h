@@ -1,8 +1,5 @@
 class commands_reader
 {
-protected:
-	unsigned long cmd_sent_ms = 0; // timestamp of last command expecting a response
-
 public:
 	unsigned int uiCrc16Cal(unsigned char const *pucY, unsigned char ucX)
 	{
@@ -45,8 +42,8 @@ public:
 		if (wait_answer)
 		{
 			answer_rec = false;
-			cmd_sent_ms = millis();
-			last_wait_cmd_sent_ms = cmd_sent_ms;
+			last_wait_cmd_sent_ms = millis();
+			last_valid_frame_ms = 0;
 		}
 	}
 };

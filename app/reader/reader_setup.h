@@ -61,8 +61,7 @@ public:
 
 		// During setup: wait for the "22" ack to advance the step.
 		// During read_on: fire-and-forget — band toggle must not block
-		// the read cycle or set cmd_sent_ms (which would confuse the
-		// no-response watchdog).
+		// the read cycle or set last_wait_cmd_sent_ms.
 		write_bytes(band, sizeof(band), crc1, crc2, !setup_done);
 	}
 

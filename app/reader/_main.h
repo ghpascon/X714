@@ -203,6 +203,7 @@ public:
 		// loop until the response eventually arrives.
 		expected_setup_ack_cmd = expected_cmd;
 		last_wait_cmd_sent_ms = millis();
+		last_valid_frame_ms = 0;
 		answer_rec = false;
 	}
 
