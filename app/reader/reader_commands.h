@@ -26,25 +26,20 @@ public:
 
 	void write_bytes(byte values[], byte lenght, byte crc1, byte crc2, bool wait_answer = true)
 	{
-		for (int i = 0; i < lenght; i++)
+		if (debug_mode)
 		{
-			Serial2.write(values[i]);
+			String dbg = "[ DEBUG ] -> ";
+			for (int i = 0; i < lenght; i++)
+				dbg += (values[i] < 0x10 ? "0" : "") + String(values[i], HEX);
+			dbg += (crc1 < 0x10 ? "0" : "") + String(crc1, HEX);
+			dbg += (crc2 < 0x10 ? "0" : "") + String(crc2, HEX);
+			myserial.write(dbg);
 		}
+		for (int i = 0; i < lenght; i++)
+			Serial2.write(values[i]);
 		Serial2.write(crc1);
 		Serial2.write(crc2);
 		if (wait_answer)
-		{
 			answer_rec = false;
-			// registra qual comando estamos esperando resposta (índice 2 no frame)
-			if (lenght >= 3)
-				expected_response_cmd = (int)values[2];
-			else
-				expected_response_cmd = -1;
-		}
-		else
-		{
-			// sem espera explícita
-			expected_response_cmd = -1;
-		}
 	}
 };

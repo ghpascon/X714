@@ -17,15 +17,11 @@ extern byte session;
 
 bool answer_rec = true;
 
-// comando que estamos esperando resposta (-1 = nenhum)
-int expected_response_cmd = -1;
 // config
 extern CONFIG_FILE config_file_commands;
 
 // tags
 extern TAG_COMMANDS tag_commands;
-
-extern bool read_on;
 
 extern MySerial myserial;
 
@@ -35,3 +31,4 @@ extern String protected_inventory_password;
 extern bool reader_in_protected_inventory;
 
 bool one_ant = true;
+extern const bool debug_mode;
