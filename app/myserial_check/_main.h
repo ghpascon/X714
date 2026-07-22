@@ -233,12 +233,10 @@ public:
         else if (cmd == "#read:on" || cmd == "readtag on")
         {
             read_on = true;
-            myserial.write("#READ:" + String(read_on ? "on" : "off"));
         }
         else if (cmd == "#read:off" || cmd == "readtag off")
         {
             read_on = false;
-            myserial.write("#READ:" + String(read_on ? "on" : "off"));
         }
         else if (cmd == "#get_tags")
         {

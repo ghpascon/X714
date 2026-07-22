@@ -1,4 +1,4 @@
-class reader_verifications : public commands_reader
+class reader_verifications : public setup_commands_reader
 {
 public:
 	void reader_verify()
@@ -22,6 +22,10 @@ public:
 		if (read_on)
 		{
 			tag_commands.clear_tags();
+		}
+		else
+		{
+			clear_buffer();
 		}
 	}
 
@@ -197,7 +201,7 @@ public:
 
 	void check_reader_connection()
 	{
-		const int timeout_reader_connection = 3000;
+		const int timeout_reader_connection = 4000;
 		static unsigned long current_timeout_reader_connection = 0;
 		if (setup_done)
 		{

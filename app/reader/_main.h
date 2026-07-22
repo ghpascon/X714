@@ -8,7 +8,7 @@
 #include "reader_write_commands.h"
 #include "protected_mode.h"
 
-class READER : public serial_reader, public reader_read_on_commands, public reader_write_commands, public setup_commands_reader, public periodic_commands_reader, public reader_verifications, public protected_mode
+class READER : public serial_reader, public reader_read_on_commands, public reader_write_commands, public periodic_commands_reader, public reader_verifications, public protected_mode
 {
 public:
 	void setup()
@@ -25,7 +25,6 @@ public:
 		check_update_antena();
 		check_serial();
 		reader_verify();
-
 		if (request_clear_serial_buffers)
 		{
 			clear_serial_buffers();
@@ -65,10 +64,10 @@ public:
 		}
 	}
 
-	void setup_reader(byte _step = 0)
+	void setup_reader()
 	{
 		setup_done = false;
-		step = _step;
+		step = 0x00;
 		expected_setup_ack_cmd = 0x00;
 		last_wait_cmd_sent_ms = 0;
 		// Discard any bytes from the previous session so they
@@ -81,6 +80,10 @@ public:
 		// for a response that is now irrelevant (e.g. a power change
 		// arrived mid-command).
 		answer_rec = true;
+		Serial2.flush();
+		Serial2.end();
+		delay(100);
+		setup();
 	}
 
 	void config_reader()

@@ -275,4 +275,17 @@ public:
 		crc2 = (crcValue >> 8) & 0xFF;
 		write_bytes(tag_focus, sizeof(tag_focus), crc1, crc2);
 	}
+
+	void clear_buffer()
+	{
+		byte clear_buffer[] = {
+			0x04,
+			0xff,
+			0x73};
+		crcValue = uiCrc16Cal(clear_buffer, sizeof(clear_buffer));
+		crc1 = crcValue & 0xFF;
+		crc2 = (crcValue >> 8) & 0xFF;
+		write_bytes(clear_buffer, sizeof(clear_buffer), crc1, crc2, false);
+		answer_rec = true; // clear_buffer is fire-and-forget, no response expected
+	}
 };
