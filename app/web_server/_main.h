@@ -72,7 +72,7 @@ public:
             const char *password = "smartx12345";
             WiFi.disconnect(true);
             WiFi.mode(WIFI_AP);
-            WiFi.setTxPower(WIFI_POWER_19_5dBm);
+            WiFi.setTxPower(WIFI_POWER_15dBm);
             WiFi.softAP(ssid.c_str(), password, 6, false, 2);
         }
     }
