@@ -9,9 +9,9 @@ public:
 		// (rx_size stays 0), unblock after this delay. The 100ms inter-byte
 		// timeout cannot fire when rx_size==0, so without this the system
 		// would wait for check_timeout (1s) or check_reader_connection (5s).
-		const unsigned long no_response_timeout = 200;
+		const unsigned long no_response_timeout = 500;
 		unsigned long now = millis();
-		const int max_frames_per_call = 500;
+		const int max_frames_per_call = 100;
 		int frames_processed = 0;
 
 		if (rx_size > 0)
@@ -182,6 +182,7 @@ private:
 
 	void cmd_handler(String cmd)
 	{
+		answer_rec = true; // default: unblock the caller unless a setup step guard overrides it
 		if (cmd.length() < 10)
 			return;
 
