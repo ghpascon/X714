@@ -3,14 +3,13 @@ class serial_reader : public commands_reader
 public:
 	void check_serial()
 	{
-		static byte rx_buffer[256];
-		static int rx_size = 0;
-		static int expected_size = 0;
-		static unsigned long frame_start_ms = 0;
-		static unsigned long last_byte_ms = 0;
-
 		const unsigned long timeout_serial_rec = 100;
 		const unsigned long full_cmd_timeout = 3000;
+		// Safety net: if a command expecting a response got NO bytes at all
+		// (rx_size stays 0), unblock after this delay. The 100ms inter-byte
+		// timeout cannot fire when rx_size==0, so without this the system
+		// would wait for check_timeout (1s) or check_reader_connection (5s).
+		const unsigned long no_response_timeout = 800;
 		unsigned long now = millis();
 
 		if (rx_size > 0)
@@ -19,9 +18,33 @@ public:
 			const bool timeout_full_frame = (now - frame_start_ms) > full_cmd_timeout;
 			if (timeout_between_bytes || timeout_full_frame)
 			{
+				// 100ms inter-byte gap: only unblock during normal operation.
+				// During setup a 100ms gap could cause a retransmit that
+				// produces a duplicate response for step-relative cmds (ea/7f),
+				// which would skip a setup step.
+				//
+				// 3s full-frame timeout: always unblock. After 3 seconds any
+				// pending response is certainly lost; retrying is safe even
+				// during setup because the original command was never answered.
+				if (timeout_full_frame || (timeout_between_bytes && setup_done))
+				{
+					answer_rec = true;
+					cmd_sent_ms = 0;
+				}
 				rx_size = 0;
 				expected_size = 0;
+				frame_start_ms = 0;
+				last_byte_ms = 0;
 			}
+		}
+		else if (!answer_rec && cmd_sent_ms > 0 && (now - cmd_sent_ms) > no_response_timeout)
+		{
+			// Reader sent zero bytes in response to a command. Unblock so the
+			// caller can retry rather than waiting for a 5s reconnect cycle.
+			answer_rec = true;
+			cmd_sent_ms = 0;
+			// Retransmit happens naturally: step hasn't changed, so config_reader()
+			// will re-send the same command on the next loop.
 		}
 
 		while (Serial2.available())
@@ -52,6 +75,7 @@ public:
 				{
 					cmd_handler(bytes_to_hex_string(rx_buffer, rx_size));
 					answer_rec = true;
+					cmd_sent_ms = 0; // response received, cancel no-response watchdog
 				}
 
 				// Invalid frame is silently discarded.
@@ -61,7 +85,25 @@ public:
 		}
 	}
 
+	void clear_serial_buffers()
+	{
+		rx_size = 0;
+		expected_size = 0;
+		frame_start_ms = 0;
+		last_byte_ms = 0;
+		cmd_sent_ms = 0; // cancel any pending no-response watchdog
+		// Also drain the hardware UART FIFO so stale bytes
+		// can't corrupt the next incoming frame.
+		while (Serial2.available())
+			Serial2.read();
+	}
+
 private:
+	byte rx_buffer[256];
+	int rx_size = 0;
+	int expected_size = 0;
+	unsigned long frame_start_ms = 0;
+	unsigned long last_byte_ms = 0;
 	bool is_valid_frame(const byte *frame, int frame_size)
 	{
 		if (frame == NULL || frame_size < 5)
@@ -118,112 +160,89 @@ private:
 
 		if (status == "00")
 		{
-			// SETUP
-			if (reader_cmd == "21")
+			// ── Setup step advancement ─────────────────────────────────────────
+			// Wrapped in !setup_done so stale responses in flight after a
+			// timeout-restart never corrupt the step counter. Per-command step
+			// guards prevent out-of-order responses from skipping steps.
+			if (!setup_done)
 			{
-				if (cmd.substring(13, 14) == "1")
-					one_ant = true;
-				else
-					one_ant = false;
-				myserial.write("#ONE_ANT:" + String(one_ant));
-				step = 1;
+				if (reader_cmd == "21" && step == 0)
+				{
+					if (cmd.substring(13, 14) == "1")
+						one_ant = true;
+					else
+						one_ant = false;
+					myserial.write("#ONE_ANT:" + String(one_ant));
+					step = 1;
+				}
+				else if (reader_cmd == "24" && step == 1)
+					step = 2;
+				else if (reader_cmd == "22" && step == 2)
+					step = 3;
+				else if (reader_cmd == "76" && step == 3)
+					step = 4;
+				else if (reader_cmd == "75" && step == 4)
+					step = 5;
+				else if (reader_cmd == "ea")
+				{
+					if (step == 5)
+						step = 6;
+					else if (step == 6)
+						step = 7;
+					else if (step == 11)
+						step = 12;
+				}
+				else if (reader_cmd == "66" && step == 7)
+					step = 8;
+				else if (reader_cmd == "25" && step == 8)
+					step = 9;
+				else if (reader_cmd == "48" && step == 9)
+					step = 10;
+				else if (reader_cmd == "7b" && step == 10)
+					step = 11;
+				else if (reader_cmd == "79" && step == 12)
+					step = 13;
+				else if (reader_cmd == "7f")
+				{
+					if (step == 13)
+						step = 14;
+					else if (step == 14)
+						step = 15;
+				}
+				else if (reader_cmd == "3f" && step == 15)
+					step = 16;
+				else if (reader_cmd == "2f" && step == 16)
+					step = 17;
 			}
 
-			else if (reader_cmd == "24")
-				step = 2;
-
-			else if (reader_cmd == "22")
-				step = 3;
-
-			else if (reader_cmd == "76")
-				step = 4;
-
-			else if (reader_cmd == "75")
-				step = 5;
-
-			else if (reader_cmd == "ea")
-			{
-				if (step == 5)
-					step = 6;
-				else if (step == 6)
-					step = 7;
-				else if (step == 11)
-					step = 12;
-			}
-
-			else if (reader_cmd == "66")
-				step = 8;
-
-			else if (reader_cmd == "25")
-				step = 9;
-
-			else if (reader_cmd == "48")
-				step = 10;
-
-			else if (reader_cmd == "7b")
-				step = 11;
-
-			else if (reader_cmd == "79")
-				step = 13;
-
-			else if (reader_cmd == "7f")
-			{
-				if (step == 13)
-					step = 14;
-				else if (step == 14)
-					step = 15;
-			}
-
-			else if (reader_cmd == "3f")
-				step = 16;
-
-			else if (reader_cmd == "2f")
-				step = 17;
-
-			// ACTIONS
-
-			else if (reader_cmd == "01" && cmd.substring(6, 8) == "f8")
+			// ── Action responses (always handled, regardless of setup state) ───
+			if (reader_cmd == "01" && cmd.substring(6, 8) == "f8")
 			{
 				myserial.write("#ANT_ERROR: ");
 			}
-
 			else if (reader_cmd == "06")
 			{
 				if (cmd.substring(6, 8) == "00")
-				{
 					myserial.write("#LOCK:OK");
-				}
 				else
-				{
 					myserial.write("#LOCK:ERROR");
-				}
 			}
-
 			// WRITE
 			else if (reader_cmd == "03" || reader_cmd == "04")
 			{
 				if (cmd.substring(6, 8) == "00")
-				{
 					myserial.write("#TAG_WRITE:OK");
-				}
 				else
-				{
 					myserial.write("#TAG_WRITE:ERROR");
-				}
 				tag_commands.clear_tags();
 			}
-
 			// PROTECTED MODE
 			else if (reader_cmd == "e9")
 			{
 				if (cmd.substring(6, 8) == "00")
-				{
 					myserial.write("#TAG_PROTECTED:OK");
-				}
 				else
-				{
 					myserial.write("#TAG_PROTECTED:ERROR");
-				}
 			}
 		}
 		else

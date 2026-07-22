@@ -1,4 +1,4 @@
-const bool debug_mode = false;
+const bool debug_mode = true;
 
 // FreeRTOS semaphore type
 #include <freertos/semphr.h>

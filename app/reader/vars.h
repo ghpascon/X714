@@ -23,6 +23,8 @@ extern CONFIG_FILE config_file_commands;
 // tags
 extern TAG_COMMANDS tag_commands;
 
+extern bool read_on;
+
 extern MySerial myserial;
 
 // ==================== Protected Inventory ====================
@@ -31,4 +33,8 @@ extern String protected_inventory_password;
 extern bool reader_in_protected_inventory;
 
 bool one_ant = true;
+bool request_clear_serial_buffers = false;
+bool had_valid_frame = false; // set once setup completes at 115200; prevents unnecessary baud change
+byte reconnect_count = 0;     // counts reconnect attempts when had_valid_frame; reset on successful setup
+
 extern const bool debug_mode;

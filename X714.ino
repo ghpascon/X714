@@ -91,7 +91,7 @@ void setup()
     xTaskCreatePinnedToCore(
         core0Task,   // Function to implement the task
         "Core0Task", // Name of the task
-        4096,        // Stack size in words
+        6144,        // Stack size in words
         NULL,        // Task input parameter
         1,           // Priority of the task (1 = low priority)
         NULL,        // Task handle

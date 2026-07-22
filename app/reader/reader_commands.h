@@ -1,5 +1,8 @@
 class commands_reader
 {
+protected:
+	unsigned long cmd_sent_ms = 0; // timestamp of last command expecting a response
+
 public:
 	unsigned int uiCrc16Cal(unsigned char const *pucY, unsigned char ucX)
 	{
@@ -40,6 +43,9 @@ public:
 		Serial2.write(crc1);
 		Serial2.write(crc2);
 		if (wait_answer)
+		{
 			answer_rec = false;
+			cmd_sent_ms = millis();
+		}
 	}
 };

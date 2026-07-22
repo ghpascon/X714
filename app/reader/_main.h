@@ -26,6 +26,12 @@ public:
 		check_serial();
 		reader_verify();
 
+		if (request_clear_serial_buffers)
+		{
+			clear_serial_buffers();
+			request_clear_serial_buffers = false;
+		}
+
 		if (!answer_rec)
 			return;
 
@@ -38,10 +44,13 @@ public:
 		// periodic_reader_loop();
 		clear_tags_no_read();
 
-		if (read_on && answer_rec)
+		if (read_on)
 		{
 			read_on_functions();
-			reader_band();
+			// Only send band-toggle if the read command didn't already
+			// consume the answer slot this cycle.
+			if (answer_rec)
+				reader_band();
 		}
 	}
 
@@ -49,6 +58,13 @@ public:
 	{
 		setup_done = false;
 		step = _step;
+		// Discard any bytes from the previous session so they
+		// don't corrupt the first frame of the new setup sequence.
+		clear_serial_buffers();
+		// Ensure setup can start immediately, even if we were waiting
+		// for a response that is now irrelevant (e.g. a power change
+		// arrived mid-command).
+		answer_rec = true;
 	}
 
 	void config_reader()
@@ -104,16 +120,32 @@ public:
 			myserial.write("#NAME:" + get_esp_name());
 			myserial.write("#VERSION:" + String(VERSION));
 			setup_done = true;
+			had_valid_frame = true; // confirmed reader speaks 115200: skip baud-change on reconnect
+			return;					// no command sent — do NOT clear answer_rec
 		}
+
+		// Guarantee we wait for the ack of the command just sent,
+		// even for functions that use wait_answer=false (e.g. set_tag_focus,
+		// protected_inventory). Without this they would be re-sent on every
+		// loop until the response eventually arrives.
+		answer_rec = false;
 	}
 
 	void check_update_antena()
 	{
-		if (antena_commands.need_update_antena)
+		if (!antena_commands.need_update_antena)
+			return;
+
+		antena_commands.need_update_antena = false;
+
+		if (setup_done)
 		{
+			// Restart setup so the new antenna settings are applied.
 			setup_reader();
-			antena_commands.need_update_antena = false;
 		}
+		// If setup is already running, antena[].power was updated in-place;
+		// step 16 (set_ant_power) will read the latest value when it runs.
+		// Restarting now would only cause cascading restarts on rapid changes.
 	}
 
 	void periodic_reader_loop()

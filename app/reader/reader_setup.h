@@ -59,7 +59,11 @@ public:
 		byte crc1 = crcValue & 0xFF;
 		byte crc2 = (crcValue >> 8) & 0xFF;
 
-		write_bytes(band, sizeof(band), crc1, crc2);
+		// During setup: wait for the "22" ack to advance the step.
+		// During read_on: fire-and-forget — band toggle must not block
+		// the read cycle or set cmd_sent_ms (which would confuse the
+		// no-response watchdog).
+		write_bytes(band, sizeof(band), crc1, crc2, !setup_done);
 	}
 
 	void reader_work_mode()

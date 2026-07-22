@@ -38,11 +38,38 @@ public:
 			answer_rec = true;
 			setup_done = false;
 			step = 0;
+			// Flush stale UART bytes so they don't corrupt the first frame
+			// of the new setup sequence.
+			request_clear_serial_buffers = true;
 		}
 	}
 
 	void try_change_baudrate()
 	{
+		// If the reader has already exchanged valid frames at 115200, the
+		// disconnection is transient — not a baudrate mismatch.
+		// Reinitialise Serial2 at the current baud and let normal setup retry.
+		// After several failed reconnects, restart the ESP32 as a last resort.
+		if (had_valid_frame)
+		{
+			if (reconnect_count > 5)
+			{
+				myserial.write("#RECONNECT_FAILED: restart");
+				delay(100);
+				ESP.restart();
+			}
+
+			reconnect_count++;
+			myserial.write("#RECONNECT_115200 (" + String(reconnect_count) + "/5)");
+			Serial2.end();
+			delay(50);
+			Serial2.begin(115200, SERIAL_8N1, rx_reader_module, tx_reader_module);
+			delay(100);
+			while (Serial2.available())
+				Serial2.read();
+			return;
+		}
+
 		// Sends baud-change command at the old baud, waits for response and reports result.
 		myserial.write("#TRY_CHANGE_BAUDRATE");
 
@@ -156,7 +183,7 @@ public:
 				else
 				{
 					myserial.write("change_baudrate_nok");
-					return;
+					ESP.restart(); // restart to try again on next boot
 				}
 			}
 		}
@@ -167,7 +194,10 @@ public:
 		const int timeout_reader_connection = 5000;
 		static unsigned long current_timeout_reader_connection = 0;
 		if (setup_done)
+		{
 			current_timeout_reader_connection = millis();
+			reconnect_count = 0; // reset on healthy setup
+		}
 		if (millis() - current_timeout_reader_connection > timeout_reader_connection)
 		{
 			try_change_baudrate();
