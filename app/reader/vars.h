@@ -36,5 +36,8 @@ bool one_ant = true;
 bool request_clear_serial_buffers = false;
 bool had_valid_frame = false; // set once setup completes at 115200; prevents unnecessary baud change
 byte reconnect_count = 0;     // counts reconnect attempts when had_valid_frame; reset on successful setup
+byte expected_setup_ack_cmd = 0x00;
+unsigned long last_wait_cmd_sent_ms = 0;
+unsigned long setup_transition_until_ms = 0;
 
 extern const bool debug_mode;

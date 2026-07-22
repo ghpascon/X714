@@ -27,7 +27,7 @@ public:
 
 	void check_timeout(bool force = false)
 	{
-		const int answer_timeout = 1000;
+		const int answer_timeout = 300;
 		static unsigned long current_answer_timeout = 0;
 		if (answer_rec)
 			current_answer_timeout = millis();
@@ -38,6 +38,9 @@ public:
 			answer_rec = true;
 			setup_done = false;
 			step = 0;
+			expected_setup_ack_cmd = 0x00;
+			last_wait_cmd_sent_ms = 0;
+			setup_transition_until_ms = millis() + 120;
 			// Flush stale UART bytes so they don't corrupt the first frame
 			// of the new setup sequence.
 			request_clear_serial_buffers = true;
@@ -191,13 +194,19 @@ public:
 
 	void check_reader_connection()
 	{
-		const int timeout_reader_connection = 5000;
+		const int timeout_reader_connection = 3000;
 		static unsigned long current_timeout_reader_connection = 0;
 		if (setup_done)
 		{
 			current_timeout_reader_connection = millis();
 			reconnect_count = 0; // reset on healthy setup
 		}
+
+		// Don't run reconnect logic while setup is actively transitioning or
+		// waiting for a step ACK. Let the setup watchdog/resend path handle it.
+		if (!setup_done && (setup_transition_until_ms > 0 || expected_setup_ack_cmd != 0x00))
+			return;
+
 		if (millis() - current_timeout_reader_connection > timeout_reader_connection)
 		{
 			try_change_baudrate();

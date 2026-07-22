@@ -46,6 +46,7 @@ public:
 		{
 			answer_rec = false;
 			cmd_sent_ms = millis();
+			last_wait_cmd_sent_ms = cmd_sent_ms;
 		}
 	}
 };

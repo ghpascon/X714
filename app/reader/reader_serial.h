@@ -11,6 +11,8 @@ public:
 		// would wait for check_timeout (1s) or check_reader_connection (5s).
 		const unsigned long no_response_timeout = 800;
 		unsigned long now = millis();
+		const int max_frames_per_call = 20;
+		int frames_processed = 0;
 
 		if (rx_size > 0)
 		{
@@ -29,6 +31,8 @@ public:
 				if (timeout_full_frame || (timeout_between_bytes && setup_done))
 				{
 					answer_rec = true;
+					expected_setup_ack_cmd = 0x00;
+					last_wait_cmd_sent_ms = 0;
 					cmd_sent_ms = 0;
 				}
 				rx_size = 0;
@@ -37,11 +41,13 @@ public:
 				last_byte_ms = 0;
 			}
 		}
-		else if (!answer_rec && cmd_sent_ms > 0 && (now - cmd_sent_ms) > no_response_timeout)
+		else if (!answer_rec && last_wait_cmd_sent_ms > 0 && (now - last_wait_cmd_sent_ms) > no_response_timeout)
 		{
 			// Reader sent zero bytes in response to a command. Unblock so the
 			// caller can retry rather than waiting for a 5s reconnect cycle.
 			answer_rec = true;
+			expected_setup_ack_cmd = 0x00;
+			last_wait_cmd_sent_ms = 0;
 			cmd_sent_ms = 0;
 			// Retransmit happens naturally: step hasn't changed, so config_reader()
 			// will re-send the same command on the next loop.
@@ -73,14 +79,39 @@ public:
 			{
 				if (is_valid_frame(rx_buffer, rx_size))
 				{
+					const byte frame_cmd = rx_buffer[2];
+					const bool waiting_setup_ack = (!setup_done && !answer_rec && expected_setup_ack_cmd != 0x00);
+					const bool setup_ack_matched = waiting_setup_ack && (frame_cmd == expected_setup_ack_cmd);
+
 					cmd_handler(bytes_to_hex_string(rx_buffer, rx_size));
-					answer_rec = true;
-					cmd_sent_ms = 0; // response received, cancel no-response watchdog
+
+					if (waiting_setup_ack)
+					{
+						// During setup, do not unblock on inventory frames (cmd 0x01)
+						// or unrelated responses. Only the expected command may
+						// release the setup pipeline.
+						if (setup_ack_matched)
+						{
+							answer_rec = true;
+							expected_setup_ack_cmd = 0x00;
+							last_wait_cmd_sent_ms = 0;
+							cmd_sent_ms = 0;
+						}
+					}
+					else
+					{
+						answer_rec = true;
+						last_wait_cmd_sent_ms = 0;
+						cmd_sent_ms = 0;
+					}
 				}
 
 				// Invalid frame is silently discarded.
 				rx_size = 0;
 				expected_size = 0;
+				frames_processed++;
+				if (frames_processed >= max_frames_per_call)
+					break;
 			}
 		}
 	}
@@ -91,6 +122,8 @@ public:
 		expected_size = 0;
 		frame_start_ms = 0;
 		last_byte_ms = 0;
+		expected_setup_ack_cmd = 0x00;
+		last_wait_cmd_sent_ms = 0;
 		cmd_sent_ms = 0; // cancel any pending no-response watchdog
 		// Also drain the hardware UART FIFO so stale bytes
 		// can't corrupt the next incoming frame.
@@ -264,6 +297,9 @@ private:
 
 	void tag_command(String tag_cmd)
 	{
+		if (!setup_done)
+			return; // Drop inventory frames during setup to avoid setup starvation.
+
 		if (tag_cmd.length() < 18)
 			return;
 		if (!is_hex_string(tag_cmd))
