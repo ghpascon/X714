@@ -21,13 +21,13 @@ public:
 	int tagCount() const { return store.size(); }
 	const TagRecord *getTag(int i) const { return store.get(i); }
 
-	void add_tag(const String &current_epc, const String &current_tid, int current_ant, int current_rssi)
+	String add_tag(const String &current_epc, const String &current_tid, int current_ant, int current_rssi)
 	{
 		if (!read_on)
-			return;
+			return "";
 
 		if (antena[current_ant - 1].rssi < current_rssi)
-			return;
+			return "";
 
 		// Filtro de prefixo
 		if (prefix.length() > 0)
@@ -65,7 +65,7 @@ public:
 			}
 
 			if (!prefix_match)
-				return;
+				return "";
 		}
 
 		// SET ANT LED
@@ -77,7 +77,7 @@ public:
 
 		// Deduplicacao O(1) por TID via hash table
 		if (!store.upsert(current_epc.c_str(), current_tid.c_str(), current_ant, current_rssi))
-			return; // TID duplicado ou store cheio
+			return ""; // TID duplicado ou store cheio
 
 		if (buzzer_on)
 			pins.turn_on_buzzer();
@@ -88,6 +88,7 @@ public:
 			if (r)
 				display_current_tag(String(r->epc), String(r->tid), String(r->ant_number), String(r->rssi));
 		}
+		return "";
 	}
 
 	void tag_data_display()

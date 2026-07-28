@@ -2,13 +2,13 @@
 #include "reader_commands.h"
 #include "reader_periodic.h"
 #include "reader_read_commands.h"
+#include "reader_write_commands.h"
 #include "reader_serial.h"
 #include "reader_setup.h"
 #include "reader_verifications.h"
-#include "reader_write_commands.h"
 #include "protected_mode.h"
 
-class READER : public serial_reader, public reader_read_on_commands, public reader_write_commands, public periodic_commands_reader, public reader_verifications, public protected_mode
+class READER : public serial_reader, public reader_read_on_commands, public periodic_commands_reader, public reader_verifications, public protected_mode
 {
 public:
 	void setup()

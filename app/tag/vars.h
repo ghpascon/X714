@@ -1,4 +1,3 @@
-
 extern ANTENA antena[];
 
 extern PINS pins;

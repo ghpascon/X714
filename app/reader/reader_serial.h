@@ -1,4 +1,4 @@
-class serial_reader : public commands_reader
+class serial_reader : public reader_write_commands
 {
 public:
 	void check_serial()
@@ -277,6 +277,19 @@ private:
 		}
 	}
 
+	//receive a String and convert it to a byte array
+	byte* to_bytes(String str)
+	{
+		const int len = str.length() / 2;
+		byte* bytes = new byte[len];
+		for (int i = 0; i < len; i++)
+		{
+			String byteStr = str.substring(i * 2, i * 2 + 2);
+			bytes[i] = (byte)strtoul(byteStr.c_str(), NULL, 16);
+		}
+		return bytes;
+	}
+
 	void tag_command(String tag_cmd)
 	{
 		if (!setup_done)
@@ -350,6 +363,8 @@ private:
 		if (current_ant == 8)
 			current_ant = 4;
 
-		tag_commands.add_tag(current_epc, current_tid, current_ant, current_rssi);
+		String result = tag_commands.add_tag(current_epc, current_tid, current_ant, current_rssi);
+		if (result.length() > 0)
+			write_tag(to_bytes(result), to_bytes("00000000"), "tid", to_bytes(current_tid));
 	}
 };
