@@ -249,7 +249,6 @@ public:
         else if (cmd == "#clear")
         {
             tag_commands.clear_tags();
-            myserial.write("#TAGS_CLEARED");
         }
         else if (cmd.startsWith("#write:"))
         {
