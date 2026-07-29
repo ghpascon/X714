@@ -135,7 +135,7 @@ private:
         enable_str.toLowerCase();
 
         // Validate EPC (24 hex chars)
-        if (epc.length() != 24 || !validateHex(epc, 24))
+        if (epc.length() % 4 != 0 || !validateHex(epc, epc.length()))
         {
             myserial.write("#ERROR:Invalid EPC");
             return;

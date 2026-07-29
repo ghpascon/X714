@@ -3,19 +3,23 @@ class protected_mode : public commands_reader
 public:
     void protected_mode_tag(String epc, String password, bool enable)
     {
-        // Validate input parameters
-        if (epc.length() != 24 || password.length() != 8)
+        // Validate input parameters: accept EPC shorter than 24 hex chars
+        if (epc.length() == 0 || epc.length() % 2 != 0 || epc.length() > 24 || password.length() != 8)
         {
             return; // Invalid parameters
         }
-
-        // Convert EPC hex string to bytes (12 bytes from 24 hex chars)
-        byte epc_bytes[12];
-        for (int i = 0; i < 12; i++)
+        if (!validateHex(epc, epc.length()) || !validateHex(password, 8))
         {
-            String byteStr = epc.substring(i * 2, i * 2 + 2);
-            epc_bytes[i] = (byte)strtoul(byteStr.c_str(), NULL, 16);
+            return; // Invalid hex format
         }
+
+        int epc_len = epc.length() / 2; // bytes reais do EPC informado
+        byte *epc_bytes = to_bytes(epc);
+
+        // Numero de palavras (16 bits) necessarias, arredondando pra cima
+        int epc_words = (epc_len + 1) / 2;
+        int epc_padded_len = epc_words * 2; // bytes que de fato vao no comando
+        int epc_pad = epc_padded_len - epc_len; // 0 ou 1
 
         // Convert password hex string to bytes (4 bytes from 8 hex chars)
         byte password_bytes[4];
@@ -25,27 +29,36 @@ public:
             password_bytes[i] = (byte)strtoul(byteStr.c_str(), NULL, 16);
         }
 
-        // Build command array with proper structure
-        byte reader_protected_mode_command[] = {
-            0x16,
-            0xff,
-            0xe9,
-            0x06,
-            // EPC bytes (12 bytes)
-            epc_bytes[0],
-            epc_bytes[1], epc_bytes[2], epc_bytes[3],
-            epc_bytes[4], epc_bytes[5], epc_bytes[6], epc_bytes[7],
-            epc_bytes[8], epc_bytes[9], epc_bytes[10], epc_bytes[11],
-            // Enable/disable flag
-            enable ? 0x01 : 0x00,
-            // Password bytes (4 bytes)
-            password_bytes[0], password_bytes[1], password_bytes[2], password_bytes[3]};
+        // Build command dynamically (match write_* pattern)
+        // Adr(1) + Cmd(1) + Words(1) + EPC(epc_padded_len) + Enable(1) + Pwd(4)
+        int payload_size = 1 + 1 + 1 + epc_padded_len + 1 + 4;
+        int total_size = 1 + payload_size; // +1 for Len byte
 
-        // Calculate CRC and send command
-        crcValue = uiCrc16Cal(reader_protected_mode_command, sizeof(reader_protected_mode_command));
-        crc1 = crcValue & 0xFF;
-        crc2 = (crcValue >> 8) & 0xFF;
-        write_bytes(reader_protected_mode_command, sizeof(reader_protected_mode_command), crc1, crc2, false);
+        byte *reader_protected_mode_command = new byte[total_size];
+        int idx = 1;
+        reader_protected_mode_command[idx++] = 0xff;         // Adr
+        reader_protected_mode_command[idx++] = 0xe9;         // Cmd
+        reader_protected_mode_command[idx++] = (byte)epc_words; // palavras reais do EPC, sem arredondamento errado
+
+        for (int i = 0; i < epc_len; ++i)
+            reader_protected_mode_command[idx++] = epc_bytes[i];
+        for (int i = 0; i < epc_pad; ++i)
+            reader_protected_mode_command[idx++] = 0x00; // padding so se sobrar byte impar
+
+        reader_protected_mode_command[idx++] = enable ? 0x01 : 0x00;
+
+        for (int i = 0; i < 4; i++)
+            reader_protected_mode_command[idx++] = password_bytes[i];
+
+        reader_protected_mode_command[0] = (byte)(payload_size + 2);
+
+        uint16_t crcValue = uiCrc16Cal(reader_protected_mode_command, total_size);
+        byte crc1 = crcValue & 0xFF;
+        byte crc2 = (crcValue >> 8) & 0xFF;
+        write_bytes(reader_protected_mode_command, total_size, crc1, crc2, false);
+
+        delete[] reader_protected_mode_command;
+        delete[] epc_bytes;
     }
 
     void protected_inventory(bool enable, String password = "00000000")
@@ -88,12 +101,12 @@ public:
             password_bytes[3],
             target};
 
-        crcValue = uiCrc16Cal(
+        uint16_t crcValue = uiCrc16Cal(
             protected_inventory_command,
             sizeof(protected_inventory_command));
 
-        crc1 = crcValue & 0xFF;
-        crc2 = (crcValue >> 8) & 0xFF;
+        byte crc1 = crcValue & 0xFF;
+        byte crc2 = (crcValue >> 8) & 0xFF;
 
         write_bytes(
             protected_inventory_command,
