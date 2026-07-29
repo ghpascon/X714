@@ -42,17 +42,17 @@ public:
         String targetType = (count >= 3) ? parts[2] : "";
         String targetValue = (count == 4) ? parts[3] : "";
 
-        // Validate EPC
-        if (!validateHex(newEPC, 24))
+        // Validate EPC: only check hex chars and that length is multiple of 4 (words)
+        if (!validateHex(newEPC, newEPC.length()) || (newEPC.length() % 4 != 0))
         {
-            myserial.write("#ERROR:Invalid EPC length\n");
+            myserial.write("#ERROR:Invalid EPC (must be hex and multiple of 4 chars)\n");
             return;
         }
 
-        // Validate password
-        if (!validateHex(password, 8))
+        // Validate password: only check hex chars and that length is multiple of 4 (words)
+        if (!validateHex(password, password.length()) || (password.length() % 4 != 0))
         {
-            myserial.write("#ERROR:Invalid password\n");
+            myserial.write("#ERROR:Invalid password (must be hex and multiple of 4 chars)\n");
             return;
         }
 
@@ -60,36 +60,20 @@ public:
         if (targetType.length() > 0)
         {
             targetType.toLowerCase();
-            if ((targetType != "epc" && targetType != "tid") || !validateHex(targetValue, 24))
+            if ((targetType != "epc" && targetType != "tid") || !validateHex(targetValue, targetType == "tid" ? 24 : targetValue.length()) || (targetValue.length() % 4 != 0))
             {
-                myserial.write("#ERROR:Invalid target type/value\n");
+                myserial.write("#ERROR:Invalid target type/value (must be hex and multiple of 4 chars)\n");
                 return;
             }
         }
 
-        // Convert hex strings to byte arrays
-        byte epc_bytes[12], pwd_bytes[4], mask_bytes[12];
-        hexToBytes(newEPC, epc_bytes, 12);
-        hexToBytes(password, pwd_bytes, 4);
-
         if (targetType.length() > 0)
         {
-            hexToBytes(targetValue, mask_bytes, 12);
-            reader_module.write_tag(epc_bytes, pwd_bytes, targetType, mask_bytes);
+            reader_module.write_tag(newEPC, password, targetType, targetValue);
         }
         else
         {
-            reader_module.write_tag_no_filter(epc_bytes, pwd_bytes);
-        }
-    }
-
-private:
-    void hexToBytes(String hex, byte *buffer, int bufferLen)
-    {
-        for (int i = 0; i < bufferLen; i++)
-        {
-            String byteStr = hex.substring(i * 2, i * 2 + 2);
-            buffer[i] = (byte)strtoul(byteStr.c_str(), NULL, 16);
+            reader_module.write_tag_no_filter(newEPC, password);
         }
     }
 };

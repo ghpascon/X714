@@ -1,0 +1,122 @@
+8.2.3	Write data
+The function of this command is to write multiple words to reserved memory, TID memory or user memory in one communication cycle.
+Command frame:
+Len
+Adr
+Cmd
+Data[]
+CRC-16
+0xXX
+0xXX
+0x03
+——
+LSB
+MSB
+Parameters of Data[]: 
+Data[]
+WNum
+ENum
+EPC
+Mem
+WordPtr
+Wdt
+0xXX
+0xXX
+variable
+0xXX
+0xXX
+variable
+Pwd
+MaskMem
+MaskAdr
+MaskLen
+MaskData
+
+4 bytes
+0xXX
+2 bytes
+0xXX
+variable
+
+Parameters definition
+WNum: the amount of words to be written. Every word contains 2 bytes. The value of WNum must be larger than 0, and less or equal to 32, as well as identical to the actual amount of word to be written. Reader will return a parameter error status in the response frame if a 0 or an incorrect value of WNum is delivered in this field.
+ENum: 
+0x00 ~ 0x0f – ENum represents the length of EPC number. The unit of ENum is word, and the length of EPC should be less than 15 words. In this situation, parameters MaskMen, MaskAdr, MaskLen, MaskData should all be left empty. 
+0xff – MaskMem, MaskAdr, MaskLen, MaskData should be provided instead of EPC parameters.
+Reader will return a parameter error status in the response frame if other value is delivered in this field.
+EPC: EPC number of the target tag. Length of the EPC depends on the provided EPC number. The unit of EPC number is word. During communication, the most-significant word and the most-significant byte in a word will be transmitted first. It is essential to provide FULL EPC in this command. 
+Mem: 1 byte, the type of target memory. 
+0x00 – reserved memory
+0x01 – EPC memory; 
+0x02 – TID memory; 
+0x03 – User memory. 
+All other values are reserved. Reader will return a parameter error status in the response frame if other value is delivered in this field.
+WordPtr: 1 byte, the initial word address of target. 
+Wdt: words to be written to tag memory. The amount of words in Wdt must be identical to the value of WNum. The most-significant byte comes first in a word. Words will be written to tag from lower address to higher address according to the order in Data[]. For instance, WordPtr is 0x02, the 1st word in Data[](from left to right) will be written to the address 0x02 in the memory specified by Mem, the 2nd word will then be written to 0x03 etc.
+Pwd: 4 bytes, it is the 4 bytes access password of a tag. From left to right, the first two bytes are the high bytes of access password, and the last two bytes are the low bytes. The most-significant bit of a tag 32-bit access password is the most-significant bit in the 1st byte of Pwd (from left to right). Likewise, the least-significant bit of a tag 32-bit access password is the least-significant bit in the 4th (last) byte of Pwd. Access password must be properly provided and will be verified before write operations. If target memory is not password protected, Pwd can be set to all-zero.   
+MaskMem: 1 byte, mask area indication.
+0x01 – EPC memory; 
+0x02 – TID memory; 
+0x03 – User memory. 
+All other values are reserved, reader will return a parameter error status in the response frame if other value is delivered in this field.
+MaskAdr: 2 bytes, entry bit address of the mask, the valid range of MaskAdr is 0 ~ 16383. 
+MaskLen: 1 byte, bit length of mask (unit: bits).
+MaskData: mask data. The length of MaskData equals to MaskLen/8. If MaskLen is not a multiple of 8 integer, the length of MaskData is equal to the int[MaskLen/8]+1. Non-specified lower significant figures should be filled up with 0.
+NOTE:
+When MaskMem, MaskAdr, MaskLen and MaskData are not provided, full EPC number will be used as mask pattern in inventory. 
+Response frame: 
+Len
+Adr
+reCmd
+Status
+Data[]
+CRC-16
+0x05
+0xXX
+0x03
+0x00
+——
+LSB
+MSB
+
+	8.2.4	Write EPC number
+The function of this command is to write EPC number to a tag. During this write EPC operation, only one tag is allowed to be place in the antenna effective area.
+Command frame:
+Len
+Adr
+Cmd
+Data[]
+CRC-16
+
+
+
+ENum
+Pwd 
+WEPC
+
+0xXX
+0xXX
+0x04
+0xXX
+4 bytes
+variable
+LSB
+MSB
+Parameters definition
+ENum: 1 byte, the length of EPC number. The unit of ENum is word, and the length of EPC can be 0, but it should be less than 15 words. Reader will return a parameter error status in the response frame if other value is delivered in this field.
+Pwd: 4 bytes, it is the 4 bytes access password of a tag. From left to right, the first two bytes are the high bytes of access password, and the last two bytes are the low bytes. The most-significant bit of a tag 32-bit access password is the most-significant bit in the 1st byte of Pwd (from left to right). Likewise, the least-significant bit of a tag 32-bit access password is the least-significant bit in the 4th (last) byte of Pwd. Access password will only be used for verification during reserved memory reading operation, when the associated target memory is password protected and the tag access password is non-zero. Otherwise Psw should be set to all-zero or set to the correct access password.   
+WEPC: the EPC number to be written to tag. The amount of words in WEPC must be identical to the value of ENum. The minimum and maximum length of WEPC is 1 and 31. Reader will return a parameter error status in the response frame if data with inappropriate length is delivered in this field.
+Response frame:
+Len
+Adr
+reCmd
+Status
+Data[]
+CRC-16
+0x05
+0xXX
+0x04
+0x00
+——
+LSB
+MSB

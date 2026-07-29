@@ -56,3 +56,16 @@ bool validateHex(String s, int expectedLength)
     }
     return true;
 }
+
+// receive a String and convert it to a byte array
+byte *to_bytes(String str)
+{
+    const int len = str.length() / 2;
+    byte *bytes = new byte[len];
+    for (int i = 0; i < len; i++)
+    {
+        String byteStr = str.substring(i * 2, i * 2 + 2);
+        bytes[i] = (byte)strtoul(byteStr.c_str(), NULL, 16);
+    }
+    return bytes;
+}
