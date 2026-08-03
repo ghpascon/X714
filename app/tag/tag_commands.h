@@ -1,10 +1,31 @@
 #include "vars.h"
+#include <unordered_map>
+
+struct StringHash
+{
+	size_t operator()(const String &s) const noexcept
+	{
+		unsigned long hash = 5381;
+		for (unsigned int i = 0; i < s.length(); ++i)
+			hash = ((hash << 5) + hash) + s[i];
+		return (size_t)hash;
+	}
+};
+
+struct StringEqual
+{
+	bool operator()(const String &a, const String &b) const noexcept
+	{
+		return a == b;
+	}
+};
 
 class TAG_COMMANDS
 {
 public:
 	TagStore store; // fonte de verdade: todas as tags lidas
 	bool send_protect_mode = false;
+	std::unordered_map<String, String, StringHash, StringEqual> target_map;
 
 	void ensure_protect_mode_correct()
 	{
@@ -66,6 +87,24 @@ public:
 
 			if (!prefix_match)
 				return "";
+		}
+
+		// TARGET MAP
+		if (check_target_map_condition(current_epc))
+		{
+			String target = get_target_from_tid(current_tid);
+
+			if (target != "")
+				return target;
+
+			target = write_prefix + current_epc.substring(write_prefix.length());
+			add_new_target(current_tid, target);
+
+			return target;
+		}
+		else
+		{
+			remove_from_target_map(current_tid);
 		}
 
 		// SET ANT LED
@@ -240,5 +279,53 @@ private:
 		if (gtin[0] == '0')
 			gtin = gtin.substring(1);
 		return gtin;
+	}
+
+	// TARGET MAP
+
+	bool check_target_map_condition(const String &epc) const
+	{
+		if (write_prefix.length() == 0)
+			return false;
+		return !epc.startsWith(write_prefix);
+	}
+
+	String get_target_from_tid(const String &tid) const
+	{
+		auto it = target_map.find(tid);
+		if (it == target_map.end())
+			return "";
+		return it->second;
+	}
+
+	bool add_new_target(const String &tid, const String &target)
+	{
+		auto result = target_map.emplace(tid, target);
+		myserial.write("#ADDED_TO_TARGET_MAP:" + tid + "->" + target);
+		return result.second;
+	}
+
+	bool remove_from_target_map(const String &tid)
+	{
+		if (target_map.erase(tid) > 0)
+		{
+			myserial.write("#REMOVED_FROM_TARGET_MAP:" + tid);
+			return true;
+		}
+		return false;
+	}
+
+	String get_target_map()
+	{
+		String out;
+		for (const auto &item : target_map)
+		{
+			if (out.length())
+				out += ",";
+			out += item.first;
+			out += "->";
+			out += item.second;
+		}
+		return out;
 	}
 };

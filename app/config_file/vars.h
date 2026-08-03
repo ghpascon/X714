@@ -40,3 +40,5 @@ extern String wifi_ssid;
 extern String wifi_password;
 
 extern bool fs_loaded;
+
+extern String write_prefix;

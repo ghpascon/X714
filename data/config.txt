@@ -23,3 +23,4 @@ protected_inventory_enabled:off
 protected_inventory_password:00000000
 wifi_ssid:
 wifi_password:
+write_prefix:

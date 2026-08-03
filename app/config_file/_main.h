@@ -319,6 +319,15 @@ private:
 			return true;
 		}
 
+		// ==================== WRITE PREFIX ====================
+		else if (parameter.startsWith("write_prefix:"))
+		{
+			write_prefix = parameter.substring(parameter.indexOf(":") + 1);
+			write_prefix = trimStr(write_prefix);
+			handled = true;
+			return true;
+		}
+
 		return handled;
 	}
 
@@ -386,6 +395,9 @@ public:
 		// Wi-Fi
 		new_config += "wifi_ssid:" + wifi_ssid + "\n";
 		new_config += "wifi_password:" + wifi_password + "\n";
+		
+		// write_prefix
+		new_config += "write_prefix:" + write_prefix + "\n";
 
 		// Na primeira chamada, apenas inicializa a referência e não salva
 		if (first_time)

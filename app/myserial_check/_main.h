@@ -531,6 +531,14 @@ public:
             webhook_url = original_cmd.substring(original_cmd.indexOf(':') + 1);
             myserial.write("#WEBHOOK_URL:" + webhook_url);
         }
+        // ================= write prefix =================
+        else if (cmd.startsWith("#write_prefix:"))
+        {
+            write_prefix = cmd.substring(cmd.indexOf(':') + 1);
+            myserial.write("#WRITE_PREFIX:" + write_prefix);
+        }
+        else if (cmd == "#get_write_prefix")
+            myserial.write("#WRITE_PREFIX:" + write_prefix);
 
         // ================= Fallback =================
         else
