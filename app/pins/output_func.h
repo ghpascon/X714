@@ -63,6 +63,20 @@ public:
 		}
 	}
 
+	void turn_buzzer(bool on)
+	{
+		if (on)
+		{
+			digitalWrite(buzzer_pin, HIGH);
+			pinMode(indicator_pin, OUTPUT);
+		}
+		else
+		{
+			digitalWrite(buzzer_pin, LOW);
+			pinMode(indicator_pin, INPUT_PULLUP);
+		}
+	}
+
 	void set_ant_leds()
 	{
 		const unsigned long now = millis();

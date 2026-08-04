@@ -30,6 +30,11 @@ public:
 
 	void write_gpo(int index, bool state)
 	{
+		if (index == 0)
+		{
+			turn_buzzer(state);
+			return;
+		}
 		index -= 1; // Adjust index to be 0-based
 		if (index < 0 || index >= gpo_qtd)
 			return;
