@@ -259,6 +259,14 @@ private:
 				else
 					myserial.write("#TAG_PROTECTED:ERROR");
 			}
+			else if (reader_cmd == "91")
+			{
+				if (cmd.substring(6, 8) == "00")
+				{
+					const int return_loss = strtol(cmd.substring(8, 10).c_str(), NULL, 16);
+					myserial.write("#RETURN_LOSS:" + String(return_loss));
+				}
+			}
 		}
 		else
 		{

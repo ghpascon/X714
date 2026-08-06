@@ -287,4 +287,31 @@ public:
 		write_bytes(clear_buffer, sizeof(clear_buffer), crc1, crc2, false);
 		answer_rec = true; // clear_buffer is fire-and-forget, no response expected
 	}
+
+	void measure_rl(int ant, int freq = 915000)
+	{
+		if (freq < 1000)
+			freq *= 1000; // Convert kHz to Hz if necessary
+		if (ant < 1 || ant > ant_qtd)
+			return; // Invalid antenna number
+		ant -= 1;	// Convert to 0-based index
+		byte freq_bytes[4] = {
+			(byte)((freq >> 24) & 0xFF),
+			(byte)((freq >> 16) & 0xFF),
+			(byte)((freq >> 8) & 0xFF),
+			(byte)(freq & 0xFF)};
+		byte rl_bytes[] = {
+			0x09,
+			0xff,
+			0x91,
+			freq_bytes[0],
+			freq_bytes[1],
+			freq_bytes[2],
+			freq_bytes[3],
+			ant};
+		crcValue = uiCrc16Cal(rl_bytes, sizeof(rl_bytes));
+		crc1 = crcValue & 0xFF;
+		crc2 = (crcValue >> 8) & 0xFF;
+		write_bytes(rl_bytes, sizeof(rl_bytes), crc1, crc2);
+	}
 };

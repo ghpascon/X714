@@ -540,6 +540,22 @@ public:
         else if (cmd == "#get_write_prefix")
             myserial.write("#WRITE_PREFIX:" + write_prefix);
 
+        else if (cmd.startsWith("#measure_rl:"))
+        {
+            int idx = cmd.indexOf(':');
+            if (idx == -1)
+            {
+                myserial.write("#ERROR:Invalid command format");
+                return;
+            }
+            int idx_sep = cmd.indexOf(',', idx + 1);
+            if (idx_sep == -1)
+            {
+                reader_module.measure_rl(cmd.substring(idx + 1).toInt());
+                return;
+            }
+            reader_module.measure_rl(cmd.substring(idx + 1, idx_sep).toInt(), cmd.substring(idx_sep + 1).toInt());
+        }
         // ================= Fallback =================
         else
         {
