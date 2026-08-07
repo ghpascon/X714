@@ -117,9 +117,12 @@ void loop()
     reader_module.functions();
     myserialcheck.loop();
 
-    // Handle web server requests (synchronous server)
-    web_server.loop();
+    if (hotspot_on)
+    {
+        // Handle web server requests (synchronous server)
+        web_server.loop();
 
-    // Webhook tick
-    webhook.loop();
+        // Webhook tick
+        webhook.loop();
+    }
 }
