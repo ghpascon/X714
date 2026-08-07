@@ -78,10 +78,13 @@ void setup()
         config_file_commands.get_config();
 
     // Initialize modules
-    connection.setup();
     myserial.setup();
-    web_server.setup();
-    webhook.setup();
+    if (hotspot_on)
+    {
+        connection.setup();
+        web_server.setup();
+        webhook.setup();
+    }
     tag_commands.clear_tags();
     rgb.setup();
     pins.setup();

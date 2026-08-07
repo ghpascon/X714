@@ -9,3 +9,4 @@ extern bool simple_send;
 extern CONNECTION connection;
 extern bool eth_connected;
 extern bool btConnected;
+extern bool hotspot_on;

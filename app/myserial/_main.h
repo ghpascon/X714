@@ -8,7 +8,8 @@ public:
     {
         Serial.begin(115200);
 
-        setup_bt();
+        if (hotspot_on)
+            setup_bt();
 
         my_keyboard.begin();
         USB.VID(0x0001);
