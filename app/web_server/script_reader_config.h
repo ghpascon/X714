@@ -22,40 +22,19 @@ void config_reader_script()
 
     server.on("/get_reader_config", HTTP_GET, []()
               {
-            const int row = 3;
-            const int col = 2;
-            const String json_kv[row][col] = {
-                {"simple_send", String(simple_send?1:0)},
-                {"session", String(session, DEC)},
-                {"gpi_stop_delay", String(gpi_stop_delay)}};
-
             String json = "{";
-            for (int i = 0; i < row; i++) {
-            json += "\"" + json_kv[i][0] + "\":\"" + json_kv[i][1] + "\",";
-            }
+            json += "\"simple_send\":\"" + String(simple_send ? 1 : 0) + "\",";
+            json += "\"session\":\"" + String(session, DEC) + "\",";
+            json += "\"gpi_stop_delay\":\"" + String(gpi_stop_delay) + "\"";
             json += "}";
-            json.replace(",}", "}");
         server.send(200, "application/json", json); });
 
     server.on("/table_reader_att", HTTP_GET, []()
               {
-        int row = 3;
-        int col = 2;
-        String data[row][col] = {
-            {"simple_send", String(simple_send ? 1 : 0)},
-            {"SESSION:", String(session, DEC)},
-            {"GPI STOP DELAY:", String(gpi_stop_delay) + "ms"}};
-
         String json = "[";
-        for (int i = 0; i < row; i++) {
-        if (i > 0) json += ",";
-        json += "[";
-        for (int j = 0; j < col; j++) {
-            if (j > 0) json += ",";
-            json += "\"" + data[i][j] + "\"";
-        }
-        json += "]";
-        }
+        json += "[\"simple_send\",\"" + String(simple_send ? 1 : 0) + "\"],";
+        json += "[\"SESSION:\",\"" + String(session, DEC) + "\"],";
+        json += "[\"GPI STOP DELAY:\",\"" + String(gpi_stop_delay) + "ms\"]";
         json += "]";
 
     server.send(200, "application/json", json); });

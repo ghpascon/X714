@@ -27,10 +27,16 @@ int send_payload(const String &body)
 
     if (is_https)
     {
-        // Client local para cada POST HTTPS (evita connection refused)
-        NetworkClientSecure client;
-        client.setInsecure(); // ignora SSL (usa eth ou wifi)
-        if (http.begin(client, webhook_url))
+        // Alocacao em heap reduz uso de stack em tasks pequenas
+        NetworkClientSecure *client = new NetworkClientSecure();
+        if (!client)
+        {
+            myserial.write("Failed to allocate HTTPS client");
+            return -1;
+        }
+
+        client->setInsecure(); // ignora SSL (usa eth ou wifi)
+        if (http.begin(*client, webhook_url))
         {
             http.addHeader("Content-Type", "application/json");
             http.setConnectTimeout(5000);
@@ -49,6 +55,8 @@ int send_payload(const String &body)
         {
             myserial.write("Failed to start HTTPS connection");
         }
+
+        delete client;
     }
     else
     {

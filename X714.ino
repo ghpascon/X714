@@ -11,6 +11,20 @@
 #include "libs.h"
 #include "vars.h"
 
+static TaskHandle_t core0TaskHandle = NULL;
+static const uint32_t CORE0_TASK_STACK_SIZE = 12288; // bytes
+static const size_t STACK_WARN_WATERMARK_BYTES = 1024;
+
+static void warn_low_stack(const char *task_name, TaskHandle_t handle)
+{
+    const UBaseType_t free_words = uxTaskGetStackHighWaterMark(handle);
+    const size_t free_bytes = (size_t)free_words * sizeof(StackType_t);
+    if (free_bytes < STACK_WARN_WATERMARK_BYTES)
+    {
+        Serial.printf("[stack] WARN %s low stack: %u bytes free\n", task_name, (unsigned int)free_bytes);
+    }
+}
+
 // ==================== Core 0 Task (RGB + Pins) ====================
 void core0Task(void *pvParameters)
 {
@@ -33,6 +47,13 @@ void core0Task(void *pvParameters)
 
         // Save configuration
         config_file_commands.save_config();
+
+        static unsigned long last_stack_check = 0;
+        if (millis() - last_stack_check > 5000)
+        {
+            last_stack_check = millis();
+            warn_low_stack("Core0Task", NULL);
+        }
 
         // Small delay to prevent task from starving other processes
         vTaskDelay(pdMS_TO_TICKS(10)); // 10ms delay
@@ -91,15 +112,19 @@ void setup()
     reader_module.setup();
 
     // Create task for Core 0 (RGB + Pins)
-    xTaskCreatePinnedToCore(
-        core0Task,   // Function to implement the task
-        "Core0Task", // Name of the task
-        6144,        // Stack size in words
-        NULL,        // Task input parameter
-        1,           // Priority of the task (1 = low priority)
-        NULL,        // Task handle
-        0            // Core where the task should run (0)
+    BaseType_t task_ok = xTaskCreatePinnedToCore(
+        core0Task,             // Function to implement the task
+        "Core0Task",           // Name of the task
+        CORE0_TASK_STACK_SIZE, // Stack size in bytes (ESP32/ESP-IDF)
+        NULL,                  // Task input parameter
+        1,                     // Priority of the task (1 = low priority)
+        &core0TaskHandle,      // Task handle
+        0                      // Core where the task should run (0)
     );
+    if (task_ok != pdPASS)
+    {
+        Serial.println("[task] Erro ao criar Core0Task");
+    }
 }
 
 // ==================== Loop (Core 1 - Main) ====================
@@ -107,6 +132,13 @@ void loop()
 {
     // Reset the Watchdog
     esp_task_wdt_reset();
+
+    static unsigned long last_stack_check = 0;
+    if (millis() - last_stack_check > 5000)
+    {
+        last_stack_check = millis();
+        warn_low_stack("LoopTask", NULL);
+    }
 
     // Process serial communication
     myserial.loop();

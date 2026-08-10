@@ -11,36 +11,25 @@ public:
 
         String payload = cmd.substring(7); // remove prefix
 
-        // Split by ';' into max 4 parts
-        String parts[4];
-        int count = 0;
-        int start = 0;
-        for (int i = 0; i < payload.length() && count < 4; i++)
-        {
-            if (payload.charAt(i) == ';')
-            {
-                parts[count++] = payload.substring(start, i);
-                start = i + 1;
-            }
-        }
-        parts[count++] = payload.substring(start); // last part
-
-        // Validate number of parts
-        if (count < 2)
+        const int p1 = payload.indexOf(';');
+        if (p1 == -1)
         {
             myserial.write("#ERROR:Missing EPC or password\n");
             return;
         }
-        if (count > 4)
+
+        const int p2 = payload.indexOf(';', p1 + 1);
+        const int p3 = (p2 == -1) ? -1 : payload.indexOf(';', p2 + 1);
+        if (p3 != -1 && payload.indexOf(';', p3 + 1) != -1)
         {
             myserial.write("#ERROR:Too many separators\n");
             return;
         }
 
-        String newEPC = parts[0];
-        String password = parts[1];
-        String targetType = (count >= 3) ? parts[2] : "";
-        String targetValue = (count == 4) ? parts[3] : "";
+        String newEPC = payload.substring(0, p1);
+        String password = (p2 == -1) ? payload.substring(p1 + 1) : payload.substring(p1 + 1, p2);
+        String targetType = (p2 == -1) ? "" : ((p3 == -1) ? payload.substring(p2 + 1) : payload.substring(p2 + 1, p3));
+        String targetValue = (p3 == -1) ? "" : payload.substring(p3 + 1);
 
         // Validate EPC: only check hex chars and that length is multiple of 4 (words)
         if (!validateHex(newEPC, newEPC.length()) || (newEPC.length() % 4 != 0))

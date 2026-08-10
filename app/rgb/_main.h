@@ -15,12 +15,12 @@ public:
 
 	void state()
 	{
-		static String last_state = "";
+		static uint8_t last_state = 0xFF;
 		bool connected = is_connected(true);
-		String state = String(setup_done) + String(read_on) + String(connected);
-		if (state == last_state)
+		uint8_t current_state = (setup_done ? 0x04 : 0x00) | (read_on ? 0x02 : 0x00) | (connected ? 0x01 : 0x00);
+		if (current_state == last_state)
 			return;
-		last_state = state;
+		last_state = current_state;
 		byte led_brigthness = 0x50;
 
 		// SETUP

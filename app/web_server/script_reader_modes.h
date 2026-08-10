@@ -2,31 +2,22 @@ void reader_modes_script()
 {
   server.on("/modes_att", HTTP_GET, []()
             {
-    const int row = 14;
-    const int col = 2;
-    const String json_kv[row][col] = {
-        {"gpi_start_label", String(start_reading ? "START READING" : (gpi_start ? "ON" : "OFF"))},
-        {"gpi_start_color", String(start_reading ? "#cccccc" : (gpi_start ? "#00ff00" : "#ff0000"))},
-        {"start_reading_label", String(start_reading ? "ON" : "OFF")},
-        {"start_reading_color", String(start_reading ? "#00ff00" : "#ff0000")},
-        {"always_send_label", String(always_send ? "ON" : "OFF")},
-        {"always_send_color", String(always_send ? "#00ff00" : "#ff0000")},
-        {"simple_send_label", String(simple_send ? "ON" : "OFF")},
-        {"simple_send_color", String(simple_send ? "#00ff00" : "#ff0000")},
-        {"keyboard_label", String(keyboard ? "ON" : "OFF")},
-        {"keyboard_color", String(keyboard ? "#00ff00" : "#ff0000")},
-        {"buzzer_label", String(buzzer_on ? "ON" : "OFF")},
-        {"buzzer_color", String(buzzer_on ? "#00ff00" : "#ff0000")},
-        {"gtin_label", String(decode_gtin ? "ON" : "OFF")},
-        {"gtin_color", String(decode_gtin ? "#00ff00" : "#ff0000")}
-    };
-
     String json = "{";
-    for (int i = 0; i < row; i++) {
-      json += "\"" + json_kv[i][0] + "\":\"" + json_kv[i][1] + "\",";
-    }
+    json += "\"gpi_start_label\":\"" + String(start_reading ? "START READING" : (gpi_start ? "ON" : "OFF")) + "\",";
+    json += "\"gpi_start_color\":\"" + String(start_reading ? "#cccccc" : (gpi_start ? "#00ff00" : "#ff0000")) + "\",";
+    json += "\"start_reading_label\":\"" + String(start_reading ? "ON" : "OFF") + "\",";
+    json += "\"start_reading_color\":\"" + String(start_reading ? "#00ff00" : "#ff0000") + "\",";
+    json += "\"always_send_label\":\"" + String(always_send ? "ON" : "OFF") + "\",";
+    json += "\"always_send_color\":\"" + String(always_send ? "#00ff00" : "#ff0000") + "\",";
+    json += "\"simple_send_label\":\"" + String(simple_send ? "ON" : "OFF") + "\",";
+    json += "\"simple_send_color\":\"" + String(simple_send ? "#00ff00" : "#ff0000") + "\",";
+    json += "\"keyboard_label\":\"" + String(keyboard ? "ON" : "OFF") + "\",";
+    json += "\"keyboard_color\":\"" + String(keyboard ? "#00ff00" : "#ff0000") + "\",";
+    json += "\"buzzer_label\":\"" + String(buzzer_on ? "ON" : "OFF") + "\",";
+    json += "\"buzzer_color\":\"" + String(buzzer_on ? "#00ff00" : "#ff0000") + "\",";
+    json += "\"gtin_label\":\"" + String(decode_gtin ? "ON" : "OFF") + "\",";
+    json += "\"gtin_color\":\"" + String(decode_gtin ? "#00ff00" : "#ff0000") + "\"";
     json += "}";
-    json.replace(",}", "}");
 
     server.send(200, "application/json", json); });
 

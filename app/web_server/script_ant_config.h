@@ -86,23 +86,13 @@ void config_ant_script()
 
     server.on("/table_att", HTTP_GET, []()
               {
-        int row = 4;
-        int col = 4;
-        String data[row][col] = {
-            {"A1", String(antena[0].active ? "ON" : "OFF"), String(antena[0].power), String(antena[0].rssi)},
-            {"A2", String(antena[1].active ? "ON" : "OFF"), String(antena[1].power), String(antena[1].rssi)},
-            {"A3", String(antena[2].active ? "ON" : "OFF"), String(antena[2].power), String(antena[2].rssi)},
-            {"A4", String(antena[3].active ? "ON" : "OFF"), String(antena[3].power), String(antena[3].rssi)}};
-
         String json = "[";
-        for (int i = 0; i < row; i++) {
+        for (int i = 0; i < ant_qtd; i++) {
         if (i > 0) json += ",";
-        json += "[";
-        for (int j = 0; j < col; j++) {
-            if (j > 0) json += ",";
-            json += "\"" + data[i][j] + "\"";
-        }
-        json += "]";
+        json += "[\"A" + String(i + 1) + "\",\"";
+        json += String(antena[i].active ? "ON" : "OFF") + "\",\"";
+        json += String(antena[i].power) + "\",\"";
+        json += String(antena[i].rssi) + "\"]";
         }
         json += "]";
     server.send(200, "application/json", json); });

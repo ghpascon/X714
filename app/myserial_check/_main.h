@@ -49,30 +49,22 @@ private:
 
         String payload = cmd.substring(17); // remove "#change_password:"
 
-        // Split by ';' into max 3 parts: EPC;NEW_PASSWORD;OLD_PASSWORD
-        String parts[3];
-        int count = 0;
-        int start = 0;
-        for (int i = 0; i < payload.length() && count < 3; i++)
+        const int p1 = payload.indexOf(';');
+        if (p1 == -1)
         {
-            if (payload.charAt(i) == ';')
-            {
-                parts[count++] = payload.substring(start, i);
-                start = i + 1;
-            }
+            myserial.write("#ERROR:Invalid parameters count");
+            return;
         }
-        parts[count++] = payload.substring(start); // last part
-
-        // Validate number of parts (2 or 3)
-        if (count < 2 || count > 3)
+        const int p2 = payload.indexOf(';', p1 + 1);
+        if (p2 != -1 && payload.indexOf(';', p2 + 1) != -1)
         {
             myserial.write("#ERROR:Invalid parameters count");
             return;
         }
 
-        String epc = parts[0];
-        String new_password = parts[1];
-        String old_password = (count == 3) ? parts[2] : "00000000";
+        String epc = payload.substring(0, p1);
+        String new_password = (p2 == -1) ? payload.substring(p1 + 1) : payload.substring(p1 + 1, p2);
+        String old_password = (p2 == -1) ? "00000000" : payload.substring(p2 + 1);
 
         // Validate EPC (24 hex chars)
         if (epc.length() != 24 || !validateHex(epc, 24))
@@ -108,30 +100,17 @@ private:
 
         String payload = cmd.substring(16); // remove "#protected_mode:"
 
-        // Split by ';' into 3 parts: EPC;PASSWORD;ENABLE
-        String parts[3];
-        int count = 0;
-        int start = 0;
-        for (int i = 0; i < payload.length() && count < 3; i++)
-        {
-            if (payload.charAt(i) == ';')
-            {
-                parts[count++] = payload.substring(start, i);
-                start = i + 1;
-            }
-        }
-        parts[count++] = payload.substring(start); // last part
-
-        // Validate number of parts (must be 3)
-        if (count != 3)
+        const int p1 = payload.indexOf(';');
+        const int p2 = (p1 == -1) ? -1 : payload.indexOf(';', p1 + 1);
+        if (p1 == -1 || p2 == -1 || payload.indexOf(';', p2 + 1) != -1)
         {
             myserial.write("#ERROR:Missing parameters");
             return;
         }
 
-        String epc = parts[0];
-        String password = parts[1];
-        String enable_str = parts[2];
+        String epc = payload.substring(0, p1);
+        String password = payload.substring(p1 + 1, p2);
+        String enable_str = payload.substring(p2 + 1);
         enable_str.toLowerCase();
 
         // Validate EPC (24 hex chars)
@@ -172,30 +151,16 @@ private:
 
         String payload = cmd.substring(21); // remove "#protected_inventory:"
 
-        // Split by ';' into max 2 parts: ENABLE;PASSWORD
-        String parts[2];
-        int count = 0;
-        int start = 0;
-        for (int i = 0; i < payload.length() && count < 2; i++)
-        {
-            if (payload.charAt(i) == ';')
-            {
-                parts[count++] = payload.substring(start, i);
-                start = i + 1;
-            }
-        }
-        parts[count++] = payload.substring(start); // last part
-
-        // Validate number of parts (1 or 2)
-        if (count < 1 || count > 2)
+        const int p1 = payload.indexOf(';');
+        if (p1 != -1 && payload.indexOf(';', p1 + 1) != -1)
         {
             myserial.write("#ERROR:Invalid parameters count");
             return;
         }
 
-        String enable_str = parts[0];
+        String enable_str = (p1 == -1) ? payload : payload.substring(0, p1);
         enable_str.toLowerCase();
-        String password = (count == 2) ? parts[1] : "00000000";
+        String password = (p1 == -1) ? "00000000" : payload.substring(p1 + 1);
 
         // Validate enable parameter
         if (enable_str != "on" && enable_str != "off" && enable_str != "true" && enable_str != "false")

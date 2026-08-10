@@ -50,44 +50,9 @@ public:
 		if (antena[current_ant - 1].rssi < current_rssi)
 			return "";
 
-		// Filtro de prefixo
-		if (prefix.length() > 0)
-		{
-			bool prefix_match = false;
-
-			if (prefix.indexOf(',') == -1)
-			{
-				String trimmed_prefix = prefix;
-				trimmed_prefix.trim();
-				trimmed_prefix.toLowerCase();
-				if (trimmed_prefix.length() > 0 && current_epc.startsWith(trimmed_prefix))
-					prefix_match = true;
-			}
-			else
-			{
-				int start = 0;
-				int separator_pos = prefix.indexOf(',');
-
-				while (start < prefix.length())
-				{
-					String current_prefix = (separator_pos != -1) ? prefix.substring(start, separator_pos) : prefix.substring(start);
-					current_prefix.trim();
-					current_prefix.toLowerCase();
-					if (current_prefix.length() > 0 && current_epc.startsWith(current_prefix))
-					{
-						prefix_match = true;
-						break;
-					}
-					if (separator_pos == -1)
-						break;
-					start = separator_pos + 1;
-					separator_pos = prefix.indexOf(',', start);
-				}
-			}
-
-			if (!prefix_match)
-				return "";
-		}
+		// VALIDATE PREFIX
+		if (!validate_prefix(current_epc))
+			return "";
 
 		// TARGET MAP
 		if (check_target_map_condition(current_epc))
@@ -279,6 +244,47 @@ private:
 		if (gtin[0] == '0')
 			gtin = gtin.substring(1);
 		return gtin;
+	}
+
+	// VALIDATE PREFIX
+	bool validate_prefix(const String &current_epc)
+	{
+		// Filtro de prefixo
+		if (prefix.length() == 0)
+			return true;
+		bool prefix_match = false;
+
+		if (prefix.indexOf(',') == -1)
+		{
+			String trimmed_prefix = prefix;
+			trimmed_prefix.trim();
+			trimmed_prefix.toLowerCase();
+			if (trimmed_prefix.length() > 0 && current_epc.startsWith(trimmed_prefix))
+				prefix_match = true;
+		}
+		else
+		{
+			int start = 0;
+			int separator_pos = prefix.indexOf(',');
+
+			while (start < prefix.length())
+			{
+				String current_prefix = (separator_pos != -1) ? prefix.substring(start, separator_pos) : prefix.substring(start);
+				current_prefix.trim();
+				current_prefix.toLowerCase();
+				if (current_prefix.length() > 0 && current_epc.startsWith(current_prefix))
+				{
+					prefix_match = true;
+					break;
+				}
+				if (separator_pos == -1)
+					break;
+				start = separator_pos + 1;
+				separator_pos = prefix.indexOf(',', start);
+			}
+		}
+
+		return prefix_match;
 	}
 
 	// TARGET MAP
