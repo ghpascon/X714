@@ -5,10 +5,13 @@ void WiFiEvent(arduino_event_id_t event)
     case ARDUINO_EVENT_ETH_START:
         Serial.println("ETH Started");
         eth_state = "started";
+        eth_connected = false;
+        eth_ip = "";
         break;
     case ARDUINO_EVENT_ETH_CONNECTED:
         Serial.println("ETH Connected");
         eth_state = "connected";
+        eth_connected = false;
         break;
     case ARDUINO_EVENT_ETH_GOT_IP:
         eth_ip = ETH.localIP().toString();

@@ -8,6 +8,7 @@ public:
     {
         // Lê o input da serial
         String cmd = myserial.check_serial();
+        cmd = sanitize_cmd_input(cmd);
 
         if (cmd.length() > 0)
         {
@@ -39,6 +40,31 @@ public:
     }
 
 private:
+    String sanitize_cmd_input(const String &input)
+    {
+        String sanitized;
+        sanitized.reserve(input.length());
+
+        for (size_t i = 0; i < input.length(); i++)
+        {
+            uint8_t c = (uint8_t)input.charAt(i);
+
+            if (c == '\r' || c == '\n' || c == '\0')
+                continue;
+
+            if (c == '\t')
+                c = ' ';
+
+            if (c < 32 || c == 127 || c > 126)
+                continue;
+
+            sanitized += (char)c;
+        }
+
+        sanitized.trim();
+        return sanitized;
+    }
+
     void change_password_cmd(String cmd)
     {
         if (!cmd.startsWith("#change_password:"))
@@ -185,6 +211,7 @@ private:
 public:
     void check_commands(String cmd)
     {
+        cmd = sanitize_cmd_input(cmd);
         String original_cmd = cmd; // Keep the original command
         cmd.toLowerCase();
         cmd.trim();
@@ -475,13 +502,23 @@ public:
         else if (cmd.startsWith("#wifi_ssid:"))
         {
             wifi_ssid = original_cmd.substring(original_cmd.indexOf(':') + 1);
-            connection.setup();
+            if (wifi_ssid.length() > 0)
+            {
+                WiFi.disconnect(true);
+                WiFi.mode(WIFI_STA);
+                WiFi.begin(wifi_ssid.c_str(), wifi_password.c_str());
+            }
             myserial.write("#WIFI_SSID:" + wifi_ssid);
         }
         else if (cmd.startsWith("#wifi_password:"))
         {
             wifi_password = original_cmd.substring(original_cmd.indexOf(':') + 1);
-            connection.setup();
+            if (wifi_ssid.length() > 0)
+            {
+                WiFi.disconnect(true);
+                WiFi.mode(WIFI_STA);
+                WiFi.begin(wifi_ssid.c_str(), wifi_password.c_str());
+            }
             myserial.write("#WIFI_PASSWORD:" + wifi_password);
         }
 

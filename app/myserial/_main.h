@@ -23,6 +23,7 @@ public:
 
     void loop()
     {
+        connection.loop();
         loop_bt();
         connection_state_changed();
     }
