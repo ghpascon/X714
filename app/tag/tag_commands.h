@@ -54,6 +54,9 @@ public:
 		if (!validate_prefix(current_epc))
 			return "";
 
+		// SET ANT LED
+		pins.trigger_ant_led(current_ant);
+
 		// TARGET MAP
 		if (check_target_map_condition(current_epc))
 		{
@@ -72,16 +75,25 @@ public:
 			remove_from_target_map(current_tid);
 		}
 
-		// SET ANT LED
-		pins.trigger_ant_led(current_ant);
-
 		// always_send: emite antes do check de duplicata
 		if (always_send)
 			display_current_tag(current_epc, current_tid, String(current_ant), String(current_rssi));
 
-		// Deduplicacao O(1) por TID via hash table
+		// Se o TID ja existe, compara EPC: igual ignora; diferente substitui o registro.
+		const TagRecord *existing = store.findByTid(current_tid.c_str());
+		if (existing)
+		{
+			if (current_epc.equals(existing->epc))
+				return "";
+			store.removeByTid(current_tid.c_str());
+		}
+
+		// Se estiver cheio, remove o mais antigo para abrir espaco ao novo.
+		if (store.isFull())
+			store.removeOldest();
+
 		if (!store.upsert(current_epc.c_str(), current_tid.c_str(), current_ant, current_rssi))
-			return ""; // TID duplicado ou store cheio
+			return "";
 
 		if (buzzer_on)
 			pins.turn_on_buzzer();

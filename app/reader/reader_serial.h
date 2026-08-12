@@ -249,7 +249,6 @@ private:
 					myserial.write("#TAG_WRITE:OK");
 				else
 					myserial.write("#TAG_WRITE:ERROR");
-				tag_commands.clear_tags();
 			}
 			// PROTECTED MODE
 			else if (reader_cmd == "e9")

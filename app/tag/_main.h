@@ -60,18 +60,30 @@ public:
 
 	bool containsTid(const char *tid) const
 	{
-		if (!tid || tid[0] == '\0')
+		return _find_pool_index_by_tid(tid) >= 0;
+	}
+
+	const TagRecord *findByTid(const char *tid) const
+	{
+		const int idx = _find_pool_index_by_tid(tid);
+		if (idx < 0)
+			return nullptr;
+		return &_pool[idx];
+	}
+
+	bool removeByTid(const char *tid)
+	{
+		const int idx = _find_pool_index_by_tid(tid);
+		if (idx < 0)
 			return false;
-		uint16_t idx = _hash(tid);
-		for (uint16_t probe = 0; probe < HASH_CAP; probe++, idx = (idx + 1) & (HASH_CAP - 1))
-		{
-			const int16_t slot = _htid[idx];
-			if (slot == SLOT_EMPTY)
-				return false;
-			if (strcmp(_pool[slot].tid, tid) == 0)
-				return true;
-		}
-		return false;
+		return _remove_by_pool_index((int16_t)idx);
+	}
+
+	bool removeOldest()
+	{
+		if (_count <= 0)
+			return false;
+		return _remove_by_pool_index(_order[0]);
 	}
 
 	int size() const { return _count; }
@@ -101,6 +113,79 @@ private:
 	{
 		// 0xFF repetido: int16_t 0xFFFF == -1 == SLOT_EMPTY
 		memset(_htid, 0xFF, sizeof(_htid));
+	}
+
+	void _rebuild_hash()
+	{
+		_clear_tables();
+		for (int i = 0; i < _count; i++)
+		{
+			uint16_t idx = _hash(_pool[i].tid);
+			for (uint16_t probe = 0; probe < HASH_CAP; probe++, idx = (idx + 1) & (HASH_CAP - 1))
+			{
+				if (_htid[idx] == SLOT_EMPTY)
+				{
+					_htid[idx] = (int16_t)i;
+					break;
+				}
+			}
+		}
+	}
+
+	int _find_pool_index_by_tid(const char *tid) const
+	{
+		if (!tid || tid[0] == '\0')
+			return -1;
+
+		uint16_t idx = _hash(tid);
+		for (uint16_t probe = 0; probe < HASH_CAP; probe++, idx = (idx + 1) & (HASH_CAP - 1))
+		{
+			const int16_t slot = _htid[idx];
+			if (slot == SLOT_EMPTY)
+				return -1;
+			if (strcmp(_pool[slot].tid, tid) == 0)
+				return slot;
+		}
+		return -1;
+	}
+
+	bool _remove_by_pool_index(int16_t pool_index)
+	{
+		if (pool_index < 0 || pool_index >= _count)
+			return false;
+
+		int order_pos = -1;
+		for (int i = 0; i < _count; i++)
+		{
+			if (_order[i] == pool_index)
+			{
+				order_pos = i;
+				break;
+			}
+		}
+		if (order_pos < 0)
+			return false;
+
+		for (int i = order_pos; i < _count - 1; i++)
+			_order[i] = _order[i + 1];
+
+		const int16_t last_index = (int16_t)(_count - 1);
+		if (pool_index != last_index)
+		{
+			_pool[pool_index] = _pool[last_index];
+			for (int i = 0; i < _count - 1; i++)
+			{
+				if (_order[i] == last_index)
+				{
+					_order[i] = pool_index;
+					break;
+				}
+			}
+		}
+
+		_count--;
+		_rebuild_hash();
+		return true;
 	}
 
 	static void _strcpy24(char *dst, const char *src)
