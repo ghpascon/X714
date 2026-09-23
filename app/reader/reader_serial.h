@@ -258,14 +258,6 @@ private:
 				else
 					myserial.write("#TAG_PROTECTED:ERROR");
 			}
-			else if (reader_cmd == "91")
-			{
-				if (cmd.substring(6, 8) == "00")
-				{
-					const int return_loss = strtol(cmd.substring(8, 10).c_str(), NULL, 16);
-					myserial.write("#RETURN_LOSS:" + String(return_loss));
-				}
-			}
 		}
 		else
 		{
@@ -295,6 +287,18 @@ private:
 			return;
 
 		const int cmd_size = strtol(tag_cmd.substring(0, 2).c_str(), NULL, 16);
+
+		// treat when no epc is present in the command
+		if (cmd_size == 0x15)
+		{
+			String current_tid = tag_cmd.substring(14, 38);
+
+			String result = tag_commands.add_tag("000000000000000000000000", current_tid, tag_cmd.substring(9, 11).toInt(), 0);
+			if (result.length() > 0)
+				write_tag(result, "00000000", "tid", current_tid);
+			return;
+		}
+
 		const int cmd_len_chars = (cmd_size + 1) * 2;
 		if (cmd_size <= 0 || cmd_len_chars != tag_cmd.length())
 			return;
