@@ -288,12 +288,39 @@ private:
 
 		const int cmd_size = strtol(tag_cmd.substring(0, 2).c_str(), NULL, 16);
 
+		int current_ant = 0;
+		const int ant_positions[3] = {6, 8, 10};
+		for (int i = 0; i < 3; i++)
+		{
+			const int pos = ant_positions[i];
+			if (tag_cmd.length() < pos + 2)
+				continue;
+
+			const int ant_candidate = strtol(tag_cmd.substring(pos, pos + 2).c_str(), NULL, 16);
+			if (ant_candidate == 1 || ant_candidate == 2 || ant_candidate == 4 || ant_candidate == 8)
+			{
+				current_ant = ant_candidate;
+				break;
+			}
+		}
+
+		if (current_ant == 0)
+			current_ant = 1;
+
+		if (current_ant == 4)
+			current_ant = 3;
+		if (current_ant == 8)
+			current_ant = 4;
+
 		// treat when no epc is present in the command
 		if (cmd_size == 0x15)
 		{
 			String current_tid = tag_cmd.substring(14, 38);
-
-			String result = tag_commands.add_tag("000000000000000000000000", current_tid, tag_cmd.substring(9, 11).toInt(), 0);
+			if (!is_hex_string(current_tid))
+				return;
+			if (current_tid.substring(0, 2) != "e2")
+				return;
+			String result = tag_commands.add_tag("000000000000000000000000", current_tid, current_ant, 0);
 			if (result.length() > 0)
 				write_tag(result, "00000000", "tid", current_tid);
 			return;
@@ -336,30 +363,6 @@ private:
 		if (tag_cmd.length() >= 2)
 			current_rssi = strtol(tag_cmd.substring(tag_cmd.length() - 6, tag_cmd.length() - 4).c_str(), NULL, 16);
 		current_rssi = abs(128 - current_rssi);
-
-		int current_ant = 0;
-		const int ant_positions[3] = {6, 8, 10};
-		for (int i = 0; i < 3; i++)
-		{
-			const int pos = ant_positions[i];
-			if (tag_cmd.length() < pos + 2)
-				continue;
-
-			const int ant_candidate = strtol(tag_cmd.substring(pos, pos + 2).c_str(), NULL, 16);
-			if (ant_candidate == 1 || ant_candidate == 2 || ant_candidate == 4 || ant_candidate == 8)
-			{
-				current_ant = ant_candidate;
-				break;
-			}
-		}
-
-		if (current_ant == 0)
-			current_ant = 1;
-
-		if (current_ant == 4)
-			current_ant = 3;
-		if (current_ant == 8)
-			current_ant = 4;
 
 		String result = tag_commands.add_tag(current_epc, current_tid, current_ant, current_rssi);
 		if (result.length() > 0)
