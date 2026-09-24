@@ -26,6 +26,7 @@ public:
         connection.loop();
         loop_bt();
         connection_state_changed();
+        usb_health_check();
     }
 
     void stop_bt_for_network(const String &label)
@@ -128,5 +129,60 @@ public:
         }
 
         return cmd;
+    }
+
+private:
+    static constexpr unsigned long USB_HEALTH_INTERVAL_MS = 1000;
+    static constexpr uint8_t USB_MAX_RESET_ATTEMPTS = 3;
+    static constexpr unsigned long USB_RESET_DELAY_MS = 80;
+
+    unsigned long usb_last_health_check_ms = 0;
+    uint8_t usb_reset_attempts = 0;
+
+    void reset_usb_cdc()
+    {
+        usb_reset_attempts++;
+        Serial.println("[USB] CDC reset attempt #" + String(usb_reset_attempts));
+
+        my_usb.end();
+        delay(USB_RESET_DELAY_MS);
+        my_usb.begin(115200);
+
+        const int status_after_reset = my_usb.available();
+        if (status_after_reset >= 0)
+        {
+            usb_reset_attempts = 0;
+            Serial.println("[USB] CDC reset successful");
+            return;
+        }
+
+        if (usb_reset_attempts >= USB_MAX_RESET_ATTEMPTS)
+        {
+            Serial.println("[USB] CDC unrecoverable, rebooting ESP");
+            delay(200);
+            ESP.restart();
+        }
+    }
+
+    void usb_health_check()
+    {
+        const unsigned long now = millis();
+        if (now - usb_last_health_check_ms < USB_HEALTH_INTERVAL_MS)
+            return;
+        usb_last_health_check_ms = now;
+
+        const int usb_status = my_usb.available();
+        if (usb_status >= 0)
+        {
+            if (usb_reset_attempts > 0)
+            {
+                Serial.println("[USB] Health check OK");
+                usb_reset_attempts = 0;
+            }
+            return;
+        }
+
+        Serial.println("[USB] Health check error (available < 0)");
+        reset_usb_cdc();
     }
 };
