@@ -3,6 +3,14 @@
 class LED_RGB
 {
 public:
+#if INVERT_RGB
+#define ON HIGH
+#define OFF LOW
+#else
+#define ON LOW
+#define OFF HIGH
+#endif
+
 	void setup()
 	{
 		leds.begin();
@@ -27,9 +35,9 @@ public:
 		if (!setup_done)
 		{
 			leds.setPixelColor(0, leds.Color(led_brigthness, 0x00, 0x00));
-			digitalWrite(EXTERNAL_LED_RED_PIN, LOW);
-			digitalWrite(EXTERNAL_LED_GREEN_PIN, HIGH);
-			digitalWrite(EXTERNAL_LED_BLUE_PIN, HIGH);
+			digitalWrite(EXTERNAL_LED_RED_PIN, ON);
+			digitalWrite(EXTERNAL_LED_GREEN_PIN, OFF);
+			digitalWrite(EXTERNAL_LED_BLUE_PIN, OFF);
 		}
 
 		// IDLE
@@ -37,32 +45,32 @@ public:
 			if (connected)
 			{
 				leds.setPixelColor(0, leds.Color(0x00, 0x00, led_brigthness));
-				digitalWrite(EXTERNAL_LED_RED_PIN, HIGH);
-				digitalWrite(EXTERNAL_LED_GREEN_PIN, HIGH);
-				digitalWrite(EXTERNAL_LED_BLUE_PIN, LOW);
+				digitalWrite(EXTERNAL_LED_RED_PIN, OFF);
+				digitalWrite(EXTERNAL_LED_GREEN_PIN, OFF);
+				digitalWrite(EXTERNAL_LED_BLUE_PIN, ON);
 			}
 			else
 			{
 				leds.setPixelColor(0, leds.Color(led_brigthness, led_brigthness, 0x00));
-				digitalWrite(EXTERNAL_LED_RED_PIN, LOW);
-				digitalWrite(EXTERNAL_LED_GREEN_PIN, LOW);
-				digitalWrite(EXTERNAL_LED_BLUE_PIN, HIGH);
+				digitalWrite(EXTERNAL_LED_RED_PIN, ON);
+				digitalWrite(EXTERNAL_LED_GREEN_PIN, ON);
+				digitalWrite(EXTERNAL_LED_BLUE_PIN, OFF);
 			}
 
 		// READING
 		else if (connected)
 		{
 			leds.setPixelColor(0, leds.Color(0x00, led_brigthness, led_brigthness));
-			digitalWrite(EXTERNAL_LED_RED_PIN, HIGH);
-			digitalWrite(EXTERNAL_LED_GREEN_PIN, LOW);
-			digitalWrite(EXTERNAL_LED_BLUE_PIN, LOW);
+			digitalWrite(EXTERNAL_LED_RED_PIN, OFF);
+			digitalWrite(EXTERNAL_LED_GREEN_PIN, ON);
+			digitalWrite(EXTERNAL_LED_BLUE_PIN, ON);
 		}
 		else
 		{
 			leds.setPixelColor(0, leds.Color(0x00, led_brigthness, 0x00));
-			digitalWrite(EXTERNAL_LED_RED_PIN, HIGH);
-			digitalWrite(EXTERNAL_LED_GREEN_PIN, LOW);
-			digitalWrite(EXTERNAL_LED_BLUE_PIN, HIGH);
+			digitalWrite(EXTERNAL_LED_RED_PIN, OFF);
+			digitalWrite(EXTERNAL_LED_GREEN_PIN, ON);
+			digitalWrite(EXTERNAL_LED_BLUE_PIN, OFF);
 		}
 
 		leds.show();
