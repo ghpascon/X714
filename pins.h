@@ -10,7 +10,7 @@
 #define ESP_MODEL ESP_MODEL_ESP32_S3_ETH
 #endif
 
-#define INVERT_RGB true
+// #define INVERT_RGB
 
 #if (ESP_MODEL == ESP_MODEL_ESP32_S3)
 #define ETH_MISO_PIN 21
@@ -58,7 +58,7 @@ const byte LED_ANT_PINS[ant_qtd] = {15, 16, 17, 1};
 #define in_2_pin 19
 #define in_3_pin 20
 
-#define buzzer_pin 3
+#define buzzer_pin 25
 #define indicator_pin 15
 #define out_1_pin 16
 #define out_2_pin 17
@@ -67,17 +67,17 @@ const byte LED_ANT_PINS[ant_qtd] = {15, 16, 17, 1};
 #define tx_reader_module 2
 #define rx_reader_module 1
 
-#define RGB_DATA_PIN 3
+#define RGB_DATA_PIN 47
 #define EXTERNAL_LED_RED_PIN 41
 #define EXTERNAL_LED_GREEN_PIN 40
 #define EXTERNAL_LED_BLUE_PIN 39
 
-#define POWER_PIN 3
+#define POWER_PIN 48
 
-const byte LED_ANT_PINS[ant_qtd] = {3,3,3,3};
+const byte LED_ANT_PINS[ant_qtd] = {3, 3, 3, 3};
 
 #define TEST_PIN 0
 #else
-#error "Invalid ESP_MODEL. Use ESP_MODEL_ESP32_S3 or ESP_MODEL_ESP32_S3_ETH."
+#error "Invalid ESP_MODEL."
 #endif
 #endif // PINS_H

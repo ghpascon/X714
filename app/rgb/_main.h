@@ -3,7 +3,7 @@
 class LED_RGB
 {
 public:
-#if INVERT_RGB
+#ifndef INVERT_RGB
 #define ON HIGH
 #define OFF LOW
 #else
