@@ -173,7 +173,7 @@ Esta secao lista mensagens que podem chegar sem um comando imediato do host.
 
 | Mensagem                                | Quando ocorre                                          |
 | --------------------------------------- | ------------------------------------------------------ |
-| #T+@EPC\|TID\|ANT\|RSSI\|on/off         | Nova leitura de tag em modo normal (`simple_send=off`) |
+| `#T+@EPC\|TID\|ANT\|RSSI\|on/off`         | Nova leitura de tag em modo normal (`simple_send=off`) |
 | `EPC` (ou GTIN quando `decode_gtin=on`) | Nova leitura em modo simplificado (`simple_send=on`)   |
 | `#ADDED_TO_TARGET_MAP:TID->TARGET`      | Fluxo de `write_prefix` adiciona alvo por TID          |
 | `#REMOVED_FROM_TARGET_MAP:TID`          | Tag ja chegou com prefixo alvo e sai do mapa           |
