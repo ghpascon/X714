@@ -7,7 +7,7 @@
 
 // Default model when not explicitly defined.
 #ifndef ESP_MODEL
-#define ESP_MODEL ESP_MODEL_ESP32_S3
+#define ESP_MODEL ESP_MODEL_ESP32_S3_ETH
 #endif
 
 // #define INVERT_RGB
