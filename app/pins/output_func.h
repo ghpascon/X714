@@ -42,7 +42,6 @@ public:
 			buzzer_need_on = false;
 		}
 		const int buzzer_time_on = 200;
-		const int indicator_time_on = 1000;
 		// prev_buzzer_state and prev_indicator_output are now members
 
 		bool buzzer_should_be_on = (now - buzzer_time < (unsigned long)buzzer_time_on) && buzzer_on;
@@ -52,7 +51,7 @@ public:
 			digitalWrite(buzzer_pin, buzzer_should_be_on ? HIGH : LOW);
 		}
 
-		bool indicator_should_be_output = (now - buzzer_time < (unsigned long)indicator_time_on) && buzzer_on;
+		bool indicator_should_be_output = (now - buzzer_time < indicator_time) && buzzer_on;
 		if (indicator_should_be_output != prev_indicator_output)
 		{
 			prev_indicator_output = indicator_should_be_output;

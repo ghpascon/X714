@@ -19,6 +19,7 @@ extern bool simple_send;
 extern bool hotspot_on;
 extern bool keyboard;
 extern bool buzzer_on;
+extern int indicator_time;
 extern bool decode_gtin;
 
 extern bool dhcp_on;

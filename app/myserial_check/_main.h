@@ -339,6 +339,16 @@ public:
             buzzer_on = cmd.endsWith("on");
             myserial.write("#BUZZER:" + String(buzzer_on ? "on" : "off"));
         }
+        else if (cmd.startsWith("#set_indicator_time:"))
+        {
+            String val = cmd.substring(20);
+            indicator_time = val.toInt();
+            myserial.write("#INDICATOR_TIME:" + String(indicator_time));
+        }
+        else if (cmd == "#get_indicator_time")
+        {
+            myserial.write("#INDICATOR_TIME:" + String(indicator_time));
+        }
         else if (cmd.startsWith("#gpi_stop_delay:"))
         {
             String val = cmd.substring(16);

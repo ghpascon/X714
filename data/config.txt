@@ -5,13 +5,13 @@ antena:4,on,20,150
 session:0
 start_reading:on
 gpi_start:off
-invert_gpi:off
 gpi_stop_delay:0
 always_send:off
 simple_send:off
 hotspot_on:on
 keyboard:off
 buzzer_on:on
+indicator_time:1000
 decode_gtin:off
 dhcp_on:off
 static_ip:192.168.1.101
@@ -25,4 +25,4 @@ protected_inventory_password:00000000
 wifi_ssid:
 wifi_password:
 write_prefix:
-read_interval:100
+read_interval:50

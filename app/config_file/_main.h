@@ -233,6 +233,13 @@ private:
 			handled = true;
 			return true;
 		}
+		else if (parameter.startsWith("indicator_time:"))
+		{
+			parameter.replace("indicator_time:", "");
+			indicator_time = parameter.toInt();
+			handled = true;
+			return true;
+		}
 		else if (parameter.startsWith("decode_gtin:"))
 		{
 			decode_gtin = parameter.endsWith("on");
@@ -389,6 +396,7 @@ public:
 		new_config += "hotspot_on:" + String(hotspot_on ? "on" : "off") + "\n";
 		new_config += "keyboard:" + String(keyboard ? "on" : "off") + "\n";
 		new_config += "buzzer_on:" + String(buzzer_on ? "on" : "off") + "\n";
+		new_config += "indicator_time:" + String(indicator_time) + "\n";
 		new_config += "decode_gtin:" + String(decode_gtin ? "on" : "off") + "\n";
 		new_config += "dhcp_on:" + String(dhcp_on ? "on" : "off") + "\n";
 		new_config += "static_ip:" + static_ip + "\n";
@@ -405,7 +413,7 @@ public:
 		// Wi-Fi
 		new_config += "wifi_ssid:" + wifi_ssid + "\n";
 		new_config += "wifi_password:" + wifi_password + "\n";
-		
+
 		// write_prefix
 		new_config += "write_prefix:" + write_prefix + "\n";
 

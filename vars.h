@@ -53,6 +53,7 @@ byte temperatura = 0;
 int gpi_stop_delay = 0;
 bool hotspot_on = true;
 bool buzzer_on = false;
+int indicator_time = 1000;
 bool decode_gtin = true;
 bool fs_loaded = true;
 

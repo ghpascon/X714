@@ -1,72 +1,178 @@
+#include <uri/UriBraces.h>
+
+static bool parse_bool_path_value(const String &raw_value, bool &parsed_value)
+{
+  String value = raw_value;
+  value.trim();
+  value.toLowerCase();
+
+  if (value == "1" || value == "true" || value == "on")
+  {
+    parsed_value = true;
+    return true;
+  }
+
+  if (value == "0" || value == "false" || value == "off")
+  {
+    parsed_value = false;
+    return true;
+  }
+
+  return false;
+}
+
+static bool parse_non_negative_int_path_value(const String &raw_value, int &parsed_value)
+{
+  String value = raw_value;
+  value.trim();
+
+  if (value.length() == 0)
+    return false;
+
+  for (unsigned int i = 0; i < value.length(); i++)
+  {
+    if (!isDigit(value[i]))
+      return false;
+  }
+
+  parsed_value = value.toInt();
+  return true;
+}
+
+static String reader_modes_status_json()
+{
+  String json = "{";
+  json += "\"start_reading\":";
+  json += start_reading ? "true" : "false";
+  json += ",\"gpi_start\":";
+  json += gpi_start ? "true" : "false";
+  json += ",\"always_send\":";
+  json += always_send ? "true" : "false";
+  json += ",\"simple_send\":";
+  json += simple_send ? "true" : "false";
+  json += ",\"keyboard\":";
+  json += keyboard ? "true" : "false";
+  json += ",\"buzzer_on\":";
+  json += buzzer_on ? "true" : "false";
+  json += ",\"decode_gtin\":";
+  json += decode_gtin ? "true" : "false";
+  json += ",\"indicator_time\":" + String(indicator_time);
+  json += "}";
+  return json;
+}
+
+static void send_reader_modes_status(int http_code = 200)
+{
+  server.send(http_code, "application/json", reader_modes_status_json());
+}
+
 void reader_modes_script()
 {
   server.on("/modes_att", HTTP_GET, []()
+            { send_reader_modes_status(); });
+
+  server.on(UriBraces("/start_reading/{}"), HTTP_POST, []()
             {
-    String json = "{";
-    json += "\"gpi_start_label\":\"" + String(start_reading ? "START READING" : (gpi_start ? "ON" : "OFF")) + "\",";
-    json += "\"gpi_start_color\":\"" + String(start_reading ? "#cccccc" : (gpi_start ? "#00ff00" : "#ff0000")) + "\",";
-    json += "\"start_reading_label\":\"" + String(start_reading ? "ON" : "OFF") + "\",";
-    json += "\"start_reading_color\":\"" + String(start_reading ? "#00ff00" : "#ff0000") + "\",";
-    json += "\"always_send_label\":\"" + String(always_send ? "ON" : "OFF") + "\",";
-    json += "\"always_send_color\":\"" + String(always_send ? "#00ff00" : "#ff0000") + "\",";
-    json += "\"simple_send_label\":\"" + String(simple_send ? "ON" : "OFF") + "\",";
-    json += "\"simple_send_color\":\"" + String(simple_send ? "#00ff00" : "#ff0000") + "\",";
-    json += "\"keyboard_label\":\"" + String(keyboard ? "ON" : "OFF") + "\",";
-    json += "\"keyboard_color\":\"" + String(keyboard ? "#00ff00" : "#ff0000") + "\",";
-    json += "\"buzzer_label\":\"" + String(buzzer_on ? "ON" : "OFF") + "\",";
-    json += "\"buzzer_color\":\"" + String(buzzer_on ? "#00ff00" : "#ff0000") + "\",";
-    json += "\"gtin_label\":\"" + String(decode_gtin ? "ON" : "OFF") + "\",";
-    json += "\"gtin_color\":\"" + String(decode_gtin ? "#00ff00" : "#ff0000") + "\"";
-    json += "}";
+    bool value = false;
+    if (!parse_bool_path_value(server.pathArg(0), value))
+    {
+      server.send(400, "application/json", "{\"error\":\"invalid start_reading value\"}");
+      return;
+    }
 
-    server.send(200, "application/json", json); });
+    start_reading = value;
+    if (start_reading)
+      gpi_start = false;
 
-  server.on("/start_reading", HTTP_GET, []()
-            { 
-        start_reading = !start_reading;
-        if (start_reading)
-          gpi_start = false;
-        
-    server.send(200, "application/json", String(start_reading)); });
+    send_reader_modes_status(); });
 
-  server.on("/gpi_start", HTTP_GET, []()
-            { 
-              if(start_reading)
-               {
-         server.send(401, "application/json", String("START READ MODE ACTIVE"));
-                 return;
-                 }
-        gpi_start = !gpi_start;
-        
-    server.send(200, "application/json", String(gpi_start)); });
+  server.on(UriBraces("/gpi_start/{}"), HTTP_POST, []()
+            {
+    if (start_reading)
+    {
+      server.send(409, "application/json", "{\"error\":\"start_reading active\"}");
+      return;
+    }
 
-  server.on("/always_send", HTTP_GET, []()
-            { 
-        always_send = !always_send;
-        
-    server.send(200, "application/json", String(always_send)); });
+    bool value = false;
+    if (!parse_bool_path_value(server.pathArg(0), value))
+    {
+      server.send(400, "application/json", "{\"error\":\"invalid gpi_start value\"}");
+      return;
+    }
 
-  server.on("/simple_send", HTTP_GET, []()
-            { 
-        simple_send = !simple_send;
-        
-    server.send(200, "application/json", String(simple_send)); });
+    gpi_start = value;
+    send_reader_modes_status(); });
 
-  server.on("/keyboard", HTTP_GET, []()
-            { 
-        keyboard = !keyboard;
-        
-    server.send(200, "application/json", String(keyboard)); });
+  server.on(UriBraces("/always_send/{}"), HTTP_POST, []()
+            {
+    bool value = false;
+    if (!parse_bool_path_value(server.pathArg(0), value))
+    {
+      server.send(400, "application/json", "{\"error\":\"invalid always_send value\"}");
+      return;
+    }
 
-  server.on("/buzzer", HTTP_GET, []()
-            { 
-        buzzer_on = !buzzer_on;
-        
-    server.send(200, "application/json", String(buzzer_on)); });
+    always_send = value;
+    send_reader_modes_status(); });
 
-  server.on("/gtin", HTTP_GET, []()
-            { 
-        decode_gtin = !decode_gtin;
-        
-    server.send(200, "application/json", String(decode_gtin)); });
+  server.on(UriBraces("/simple_send/{}"), HTTP_POST, []()
+            {
+    bool value = false;
+    if (!parse_bool_path_value(server.pathArg(0), value))
+    {
+      server.send(400, "application/json", "{\"error\":\"invalid simple_send value\"}");
+      return;
+    }
+
+    simple_send = value;
+    send_reader_modes_status(); });
+
+  server.on(UriBraces("/keyboard/{}"), HTTP_POST, []()
+            {
+    bool value = false;
+    if (!parse_bool_path_value(server.pathArg(0), value))
+    {
+      server.send(400, "application/json", "{\"error\":\"invalid keyboard value\"}");
+      return;
+    }
+
+    keyboard = value;
+    send_reader_modes_status(); });
+
+  server.on(UriBraces("/buzzer/{}"), HTTP_POST, []()
+            {
+    bool value = false;
+    if (!parse_bool_path_value(server.pathArg(0), value))
+    {
+      server.send(400, "application/json", "{\"error\":\"invalid buzzer value\"}");
+      return;
+    }
+
+    buzzer_on = value;
+    send_reader_modes_status(); });
+
+  server.on(UriBraces("/gtin/{}"), HTTP_POST, []()
+            {
+    bool value = false;
+    if (!parse_bool_path_value(server.pathArg(0), value))
+    {
+      server.send(400, "application/json", "{\"error\":\"invalid gtin value\"}");
+      return;
+    }
+
+    decode_gtin = value;
+    send_reader_modes_status(); });
+
+  server.on(UriBraces("/indicator_time/{}"), HTTP_POST, []()
+            {
+    int value = 0;
+    if (!parse_non_negative_int_path_value(server.pathArg(0), value))
+    {
+      server.send(400, "application/json", "{\"error\":\"invalid indicator_time value\"}");
+      return;
+    }
+
+    indicator_time = value;
+    send_reader_modes_status(); });
 }

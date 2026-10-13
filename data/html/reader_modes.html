@@ -1,20 +1,84 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <title>X714 READER MODES</title>
     <link rel="stylesheet" type="text/css" href="/style.css" />
+    <style>
+      .indicator_time_panel {
+        width: 100%;
+        border: 2px solid #d8d8d8;
+        border-radius: 12px;
+        padding: 16px 18px;
+        box-sizing: border-box;
+        margin-top: 6px;
+        color: #ffffff;
+        background: rgba(0, 0, 0, 0.22);
+      }
+
+      .indicator_time_title {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 14px;
+        color: #ffffff;
+      }
+
+      .indicator_time_controls {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .indicator_time_current {
+        min-width: 190px;
+        font-size: 22px;
+        font-weight: 700;
+        color: #ffffff;
+      }
+
+      .indicator_time_input {
+        width: 240px;
+        height: 52px;
+        font-size: 24px;
+        padding: 0 14px;
+        box-sizing: border-box;
+        color: #ffffff;
+        background: #1f1f1f;
+        border: 2px solid #8a8a8a;
+        border-radius: 10px;
+      }
+
+      .indicator_time_input::placeholder {
+        color: #d6d6d6;
+      }
+
+      .indicator_time_apply {
+        min-width: 150px;
+        height: 52px;
+        font-size: 22px;
+        font-weight: 700;
+        color: #ffffff;
+        background: #0b8f41;
+        border: 2px solid #ffffff;
+        border-radius: 10px;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+      }
+
+      .indicator_time_apply:hover {
+        background: #0ea14a;
+      }
+    </style>
   </head>
 
   <body>
     <div class="container0">
       <div class="container1">
         <div class="container2">
-          <label style="position: relative; top: 20px" class="SMTX"
-            >X714</label
-          >
+          <label style="position: relative; top: 20px" class="SMTX">X714</label>
         </div>
         <div class="container2">
-          <button onclick="window.location.href='/'">HOME</button>
+          <button onclick="window.location.href = '/'">HOME</button>
         </div>
       </div>
 
@@ -35,7 +99,7 @@
               <td>
                 <button
                   id="start_reading_button"
-                  onclick="fetch('/start_reading')"
+                  onclick="setBooleanMode('start_reading', 'start_reading')"
                 ></button>
               </td>
             </tr>
@@ -47,7 +111,7 @@
               <td>
                 <button
                   id="gpi_start_button"
-                  onclick="fetch('/gpi_start')"
+                  onclick="setBooleanMode('gpi_start', 'gpi_start')"
                 ></button>
               </td>
             </tr>
@@ -59,7 +123,7 @@
               <td>
                 <button
                   id="always_send_button"
-                  onclick="fetch('/always_send')"
+                  onclick="setBooleanMode('always_send', 'always_send')"
                 ></button>
               </td>
             </tr>
@@ -71,7 +135,7 @@
               <td>
                 <button
                   id="simple_send_button"
-                  onclick="fetch('/simple_send')"
+                  onclick="setBooleanMode('simple_send', 'simple_send')"
                 ></button>
               </td>
             </tr>
@@ -83,7 +147,7 @@
               <td>
                 <button
                   id="keyboard_button"
-                  onclick="fetch('/keyboard')"
+                  onclick="setBooleanMode('keyboard', 'keyboard')"
                 ></button>
               </td>
             </tr>
@@ -93,7 +157,10 @@
                 <label>BUZZER:</label>
               </td>
               <td>
-                <button id="buzzer_button" onclick="fetch('/buzzer')"></button>
+                <button
+                  id="buzzer_button"
+                  onclick="setBooleanMode('buzzer', 'buzzer_on')"
+                ></button>
               </td>
             </tr>
 
@@ -102,7 +169,38 @@
                 <label>GTIN:</label>
               </td>
               <td>
-                <button id="gtin_button" onclick="fetch('/gtin')"></button>
+                <button
+                  id="gtin_button"
+                  onclick="setBooleanMode('gtin', 'decode_gtin')"
+                ></button>
+              </td>
+            </tr>
+
+            <tr>
+              <td colspan="2">
+                <div class="indicator_time_panel">
+                  <div class="indicator_time_title">INDICATOR TIME (MS)</div>
+                  <div class="indicator_time_controls">
+                    <div class="indicator_time_current">
+                      ATUAL: <span id="indicator_time_current_value">0</span>
+                    </div>
+                    <input
+                      id="indicator_time_input"
+                      class="indicator_time_input"
+                      type="number"
+                      min="0"
+                      step="1"
+                      placeholder="Novo valor"
+                    />
+                    <button
+                      id="indicator_time_button"
+                      class="indicator_time_apply"
+                      onclick="saveIndicatorTime()"
+                    >
+                      APPLY
+                    </button>
+                  </div>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -110,55 +208,114 @@
       </div>
 
       <div class="container1">
-        <button onclick="window.location.href='/reader'">READER</button>
+        <button onclick="window.location.href = '/reader'">READER</button>
       </div>
     </div>
   </body>
 
   <script>
+    let modesState = null;
+
+    function modeColor(isEnabled) {
+      return isEnabled ? "#00ff00" : "#ff0000";
+    }
+
+    function setButtonState(buttonId, isEnabled) {
+      const button = document.getElementById(buttonId);
+      button.innerText = isEnabled ? "ON" : "OFF";
+      button.style.backgroundColor = modeColor(isEnabled);
+      button.disabled = false;
+    }
+
+    function renderModes() {
+      if (!modesState) return;
+
+      setButtonState("start_reading_button", modesState.start_reading);
+      setButtonState("always_send_button", modesState.always_send);
+      setButtonState("simple_send_button", modesState.simple_send);
+      setButtonState("keyboard_button", modesState.keyboard);
+      setButtonState("buzzer_button", modesState.buzzer_on);
+      setButtonState("gtin_button", modesState.decode_gtin);
+
+      const gpiButton = document.getElementById("gpi_start_button");
+      if (modesState.start_reading) {
+        gpiButton.innerText = "LOCKED";
+        gpiButton.style.backgroundColor = "#cccccc";
+        gpiButton.disabled = true;
+      } else {
+        gpiButton.innerText = modesState.gpi_start ? "ON" : "OFF";
+        gpiButton.style.backgroundColor = modeColor(modesState.gpi_start);
+        gpiButton.disabled = false;
+      }
+
+      const indicatorInput = document.getElementById("indicator_time_input");
+      const indicatorCurrent = document.getElementById(
+        "indicator_time_current_value",
+      );
+      indicatorCurrent.innerText = modesState.indicator_time;
+
+      if (document.activeElement !== indicatorInput) {
+        indicatorInput.value = modesState.indicator_time;
+      }
+    }
+
+    async function postRouteValue(route, value) {
+      const response = await fetch(`/${route}/${value}`, {
+        method: "POST",
+      });
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        const message = data && data.error ? data.error : "request failed";
+        throw new Error(message);
+      }
+
+      if (data) {
+        modesState = data;
+        renderModes();
+      }
+    }
+
+    async function setBooleanMode(route, stateKey) {
+      if (!modesState) return;
+
+      const nextValue = modesState[stateKey] ? 0 : 1;
+      try {
+        await postRouteValue(route, nextValue);
+      } catch (error) {
+        console.error("Erro:", error);
+      }
+    }
+
+    async function saveIndicatorTime() {
+      const input = document.getElementById("indicator_time_input");
+      const value = Number.parseInt(input.value, 10);
+
+      if (Number.isNaN(value) || value < 0) {
+        alert("Indicator time invalido");
+        return;
+      }
+
+      try {
+        await postRouteValue("indicator_time", value);
+      } catch (error) {
+        console.error("Erro:", error);
+      }
+    }
+
     function update_html() {
       update_elements();
     }
+    update_html();
     setInterval(update_html, 1000);
 
     function update_elements() {
       fetch("/modes_att")
         .then((response) => response.json())
         .then((data) => {
-          document.getElementById("gpi_start_button").innerText =
-            data.gpi_start_label;
-          document.getElementById("gpi_start_button").style.backgroundColor =
-            data.gpi_start_color;
-
-          document.getElementById("start_reading_button").innerText =
-            data.start_reading_label;
-          document.getElementById(
-            "start_reading_button"
-          ).style.backgroundColor = data.start_reading_color;
-
-          document.getElementById("always_send_button").innerText =
-            data.always_send_label;
-          document.getElementById("always_send_button").style.backgroundColor =
-            data.always_send_color;
-
-          document.getElementById("simple_send_button").innerText =
-            data.simple_send_label;
-          document.getElementById("simple_send_button").style.backgroundColor =
-            data.simple_send_color;
-
-          document.getElementById("keyboard_button").innerText =
-            data.keyboard_label;
-          document.getElementById("keyboard_button").style.backgroundColor =
-            data.keyboard_color;
-
-          document.getElementById("buzzer_button").innerText =
-            data.buzzer_label;
-          document.getElementById("buzzer_button").style.backgroundColor =
-            data.buzzer_color;
-
-          document.getElementById("gtin_button").innerText = data.gtin_label;
-          document.getElementById("gtin_button").style.backgroundColor =
-            data.gtin_color;
+          modesState = data;
+          renderModes();
         })
         .catch((error) => console.error("Erro:", error));
     }

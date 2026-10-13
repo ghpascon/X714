@@ -28,6 +28,7 @@ extern bool hotspot_on;
 extern MySerial myserial;
 extern bool keyboard;
 extern bool buzzer_on;
+extern int indicator_time;
 extern bool decode_gtin;
 
 // Prefix config (extern only)
