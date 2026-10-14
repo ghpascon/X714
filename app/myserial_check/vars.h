@@ -44,5 +44,6 @@ extern String subnet_mask;
 
 extern bool webhook_on;
 extern String webhook_url;
+extern int webhook_interval;
 
 extern String write_prefix;

@@ -5,12 +5,14 @@
 
 extern bool webhook_on;
 extern String webhook_url;
+extern int webhook_interval;
 extern TAG_COMMANDS tag_commands;
 extern MySerial myserial;
 
 // Cliente HTTP global reutilizável (HTTPS não deve ser global)
 WiFiClient client_http;
 
+extern const int max_tags;
 // Envia um payload JSON via HTTP ou HTTPS
 int send_payload(const String &body)
 {
@@ -111,10 +113,10 @@ private:
     // Loop principal da classe
     void tick()
     {
-        const unsigned long period_ms = 10000; // intervalo de envio
+        const unsigned int period_ms = webhook_interval; // intervalo de envio
         if (!webhook_on || !is_connected() || webhook_url.length() == 0)
             return;
-        if (millis() - last_post < period_ms)
+        if (millis() - last_post < period_ms && count_tags() < max_tags)
             return;
         last_post = millis();
 

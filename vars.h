@@ -78,6 +78,7 @@ String subnet_mask = "255.255.255.0";
 // WEBHOOK
 bool webhook_on = false;
 String webhook_url = "http://192.168.1.10:5001";
+int webhook_interval = 10000;
 
 // ======= prefix =======
 String prefix = "";

@@ -296,6 +296,13 @@ private:
 			handled = true;
 			return true;
 		}
+		else if (parameter.startsWith("webhook_interval:"))
+		{
+			parameter.replace("webhook_interval:", "");
+			webhook_interval = parameter.toInt();
+			handled = true;
+			return true;
+		}
 		else if (parameter.startsWith("prefix:"))
 		{
 			prefix = parameter.substring(parameter.indexOf(":") + 1);
@@ -406,6 +413,7 @@ public:
 		// Webhook
 		new_config += "webhook_on:" + String(webhook_on ? "on" : "off") + "\n";
 		new_config += "webhook_url:" + webhook_url + "\n";
+		new_config += "webhook_interval:" + String(webhook_interval) + "\n";
 		new_config += "prefix:" + prefix + "\n";
 		// Protected Inventory
 		new_config += "protected_inventory_enabled:" + String(protected_inventory_enabled ? "on" : "off") + "\n";

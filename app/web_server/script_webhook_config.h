@@ -12,6 +12,7 @@ void webhook_config_script()
                   String json = "{";
                   json += "\"webhook_on\":" + String(webhook_on ? "true" : "false") + ",";
                   json += "\"webhook_url\":\"" + webhook_url + "\"";
+                  json += ",\"webhook_interval\":" + String(webhook_interval);
                   json += "}";
                   server.send(200, "application/json", json); });
 

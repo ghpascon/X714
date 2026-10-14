@@ -215,6 +215,7 @@ public:
         wifi_config_script();
     }
 
+
     void loop()
     {
         server.handleClient();
@@ -231,5 +232,10 @@ public:
                 WiFi.reconnect();
             }
         }
+    }
+
+    void api_routes()
+    {
+        // Define your API routes here
     }
 };

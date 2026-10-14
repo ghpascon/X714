@@ -543,6 +543,11 @@ public:
             webhook_url = original_cmd.substring(original_cmd.indexOf(':') + 1);
             myserial.write("#WEBHOOK_URL:" + webhook_url);
         }
+        else if (cmd.startsWith("#webhook_interval:"))
+        {
+            webhook_interval = original_cmd.substring(original_cmd.indexOf(':') + 1).toInt();
+            myserial.write("#WEBHOOK_INTERVAL:" + String(webhook_interval));
+        }
         // ================= write prefix =================
         else if (cmd.startsWith("#write_prefix:"))
         {
