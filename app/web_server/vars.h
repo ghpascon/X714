@@ -37,6 +37,7 @@ extern bool keyboard;
 extern bool buzzer_on;
 extern int indicator_time;
 extern bool decode_gtin;
+extern PINS pins;
 
 extern bool dhcp_on;
 extern String static_ip;
@@ -46,6 +47,7 @@ extern String subnet_mask;
 // Webhook
 extern bool webhook_on;
 extern String webhook_url;
+extern int webhook_interval;
 
 // Prefix
 extern String prefix;

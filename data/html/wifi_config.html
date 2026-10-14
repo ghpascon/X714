@@ -1,6 +1,8 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>X714 WIFI CONFIG</title>
     <link rel="stylesheet" type="text/css" href="/style.css" />
   </head>
@@ -12,7 +14,7 @@
           <label class="SMTX">X714</label>
         </div>
         <div class="container2">
-          <button onclick="window.location.href='/'">HOME</button>
+          <button onclick="window.location.href = '/'">HOME</button>
         </div>
       </div>
 
@@ -20,7 +22,7 @@
         style="display: flex; flex-direction: column; align-items: center"
         class="container1"
       >
-        <form action="/save_wifi_config" method="POST" target="hidden_iframe">
+        <form id="wifi-config-form">
           <div id="table_div" class="container1">
             <table id="config_table">
               <thead>
@@ -59,10 +61,13 @@
           </div>
 
           <div class="container1">
-            <input class="bt_style" type="submit" value="SET CONFIG" />
+            <button class="bt_style" type="submit">SET CONFIG</button>
           </div>
         </form>
-        <iframe name="hidden_iframe" style="display: none"></iframe>
+      </div>
+
+      <div class="container1">
+        <div id="status-banner" class="status-banner"></div>
       </div>
 
       <div class="container1">
@@ -84,29 +89,73 @@
   </body>
 
   <script>
-    window.onload = function () {
-      fetch("/get_wifi_config")
+    function setStatus(message, isError) {
+      const banner = document.getElementById("status-banner");
+      banner.textContent = message;
+      banner.classList.remove("ok", "error");
+      banner.classList.add(isError ? "error" : "ok");
+    }
+
+    function loadConfig() {
+      fetch("/api/v1/network/wifi")
         .then((response) => response.json())
-        .then((data) => {
-          document.getElementById("wifi_ssid").value = data.wifi_ssid;
-          document.getElementById("wifi_password").value = data.wifi_password;
+        .then((responseJson) => {
+          const data = responseJson.data || {};
+          document.getElementById("wifi_ssid").value = data.wifi_ssid || "";
+          document.getElementById("wifi_password").value =
+            data.wifi_password || "";
         })
         .catch((error) => {
           console.error("Error fetching wifi config:", error);
         });
-    };
+    }
 
+    document
+      .getElementById("wifi-config-form")
+      .addEventListener("submit", async function (event) {
+        event.preventDefault();
+        try {
+          const response = await fetch("/api/v1/network/wifi", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              wifi_ssid: document.getElementById("wifi_ssid").value.trim(),
+              wifi_password: document.getElementById("wifi_password").value,
+            }),
+          });
+
+          const json = await response.json();
+          if (!response.ok || json.status !== "ok") {
+            throw new Error(json.message || "falha ao salvar");
+          }
+          setStatus("Configuração Wi-Fi salva.", false);
+          update_elements();
+        } catch (error) {
+          setStatus("Erro ao salvar Wi-Fi: " + error, true);
+        }
+      });
+
+    loadConfig();
+    update_elements();
     setInterval(update_elements, 1000);
 
     function update_elements() {
-      fetch("/table_wifi_att")
+      fetch("/api/v1/network/wifi")
         .then((response) => response.json())
-        .then((data) => {
+        .then((responseJson) => {
+          const data = responseJson.data || {};
           const tbody = document
             .getElementById("dataTable")
             .getElementsByTagName("tbody")[0];
           tbody.innerHTML = "";
-          data.forEach((row) => {
+
+          const rows = [
+            ["SSID", data.wifi_ssid || "-"],
+            ["CONNECTION", data.connected ? "CONNECTED" : "DISCONNECTED"],
+            ["CURRENT IP", data.current_ip || "-"],
+          ];
+
+          rows.forEach((row) => {
             let tr = document.createElement("tr");
             row.forEach((cell) => {
               let td = document.createElement("td");

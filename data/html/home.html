@@ -1,6 +1,8 @@
 <!doctype html>
 <html>
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>X714 HOME</title>
     <link rel="stylesheet" type="text/css" href="/style.css" />
     <style>
@@ -30,8 +32,12 @@
         margin-bottom: 30px;
       }
       @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
       }
       .loading-label {
         font-family: Arial, sans-serif;
@@ -55,16 +61,17 @@
       <h1>HOME</h1>
     </div>
 
-    <div class="container1"></div>
-
     <div class="container1">
+      <div id="status-banner" class="status-banner"></div>
+    </div>
+
+    <div class="container1 home-links">
       <button class="button_links" onclick="window.location.href = '/reader'">
         READER
       </button>
     </div>
-    <br />
 
-    <div class="container1">
+    <div class="container1 home-links">
       <button
         class="button_links"
         onclick="window.location.href = '/reader_modes'"
@@ -73,9 +80,7 @@
       </button>
     </div>
 
-    <br />
-
-    <div class="container1">
+    <div class="container1 home-links">
       <button
         class="button_links"
         onclick="window.location.href = '/ant_config'"
@@ -84,9 +89,7 @@
       </button>
     </div>
 
-    <br />
-
-    <div class="container1">
+    <div class="container1 home-links">
       <button
         class="button_links"
         onclick="window.location.href = '/eth_config'"
@@ -95,9 +98,7 @@
       </button>
     </div>
 
-    <br />
-
-    <div class="container1">
+    <div class="container1 home-links">
       <button
         class="button_links"
         onclick="window.location.href = '/wifi_config'"
@@ -106,9 +107,7 @@
       </button>
     </div>
 
-    <br />
-
-    <div class="container1">
+    <div class="container1 home-links">
       <button
         class="button_links"
         onclick="window.location.href = '/webhook_config'"
@@ -117,17 +116,13 @@
       </button>
     </div>
 
-    <br />
-
-    <div class="container1">
+    <div class="container1 home-links">
       <button class="button_links" onclick="window.location.href = '/prefix'">
         PREFIX CONFIG
       </button>
     </div>
 
-    <br />
-
-    <div class="container1">
+    <div class="container1 home-links">
       <button
         class="button_links"
         onclick="window.location.href = '/protected_inventory'"
@@ -136,7 +131,7 @@
       </button>
     </div>
 
-    <div class="container1">
+    <div class="container1 home-links">
       <button
         class="button_links"
         onclick="window.location.href = '/reader_config'"
@@ -145,28 +140,25 @@
       </button>
     </div>
 
-    <br />
-
-    <div class="container1">
+    <div class="container1 home-links">
       <button class="button_links" onclick="window.location.href = '/gpo_test'">
         GPO
       </button>
     </div>
 
-    <br />
-
-    <div class="container1">
-      <button class="button_links" onclick="doRestart()">
-        RESTART
-      </button>
+    <div class="container1 home-links">
+      <button class="button_links" onclick="doRestart()">RESTART</button>
     </div>
 
     <div class="container1">
-      <label>Firmware / FS update</label>
-      <br />
-      <button class="button_links" id="btn-fw">Upload Firmware</button>
-      <button class="button_links" id="btn-fs">Upload FS</button>
-      <input type="file" id="file-input" style="display: none" />
+      <div class="update-panel">
+        <div class="update-title">Firmware / FS Upload</div>
+        <div class="update-actions">
+          <button class="button_links" id="btn-fw">Upload Firmware</button>
+          <button class="button_links" id="btn-fs">Upload FS</button>
+        </div>
+        <input type="file" id="file-input" style="display: none" />
+      </div>
     </div>
     <div class="container1">
       <table class="table" id="info_table">
@@ -214,6 +206,13 @@
 
   <script>
     var loadingOverlay = document.getElementById("loading-overlay");
+    var statusBanner = document.getElementById("status-banner");
+
+    function setStatus(message, isError) {
+      statusBanner.textContent = message;
+      statusBanner.classList.remove("ok", "error");
+      statusBanner.classList.add(isError ? "error" : "ok");
+    }
 
     function showLoading() {
       loadingOverlay.classList.add("visible");
@@ -225,10 +224,10 @@
 
     // Upload handlers for firmware and filesystem
     document.getElementById("btn-fw").addEventListener("click", function () {
-      doUpload("/update_firmware");
+      doUpload("/api/v1/system/update/firmware");
     });
     document.getElementById("btn-fs").addEventListener("click", function () {
-      doUpload("/update_fs");
+      doUpload("/api/v1/system/update/filesystem");
     });
 
     function doUpload(endpoint) {
@@ -241,14 +240,19 @@
         form.append("firmware", file);
         showLoading();
         fetch(endpoint, { method: "POST", body: form })
-          .then((r) => r.text())
-          .then((t) => {
+          .then((r) => r.json())
+          .then((json) => {
             hideLoading();
-            alert("Resposta: " + t);
+            setStatus(
+              json.status === "ok"
+                ? "Upload finalizado com sucesso."
+                : json.message || "Falha no upload.",
+              json.status !== "ok",
+            );
           })
           .catch((e) => {
             hideLoading();
-            alert("Erro: " + e);
+            setStatus("Erro no upload: " + e, true);
           });
       };
       input.click();
@@ -256,19 +260,27 @@
 
     function doRestart() {
       if (!confirm("Restart the device?")) return;
-      fetch("/restart", { method: "POST" })
-        .then((r) => r.text())
-        .then((t) => alert("Resposta: " + t))
-        .catch((e) => alert("Erro: " + e));
+      fetch("/api/v1/device/restart", { method: "POST" })
+        .then((r) => r.json())
+        .then((json) => {
+          setStatus(
+            json.status === "ok"
+              ? "Dispositivo reiniciando..."
+              : json.message || "Falha ao reiniciar.",
+            json.status !== "ok",
+          );
+        })
+        .catch((e) => setStatus("Erro ao reiniciar: " + e, true));
     }
 
     function update_info() {
-      fetch("/info", { credentials: "same-origin" })
+      fetch("/api/v1/device/info", { credentials: "same-origin" })
         .then(function (response) {
           if (!response.ok) throw new Error("HTTP error " + response.status);
           return response.json();
         })
-        .then(function (data) {
+        .then(function (responseJson) {
+          const data = responseJson.data || {};
           document.getElementById("info-name").innerText = data.name || "-";
           document.getElementById("info-bt").innerText = data.bt_mac || "-";
           document.getElementById("info-eth").innerText = data.eth_mac || "-";

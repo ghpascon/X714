@@ -1,6 +1,8 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>X714 GPO TEST</title>
     <link rel="stylesheet" type="text/css" href="/style.css" />
   </head>
@@ -9,12 +11,10 @@
     <div class="container0">
       <div class="container1">
         <div class="container2">
-          <label style="position: relative; top: 20px" class="SMTX"
-            >X714</label
-          >
+          <label style="position: relative; top: 20px" class="SMTX">X714</label>
         </div>
         <div class="container2">
-          <button onclick="window.location.href='/'">HOME</button>
+          <button onclick="window.location.href = '/'">HOME</button>
         </div>
       </div>
 
@@ -33,7 +33,7 @@
                 <label>1</label>
               </td>
               <td>
-                <button id="gpo_1_bt" onclick="fetch('/gpo_1_bt')"></button>
+                <button id="gpo_1_bt" onclick="toggleGpo(1)"></button>
               </td>
             </tr>
 
@@ -42,7 +42,7 @@
                 <label>2</label>
               </td>
               <td>
-                <button id="gpo_2_bt" onclick="fetch('/gpo_2_bt')"></button>
+                <button id="gpo_2_bt" onclick="toggleGpo(2)"></button>
               </td>
             </tr>
 
@@ -51,36 +51,85 @@
                 <label>3</label>
               </td>
               <td>
-                <button id="gpo_3_bt" onclick="fetch('/gpo_3_bt')"></button>
+                <button id="gpo_3_bt" onclick="toggleGpo(3)"></button>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
+
+      <div class="container1">
+        <div id="status-banner" class="status-banner"></div>
+      </div>
+
+      <div class="container1">
+        <button onclick="toggleBuzzer()">TOGGLE BUZZER</button>
+      </div>
     </div>
   </body>
 
   <script>
+    function setStatus(message, isError) {
+      const banner = document.getElementById("status-banner");
+      banner.textContent = message;
+      banner.classList.remove("ok", "error");
+      banner.classList.add(isError ? "error" : "ok");
+    }
+
+    async function toggleGpo(index) {
+      try {
+        const response = await fetch("/api/v1/gpo/toggle", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ index }),
+        });
+        const json = await response.json();
+        if (!response.ok || json.status !== "ok") {
+          throw new Error(json.message || "falha ao alternar");
+        }
+        update_elements();
+      } catch (error) {
+        setStatus("Erro ao alternar GPO: " + error, true);
+      }
+    }
+
+    async function toggleBuzzer() {
+      try {
+        const response = await fetch("/api/v1/toggle_buzzer", {
+          method: "POST",
+        });
+        const json = await response.json();
+        if (!response.ok || json.status !== "ok") {
+          throw new Error(json.message || "falha ao acionar buzzer");
+        }
+        setStatus("Buzzer acionado com sucesso.", false);
+      } catch (error) {
+        setStatus("Erro ao acionar buzzer: " + error, true);
+      }
+    }
+
     function update_html() {
       update_elements();
     }
+    update_html();
     setInterval(update_html, 1000);
 
     function update_elements() {
-      fetch("/gpo_att")
+      fetch("/api/v1/gpo")
         .then((response) => response.json())
-        .then((data) => {
-          document.getElementById("gpo_1_bt").innerText = data.gpo_1_bt_label;
-          document.getElementById("gpo_1_bt").style.backgroundColor =
-            data.gpo_1_bt_color;
+        .then((responseJson) => {
+          const data = responseJson.data || [false, false, false];
+          const setButton = (id, state) => {
+            const bt = document.getElementById(id);
+            bt.innerText = state ? "ON" : "OFF";
+            const color = state ? "#22c55e" : "#ef4444";
+            bt.style.background = color;
+            bt.style.borderColor = color;
+          };
 
-          document.getElementById("gpo_2_bt").innerText = data.gpo_2_bt_label;
-          document.getElementById("gpo_2_bt").style.backgroundColor =
-            data.gpo_2_bt_color;
-
-          document.getElementById("gpo_3_bt").innerText = data.gpo_3_bt_label;
-          document.getElementById("gpo_3_bt").style.backgroundColor =
-            data.gpo_3_bt_color;
+          setButton("gpo_1_bt", !!data[0]);
+          setButton("gpo_2_bt", !!data[1]);
+          setButton("gpo_3_bt", !!data[2]);
         })
         .catch((error) => console.error("Erro:", error));
     }
