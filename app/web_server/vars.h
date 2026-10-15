@@ -33,6 +33,7 @@ extern bool gpo[];
 extern bool simple_send;
 
 extern bool hotspot_on;
+extern String hotspot_name;
 extern bool keyboard;
 extern bool buzzer_on;
 extern int indicator_time;

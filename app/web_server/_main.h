@@ -117,7 +117,7 @@ public:
         else
         {
             // Modo AP: inicia o hotspot
-            const String ssid = get_esp_name();
+            const String ssid = hotspot_name.length() > 0 ? hotspot_name : get_esp_name();
             const char *password = "smartx12345";
             WiFi.disconnect(true);
             WiFi.mode(WIFI_AP);

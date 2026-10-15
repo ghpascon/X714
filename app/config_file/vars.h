@@ -45,3 +45,5 @@ extern bool fs_loaded;
 
 extern String write_prefix;
 extern int read_interval;
+
+extern String hotspot_name;

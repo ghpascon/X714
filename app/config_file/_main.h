@@ -221,6 +221,13 @@ private:
 			handled = true;
 			return true;
 		}
+		else if (parameter.startsWith("hotspot_name:"))
+		{
+			hotspot_name = parameter.substring(parameter.indexOf(":") + 1);
+			hotspot_name = trimStr(hotspot_name);
+			handled = true;
+			return true;
+		}
 		else if (parameter.startsWith("keyboard:"))
 		{
 			keyboard = parameter.endsWith("on");
@@ -401,6 +408,7 @@ public:
 		new_config += "always_send:" + String(always_send ? "on" : "off") + "\n";
 		new_config += "simple_send:" + String(simple_send ? "on" : "off") + "\n";
 		new_config += "hotspot_on:" + String(hotspot_on ? "on" : "off") + "\n";
+		new_config += "hotspot_name:" + hotspot_name + "\n";
 		new_config += "keyboard:" + String(keyboard ? "on" : "off") + "\n";
 		new_config += "buzzer_on:" + String(buzzer_on ? "on" : "off") + "\n";
 		new_config += "indicator_time:" + String(indicator_time) + "\n";
