@@ -102,6 +102,8 @@ Observacoes de validacao:
 | `#keyboard:on` / `#keyboard:off`         | Liga/desliga envio em teclado HID                    | `#KEYBOARD:on/off`                           |
 | `#always_send:on` / `#always_send:off`   | Forca envio continuo de tags                         | `#ALWAYS_SEND:on/off`                        |
 | `#simple_send:on` / `#simple_send:off`   | Envio simplificado de tag                            | `#SIMPLE_SEND:on/off`                        |
+| `#simple_send_format:[INICIO];[FIM]`     | Define recorte EPC (fim exclusivo); aceita `rchlo`   | `#SIMPLE_SEND_FORMAT:[inicio];[fim]`         |
+| `#get_simple_send_format`                | Le o formato de envio simplificado                   | `#SIMPLE_SEND_FORMAT:[inicio];[fim]`         |
 | `#gpi_start:on` / `#gpi_start:off`       | Modo GPI controla leitura ou apenas reporta entradas | `#GPI_START:on/off`                          |
 | `#gpi_stop_delay:[MS]`                   | Delay de parada GPI                                  | sem resposta                                 |
 | `#measure_rl:[ANT]`                      | Mede RL com frequencia padrao                        | sem resposta textual garantida               |
@@ -158,6 +160,7 @@ Subcomandos suportados (sem `#` dentro do payload):
 - `gpi_start:on/off`
 - `always_send:on/off`
 - `simple_send:on/off`
+- `simple_send_format:[INICIO];[FIM]`
 - `keyboard:on/off`
 
 Observacao importante:
@@ -171,12 +174,12 @@ Esta secao lista mensagens que podem chegar sem um comando imediato do host.
 
 ### Fluxo de tags
 
-| Mensagem                                | Quando ocorre                                          |
-| --------------------------------------- | ------------------------------------------------------ |
-| `#T+@EPC\|TID\|ANT\|RSSI\|on/off`         | Nova leitura de tag em modo normal (`simple_send=off`) |
-| `EPC` (ou GTIN quando `decode_gtin=on`) | Nova leitura em modo simplificado (`simple_send=on`)   |
-| `#ADDED_TO_TARGET_MAP:TID->TARGET`      | Fluxo de `write_prefix` adiciona alvo por TID          |
-| `#REMOVED_FROM_TARGET_MAP:TID`          | Tag ja chegou com prefixo alvo e sai do mapa           |
+| Mensagem                                   | Quando ocorre                                          |
+| ------------------------------------------ | ------------------------------------------------------ |
+| `#T+@EPC\|TID\|ANT\|RSSI\|on/off`          | Nova leitura de tag em modo normal (`simple_send=off`) |
+| `EPC` (recortado pelo formato configurado) | Nova leitura em modo simplificado (`simple_send=on`)   |
+| `#ADDED_TO_TARGET_MAP:TID->TARGET`         | Fluxo de `write_prefix` adiciona alvo por TID          |
+| `#REMOVED_FROM_TARGET_MAP:TID`             | Tag ja chegou com prefixo alvo e sai do mapa           |
 
 ### Estado de leitura e entradas
 

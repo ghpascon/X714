@@ -22,6 +22,7 @@ extern byte max_session;
 extern READER reader_module;
 
 extern bool simple_send;
+extern String simple_send_format;
 
 extern ANTENA antena[];
 extern bool hotspot_on;

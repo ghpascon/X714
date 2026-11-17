@@ -215,6 +215,22 @@ private:
 			handled = true;
 			return true;
 		}
+		else if (parameter.startsWith("simple_send_format:"))
+		{
+			String requested_format = parameter.substring(parameter.indexOf(":") + 1);
+			requested_format = trimStr(requested_format);
+			if (requested_format.length() == 0)
+				simple_send_format = "";
+			else
+			{
+				String normalized_format = normalize_simple_send_format(requested_format);
+				if (normalized_format.length() == 0)
+					return false;
+				simple_send_format = normalized_format;
+			}
+			handled = true;
+			return true;
+		}
 		else if (parameter.startsWith("hotspot_on:"))
 		{
 			hotspot_on = parameter.endsWith("on");
@@ -407,6 +423,7 @@ public:
 		new_config += "gpi_stop_delay:" + String(gpi_stop_delay) + "\n";
 		new_config += "always_send:" + String(always_send ? "on" : "off") + "\n";
 		new_config += "simple_send:" + String(simple_send ? "on" : "off") + "\n";
+		new_config += "simple_send_format:" + simple_send_format + "\n";
 		new_config += "hotspot_on:" + String(hotspot_on ? "on" : "off") + "\n";
 		new_config += "hotspot_name:" + hotspot_name + "\n";
 		new_config += "keyboard:" + String(keyboard ? "on" : "off") + "\n";

@@ -8,6 +8,7 @@ gpi_start:off
 gpi_stop_delay:0
 always_send:off
 simple_send:off
+simple_send_format:
 hotspot_on:on
 keyboard:off
 buzzer_on:on

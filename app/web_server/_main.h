@@ -275,6 +275,7 @@ public:
                       data["gpi_start"] = gpi_start;
                       data["always_send"] = always_send;
                       data["simple_send"] = simple_send;
+                      data["simple_send_format"] = simple_send_format;
                       data["keyboard"] = keyboard;
                       data["buzzer_on"] = buzzer_on;
                       data["decode_gtin"] = decode_gtin;
@@ -289,6 +290,24 @@ public:
                       StaticJsonDocument<512> body;
                       if (!parse_json_body(body))
                           return;
+
+                      if (!body["simple_send_format"].isNull())
+                      {
+                          String requested_format = body["simple_send_format"].as<String>();
+                          requested_format.trim();
+                          if (requested_format.length() == 0)
+                              simple_send_format = "";
+                          else
+                          {
+                              String normalized_format = normalize_simple_send_format(requested_format);
+                              if (normalized_format.length() == 0)
+                              {
+                                  send_status_error(400, "invalid simple_send_format");
+                                  return;
+                              }
+                              simple_send_format = normalized_format;
+                          }
+                      }
 
                       if (!body["start_reading"].isNull())
                       {
@@ -346,6 +365,7 @@ public:
                       doc["status"] = "ok";
                       JsonObject data = doc.createNestedObject("data");
                       data["simple_send"] = simple_send;
+                      data["simple_send_format"] = simple_send_format;
                       data["session"] = session;
                       data["gpi_stop_delay"] = gpi_stop_delay;
                       send_json_response(200, doc); });
@@ -358,6 +378,24 @@ public:
                       StaticJsonDocument<256> body;
                       if (!parse_json_body(body))
                           return;
+
+                      if (!body["simple_send_format"].isNull())
+                      {
+                          String requested_format = body["simple_send_format"].as<String>();
+                          requested_format.trim();
+                          if (requested_format.length() == 0)
+                              simple_send_format = "";
+                          else
+                          {
+                              String normalized_format = normalize_simple_send_format(requested_format);
+                              if (normalized_format.length() == 0)
+                              {
+                                  send_status_error(400, "invalid simple_send_format");
+                                  return;
+                              }
+                              simple_send_format = normalized_format;
+                          }
+                      }
 
                       if (!body["simple_send"].isNull())
                           simple_send = body["simple_send"].as<bool>();

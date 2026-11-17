@@ -7,6 +7,7 @@ extern bool always_send;
 
 extern MySerial myserial;
 extern bool simple_send;
+extern String simple_send_format;
 extern bool buzzer_on;
 extern bool decode_gtin;
 

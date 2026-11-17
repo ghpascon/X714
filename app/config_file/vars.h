@@ -16,6 +16,7 @@ extern const byte min_power;
 extern const byte max_power;
 extern const byte min_rssi;
 extern bool simple_send;
+extern String simple_send_format;
 extern bool hotspot_on;
 extern bool keyboard;
 extern bool buzzer_on;

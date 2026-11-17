@@ -31,6 +31,7 @@ extern const int gpo_qtd;
 extern bool gpo[];
 
 extern bool simple_send;
+extern String simple_send_format;
 
 extern bool hotspot_on;
 extern String hotspot_name;

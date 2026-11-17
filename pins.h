@@ -10,6 +10,8 @@
 #define ESP_MODEL ESP_MODEL_ESP32_S3
 #endif
 
+// #define INVERT_MODULE
+
 // #define INVERT_RGB
 
 #if (ESP_MODEL == ESP_MODEL_ESP32_S3)
@@ -31,8 +33,13 @@
 #define out_2_pin 40
 #define out_3_pin 39
 
+#ifndef INVERT_MODULE
 #define tx_reader_module 13
 #define rx_reader_module 14
+#else
+#define tx_reader_module 14
+#define rx_reader_module 13
+#endif
 
 #define RGB_DATA_PIN 48
 #define EXTERNAL_LED_RED_PIN 5

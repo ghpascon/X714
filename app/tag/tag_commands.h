@@ -144,15 +144,20 @@ public:
 private:
 	void display_current_tag(const String &epc, const String &tid, const String &ant, const String &rssi)
 	{
+		if (simple_send)
+		{
+			String simple_epc = format_simple_send_epc(epc, simple_send_format);
+			if (simple_epc.length() > 0)
+				myserial.write(simple_epc, true);
+			return;
+		}
+
 		String epc_out = epc;
 		if (decode_gtin)
 			epc_out = epcToGtin(epc);
 		if (epc_out == "")
 			return;
-		if (!simple_send)
-			myserial.write("#T+@" + epc_out + "|" + tid + "|" + ant + "|" + rssi + "|" + (send_protect_mode ? "on" : "off"));
-		else
-			myserial.write(epc_out, true);
+		myserial.write("#T+@" + epc_out + "|" + tid + "|" + ant + "|" + rssi + "|" + (send_protect_mode ? "on" : "off"));
 	}
 
 	// Calculate GTIN check digit (mod 10)

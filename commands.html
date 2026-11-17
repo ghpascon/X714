@@ -1,527 +1,1435 @@
-<!DOCTYPE html><html><head>
-      <title>commands</title>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      
-      <link rel="stylesheet" href="file:///c:\Users\DELL\.vscode\extensions\shd101wyy.markdown-preview-enhanced-0.8.20\crossnote\dependencies\katex\katex.min.css">
-      
-      
-      
-      
-      
-      <style>
-      code[class*=language-],pre[class*=language-]{color:#333;background:0 0;font-family:Consolas,"Liberation Mono",Menlo,Courier,monospace;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.4;-moz-tab-size:8;-o-tab-size:8;tab-size:8;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:.8em;overflow:auto;border-radius:3px;background:#f5f5f5}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal;background:#f5f5f5}.token.blockquote,.token.comment{color:#969896}.token.cdata{color:#183691}.token.doctype,.token.macro.property,.token.punctuation,.token.variable{color:#333}.token.builtin,.token.important,.token.keyword,.token.operator,.token.rule{color:#a71d5d}.token.attr-value,.token.regex,.token.string,.token.url{color:#183691}.token.atrule,.token.boolean,.token.code,.token.command,.token.constant,.token.entity,.token.number,.token.property,.token.symbol{color:#0086b3}.token.prolog,.token.selector,.token.tag{color:#63a35c}.token.attr-name,.token.class,.token.class-name,.token.function,.token.id,.token.namespace,.token.pseudo-class,.token.pseudo-element,.token.url-reference .token.variable{color:#795da3}.token.entity{cursor:help}.token.title,.token.title .token.punctuation{font-weight:700;color:#1d3e81}.token.list{color:#ed6a43}.token.inserted{background-color:#eaffea;color:#55a532}.token.deleted{background-color:#ffecec;color:#bd2c00}.token.bold{font-weight:700}.token.italic{font-style:italic}.language-json .token.property{color:#183691}.language-markup .token.tag .token.punctuation{color:#333}.language-css .token.function,code.language-css{color:#0086b3}.language-yaml .token.atrule{color:#63a35c}code.language-yaml{color:#183691}.language-ruby .token.function{color:#333}.language-markdown .token.url{color:#795da3}.language-makefile .token.symbol{color:#795da3}.language-makefile .token.variable{color:#183691}.language-makefile .token.builtin{color:#0086b3}.language-bash .token.keyword{color:#0086b3}pre[data-line]{position:relative;padding:1em 0 1em 3em}pre[data-line] .line-highlight-wrapper{position:absolute;top:0;left:0;background-color:transparent;display:block;width:100%}pre[data-line] .line-highlight{position:absolute;left:0;right:0;padding:inherit 0;margin-top:1em;background:hsla(24,20%,50%,.08);background:linear-gradient(to right,hsla(24,20%,50%,.1) 70%,hsla(24,20%,50%,0));pointer-events:none;line-height:inherit;white-space:pre}pre[data-line] .line-highlight:before,pre[data-line] .line-highlight[data-end]:after{content:attr(data-start);position:absolute;top:.4em;left:.6em;min-width:1em;padding:0 .5em;background-color:hsla(24,20%,50%,.4);color:#f4f1ef;font:bold 65%/1.5 sans-serif;text-align:center;vertical-align:.3em;border-radius:999px;text-shadow:none;box-shadow:0 1px #fff}pre[data-line] .line-highlight[data-end]:after{content:attr(data-end);top:auto;bottom:.4em}html body{font-family:'Helvetica Neue',Helvetica,'Segoe UI',Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ol,html body>ul{margin-bottom:16px}html body ol,html body ul{padding-left:2em}html body ol.no-list,html body ul.no-list{padding:0;list-style-type:none}html body ol ol,html body ol ul,html body ul ol,html body ul ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;background-color:#f0f0f0;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:700;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:700}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::after,html body code::before{letter-spacing:-.2em;content:'\00a0'}html body pre>code{padding:0;margin:0;word-break:normal;white-space:pre;background:0 0;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:after,html body pre code:before,html body pre tt:after,html body pre tt:before{content:normal}html body blockquote,html body dl,html body ol,html body p,html body pre,html body ul{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body code,html body pre{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview ul{list-style:disc}.markdown-preview ul ul{list-style:circle}.markdown-preview ul ul ul{list-style:square}.markdown-preview ol{list-style:decimal}.markdown-preview ol ol,.markdown-preview ul ol{list-style-type:lower-roman}.markdown-preview ol ol ol,.markdown-preview ol ul ol,.markdown-preview ul ol ol,.markdown-preview ul ul ol{list-style-type:lower-alpha}.markdown-preview .newpage,.markdown-preview .pagebreak{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center!important}.markdown-preview:not([data-for=preview]) .code-chunk .code-chunk-btn-group{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .status{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .output-div{margin-bottom:16px}.markdown-preview .md-toc{padding:0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div,.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}.markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0;min-height:100vh}@media screen and (min-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px + 2em)}}@media screen and (max-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{font-size:14px!important;padding:1em}}@media print{html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc{padding:0 16px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link div,html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% - 300px);padding:2em calc(50% - 457px - 300px / 2);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
-/* Please visit the URL below for more information: */
-/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+<!doctype html>
+<html>
+  <head>
+    <title>commands</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-      </style>
-      <!-- The content below will be included at the end of the <head> element. --><script type="text/javascript">
-  document.addEventListener("DOMContentLoaded", function () {
-    // your code here
-  });
-</script></head><body for="html-export">
-    
-    
-      <div class="crossnote markdown-preview  ">
-      
-<h1 id="x714---comandos-de-comunicação">X714 - Comandos de Comunicação </h1>
-<h2 id="visão-geral">Visão Geral </h2>
-<p>O X714 aceita comandos através de múltiplas interfaces de comunicação:</p>
-<ul>
-<li><strong>Serial</strong> (UART)</li>
-<li><strong>Bluetooth Low Energy (BLE)</strong></li>
-<li><strong>Ethernet (TCP/IP)</strong></li>
-</ul>
-<p>Os comandos podem ser enviados individualmente ou em lote, utilizando o separador <code>|</code> para múltiplos comandos em uma única transmissão.</p>
-<hr>
-<h2 id="comandos-básicos">Comandos Básicos </h2>
-<h3 id="conectividade-e-status">Conectividade e Status </h3>
-<table>
-<thead>
-<tr>
-<th>Comando</th>
-<th>Descrição</th>
-<th>Resposta</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>#ping</code> ou <code>ping</code></td>
-<td>Testa conectividade</td>
-<td><code>#PONG</code></td>
-</tr>
-<tr>
-<td><code>#get_state</code></td>
-<td>Obtém estado atual de leitura</td>
-<td><code>#READING</code> ou <code>#IDLE</code></td>
-</tr>
-<tr>
-<td><code>#get_info</code></td>
-<td>Informações do dispositivo</td>
-<td><code>#NAME:</code>, <code>#BT_MAC:</code>, <code>#ETH_MAC:</code>, <code>#IP:</code></td>
-</tr>
-<tr>
-<td><code>#get_serial</code></td>
-<td>Serial do dispositivo</td>
-<td><code>#SERIAL:[serial]</code></td>
-</tr>
-<tr>
-<td><code>#restart</code></td>
-<td>Reinicia o dispositivo</td>
-<td>-</td>
-</tr>
-</tbody>
-</table>
-<h3 id="controle-de-leitura">Controle de Leitura </h3>
-<table>
-<thead>
-<tr>
-<th>Comando</th>
-<th>Descrição</th>
-<th>Resposta</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>#read:on</code> ou <code>readtag on</code></td>
-<td>Inicia leitura de tags</td>
-<td><code>#READ:ON</code></td>
-</tr>
-<tr>
-<td><code>#read:off</code> ou <code>readtag off</code></td>
-<td>Para leitura de tags</td>
-<td><code>#READ:OFF</code></td>
-</tr>
-<tr>
-<td><code>initreadtag:on</code></td>
-<td>Inicia leitura automaticamente</td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>initreadtag:off</code></td>
-<td>Desabilita leitura automática</td>
-<td>-</td>
-</tr>
-</tbody>
-</table>
-<h3 id="gerenciamento-de-tags">Gerenciamento de Tags </h3>
-<table>
-<thead>
-<tr>
-<th>Comando</th>
-<th>Descrição</th>
-<th>Resposta</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>#get_tags</code></td>
-<td>Lista epcs detectados</td>
-<td>Lista de epcs</td>
-</tr>
-<tr>
-<td><code>#get_tags_all</code></td>
-<td>Lista todas as informações das tags</td>
-<td>Lista completa de tags</td>
-</tr>
-<tr>
-<td><code>#clear</code></td>
-<td>Limpa buffer de tags</td>
-<td>-</td>
-</tr>
-</tbody>
-</table>
-<h3 id="escrita-de-tags">Escrita de Tags </h3>
-<table>
-<thead>
-<tr>
-<th>Comando</th>
-<th>Descrição</th>
-<th>Formato</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>#write:[EPC];[PASSWORD]</code></td>
-<td>Escreve EPC sem filtro</td>
-<td><code>#write:000102030405060708090A0B;12345678</code></td>
-</tr>
-<tr>
-<td><code>#write:[EPC];[PASSWORD];EPC;[TARGET]</code></td>
-<td>Escreve EPC com filtro no epc</td>
-<td><code>#write:000102030405060708090A0B;12345678;epc;AABBCCDDEEFF001122334455</code></td>
-</tr>
-<tr>
-<td><code>#write:[EPC];[PASSWORD];TID;[TARGET]</code></td>
-<td>Escreve EPC com filtro no tid</td>
-<td><code>#write:000102030405060708090A0B;12345678;tid;E28012341234123412341234</code></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Parâmetros de escrita:</strong></p>
-<ul>
-<li><strong>EPC</strong>: 24 caracteres hexadecimais (12 bytes)</li>
-<li><strong>PASSWORD</strong>: 8 caracteres hexadecimais (4 bytes)</li>
-<li><strong>TYPE</strong>: <code>epc</code> ou <code>tid</code></li>
-<li><strong>TARGET</strong>: 24 caracteres hexadecimais para filtro</li>
-</ul>
-<h3 id="gerenciamento-avançado-de-tags">Gerenciamento Avançado de Tags </h3>
-<table>
-<thead>
-<tr>
-<th>Comando</th>
-<th>Descrição</th>
-<th>Formato</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>#change_password:[EPC];[NEW_PWD];[OLD_PWD]</code></td>
-<td>Altera senha de tag específica</td>
-<td><code>#change_password:000102030405060708090A0B;ABCD1234;00000000</code></td>
-</tr>
-<tr>
-<td><code>#protected_mode:[EPC];[PASSWORD];[ENABLE]</code></td>
-<td>Ativa/desativa modo protegido para tag específica</td>
-<td><code>#protected_mode:000102030405060708090A0B;12345678;on</code></td>
-</tr>
-<tr>
-<td><code>#protected_inventory:[ENABLE];[PASSWORD]</code></td>
-<td>Ativa/desativa inventário protegido global</td>
-<td><code>#protected_inventory:on;12345678</code></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Parâmetros avançados:</strong></p>
-<ul>
-<li><strong>EPC</strong>: 24 caracteres hexadecimais (12 bytes) - EPC da tag alvo</li>
-<li><strong>NEW_PWD</strong>: 8 caracteres hexadecimais (4 bytes) - Nova senha</li>
-<li><strong>OLD_PWD</strong>: 8 caracteres hexadecimais (4 bytes) - Senha atual (padrão: 00000000)</li>
-<li><strong>PASSWORD</strong>: 8 caracteres hexadecimais (4 bytes) - Senha de acesso (padrão: 00000000)</li>
-<li><strong>ENABLE</strong>: <code>on</code>/<code>off</code> ou <code>true</code>/<code>false</code> - Habilita/desabilita proteção</li>
-</ul>
-<p><strong>Respostas específicas:</strong></p>
-<ul>
-<li><code>#CHANGE_PASSWORD:OK</code> - Senha alterada com sucesso</li>
-<li><code>#PROTECTED_MODE:ENABLED</code> - Modo protegido ativado para tag específica</li>
-<li><code>#PROTECTED_MODE:DISABLED</code> - Modo protegido desativado para tag específica</li>
-<li><code>#PROTECTED_INVENTORY:ENABLED</code> - Inventário protegido ativado globalmente</li>
-<li><code>#PROTECTED_INVENTORY:DISABLED</code> - Inventário protegido desativado globalmente</li>
-<li><code>#ERROR:[DESCRIÇÃO]</code> - Erro na execução (EPC inválido, senha incorreta, etc.)</li>
-</ul>
-<hr>
-<h2 id="configuração-de-potência-e-sessão">Configuração de Potência e Sessão </h2>
-<table>
-<thead>
-<tr>
-<th>Comando</th>
-<th>Descrição</th>
-<th>Faixa/Valores</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>#read_power:[VALOR]</code> ou <code>readpower:[VALOR]</code></td>
-<td>Define potência de leitura</td>
-<td>Conforme especificação</td>
-</tr>
-<tr>
-<td><code>#get_power</code></td>
-<td>Obtém potência atual</td>
-<td><code>#POWER:[valor]</code></td>
-</tr>
-<tr>
-<td><code>#session:[VALOR]</code> ou <code>gen2session:[VALOR]</code></td>
-<td>Define sessão Gen2</td>
-<td>0 ao máximo configurado</td>
-</tr>
-<tr>
-<td><code>#get_session</code></td>
-<td>Obtém sessão atual</td>
-<td><code>#SESSION:[valor]</code></td>
-</tr>
-<tr>
-<td><code>#password[...]</code></td>
-<td>Altera senha do reader</td>
-<td>Conforme protocolo</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="configurações-gerais">Configurações Gerais </h2>
-<h3 id="modo-de-operação">Modo de Operação </h3>
-<table>
-<thead>
-<tr>
-<th>Comando</th>
-<th>Descrição</th>
-<th>Valores</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>readmode hid</code></td>
-<td>Modo teclado (HID)</td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>readmode normal</code></td>
-<td>Modo normal</td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>#buzzer:on</code></td>
-<td>Habilita buzzer</td>
-<td><code>#BUZZER:ON</code></td>
-</tr>
-<tr>
-<td><code>#buzzer:off</code></td>
-<td>Desabilita buzzer</td>
-<td><code>#BUZZER:OFF</code></td>
-</tr>
-<tr>
-<td><code>#decode_gtin:on</code></td>
-<td>Habilita decodificação GTIN</td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>#decode_gtin:off</code></td>
-<td>Desabilita decodificação GTIN</td>
-<td>-</td>
-</tr>
-</tbody>
-</table>
-<h3 id="configuração-de-rede">Configuração de Rede </h3>
-<table>
-<thead>
-<tr>
-<th>Comando</th>
-<th>Descrição</th>
-<th>Valores</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>#hotspot:on</code></td>
-<td>Habilita modo hotspot</td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>#hotspot:off</code></td>
-<td>Desabilita modo hotspot</td>
-<td>-</td>
-</tr>
-</tbody>
-</table>
-<h3 id="configuração-de-prefixo">Configuração de Prefixo </h3>
-<table>
-<thead>
-<tr>
-<th>Comando</th>
-<th>Descrição</th>
-<th>Exemplo</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>#prefix:[VALOR]</code></td>
-<td>Define prefixo para tags</td>
-<td><code>#prefix:TAG_</code></td>
-</tr>
-<tr>
-<td><code>#get_prefix</code></td>
-<td>Obtém prefixo atual</td>
-<td><code>#PREFIX:[valor]</code></td>
-</tr>
-<tr>
-<td><code>#get_protected_inventory</code></td>
-<td>Obtém status do inventário protegido</td>
-<td><code>#PROTECTED_INVENTORY:[status]</code>, <code>#PROTECTED_INVENTORY_PASSWORD:[senha]</code></td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="comando-de-configuração-múltipla">Comando de Configuração Múltipla </h2>
-<h3 id="set_cmdcomandos"><code>#set_cmd:[COMANDOS]</code> </h3>
-<p>Permite configurar múltiplas opções simultaneamente usando o separador <code>|</code>.</p>
-<p><strong>Comandos disponíveis no set_cmd:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Comando</th>
-<th>Descrição</th>
-<th>Exemplo</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>set_ant:[N],[ATIVO],[POTÊNCIA],[RSSI]</code></td>
-<td>Configura antena específica</td>
-<td><code>set_ant:1,on,30,25</code></td>
-</tr>
-<tr>
-<td><code>session:[VALOR]</code></td>
-<td>Define sessão</td>
-<td><code>session:1</code></td>
-</tr>
-<tr>
-<td><code>read_power:[VALOR]</code></td>
-<td>Potência de leitura</td>
-<td><code>read_power:30</code></td>
-</tr>
-<tr>
-<td><code>write_power:[VALOR]</code></td>
-<td>Potência de escrita</td>
-<td><code>write_power:30</code></td>
-</tr>
-<tr>
-<td><code>buzzer:on/off</code></td>
-<td>Controle do buzzer</td>
-<td><code>buzzer:on</code></td>
-</tr>
-<tr>
-<td><code>gpi_stop_delay:[MS]</code></td>
-<td>Delay de parada GPI</td>
-<td><code>gpi_stop_delay:1000</code></td>
-</tr>
-<tr>
-<td><code>decode_gtin:on/off</code></td>
-<td>Decodificação GTIN</td>
-<td><code>decode_gtin:on</code></td>
-</tr>
-<tr>
-<td><code>start_reading:on/off</code></td>
-<td>Leitura automática</td>
-<td><code>start_reading:on</code></td>
-</tr>
-<tr>
-<td><code>gpi_start:on/off</code></td>
-<td>Início por GPI</td>
-<td><code>gpi_start:on</code></td>
-</tr>
-<tr>
-<td><code>always_send:on/off</code></td>
-<td>Envio contínuo</td>
-<td><code>always_send:on</code></td>
-</tr>
-<tr>
-<td><code>simple_send:on/off</code></td>
-<td>Envio simplificado</td>
-<td><code>simple_send:on</code></td>
-</tr>
-<tr>
-<td><code>keyboard:on/off</code></td>
-<td>Modo teclado</td>
-<td><code>keyboard:on</code></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Exemplo de uso:</strong></p>
-<pre data-role="codeBlock" data-info="text" class="language-text text"><code>#set_cmd:session:1|read_power:30|buzzer:on|start_reading:on
-</code></pre><p><strong>Resposta:</strong> Para cada comando processado:</p>
-<ul>
-<li><code>#CMD:[comando]</code> (log do comando)</li>
-<li><code>#SET_CMD:OK</code> ou <code>#SET_CMD:NOK</code></li>
-</ul>
-<hr>
-<h2 id="comandos-em-lote">Comandos em Lote </h2>
-<h3 id="múltiplos-comandos-com-">Múltiplos Comandos com <code>|</code> </h3>
-<p>É possível enviar vários comandos em uma única transmissão, separados por <code>|</code>:</p>
-<p><strong>Exemplo:</strong></p>
-<pre data-role="codeBlock" data-info="text" class="language-text text"><code>#read:on|#clear|#buzzer:on
-</code></pre><p><strong>Comportamento:</strong></p>
-<ul>
-<li>Cada comando é processado sequencialmente</li>
-<li>Comandos <code>#set_cmd:</code> são tratados de forma especial (não são separados)</li>
-<li>Outros comandos são processados individualmente</li>
-</ul>
-<hr>
-<h2 id="códigos-de-resposta">Códigos de Resposta </h2>
-<table>
-<thead>
-<tr>
-<th>Resposta</th>
-<th>Significado</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>#PONG</code></td>
-<td>Resposta ao ping</td>
-</tr>
-<tr>
-<td><code>#READ:ON/OFF</code></td>
-<td>Estado de leitura alterado</td>
-</tr>
-<tr>
-<td><code>#READING/#IDLE</code></td>
-<td>Estado atual de leitura</td>
-</tr>
-<tr>
-<td><code>#BUZZER:ON/OFF</code></td>
-<td>Estado do buzzer</td>
-</tr>
-<tr>
-<td><code>#CHANGE_PASSWORD:OK</code></td>
-<td>Senha alterada com sucesso</td>
-</tr>
-<tr>
-<td><code>#PROTECTED_MODE:ENABLED</code></td>
-<td>Modo protegido ativado para tag específica</td>
-</tr>
-<tr>
-<td><code>#PROTECTED_MODE:DISABLED</code></td>
-<td>Modo protegido desativado para tag específica</td>
-</tr>
-<tr>
-<td><code>#PROTECTED_INVENTORY:ENABLED</code></td>
-<td>Inventário protegido ativado globalmente</td>
-</tr>
-<tr>
-<td><code>#PROTECTED_INVENTORY:DISABLED</code></td>
-<td>Inventário protegido desativado globalmente</td>
-</tr>
-<tr>
-<td><code>#PROTECTED_INVENTORY_PASSWORD:[senha]</code></td>
-<td>Senha atual do inventário protegido</td>
-</tr>
-<tr>
-<td><code>#INVALID_CMD</code></td>
-<td>Comando não reconhecido</td>
-</tr>
-<tr>
-<td><code>#ERROR:[DESCRIÇÃO]</code></td>
-<td>Erro na execução (parâmetros inválidos, etc.)</td>
-</tr>
-<tr>
-<td><code>#SET_CMD:OK/NOK</code></td>
-<td>Resultado da configuração</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="notas-importantes">Notas Importantes </h2>
-<ol>
-<li><strong>Comandos são case-sensitive</strong> - mantenha a capitalização exata</li>
-<li><strong>Valores hexadecimais</strong> devem usar caracteres 0-9, A-F (maiúsculos ou minúsculos)</li>
-<li><strong>Separadores</strong> para múltiplos comandos: <code>|</code> (pipe)</li>
-<li><strong>Separadores</strong> para parâmetros: <code>;</code> (ponto e vírgula) ou <code>:</code> (dois pontos)</li>
-<li><strong>Configurações</strong> são aplicadas imediatamente e podem reconfigurar o reader</li>
-<li><strong>Reinicialização</strong> pode ser necessária após certas configurações</li>
-<li><strong>Funcionalidades avançadas</strong> como alteração de senhas e modo protegido requerem validação rigorosa dos parâmetros</li>
-</ol>
-<hr>
-<h2 id="suporte-técnico">Suporte Técnico </h2>
-<p>Para dúvidas técnicas ou implementação específica, consulte a documentação técnica completa ou entre em contato com o suporte.</p>
+    <link
+      rel="stylesheet"
+      href="file:///c:\Users\DELL\.vscode\extensions\shd101wyy.markdown-preview-enhanced-0.8.20\crossnote\dependencies\katex\katex.min.css"
+    />
 
-      </div>
-      
-      
-    
-    
-    
-    
-    
-    
-  
-    </body></html>
+    <style>
+      code[class*="language-"],
+      pre[class*="language-"] {
+        color: #333;
+        background: 0 0;
+        font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+        text-align: left;
+        white-space: pre;
+        word-spacing: normal;
+        word-break: normal;
+        word-wrap: normal;
+        line-height: 1.4;
+        -moz-tab-size: 8;
+        -o-tab-size: 8;
+        tab-size: 8;
+        -webkit-hyphens: none;
+        -moz-hyphens: none;
+        -ms-hyphens: none;
+        hyphens: none;
+      }
+      pre[class*="language-"] {
+        padding: 0.8em;
+        overflow: auto;
+        border-radius: 3px;
+        background: #f5f5f5;
+      }
+      :not(pre) > code[class*="language-"] {
+        padding: 0.1em;
+        border-radius: 0.3em;
+        white-space: normal;
+        background: #f5f5f5;
+      }
+      .token.blockquote,
+      .token.comment {
+        color: #969896;
+      }
+      .token.cdata {
+        color: #183691;
+      }
+      .token.doctype,
+      .token.macro.property,
+      .token.punctuation,
+      .token.variable {
+        color: #333;
+      }
+      .token.builtin,
+      .token.important,
+      .token.keyword,
+      .token.operator,
+      .token.rule {
+        color: #a71d5d;
+      }
+      .token.attr-value,
+      .token.regex,
+      .token.string,
+      .token.url {
+        color: #183691;
+      }
+      .token.atrule,
+      .token.boolean,
+      .token.code,
+      .token.command,
+      .token.constant,
+      .token.entity,
+      .token.number,
+      .token.property,
+      .token.symbol {
+        color: #0086b3;
+      }
+      .token.prolog,
+      .token.selector,
+      .token.tag {
+        color: #63a35c;
+      }
+      .token.attr-name,
+      .token.class,
+      .token.class-name,
+      .token.function,
+      .token.id,
+      .token.namespace,
+      .token.pseudo-class,
+      .token.pseudo-element,
+      .token.url-reference .token.variable {
+        color: #795da3;
+      }
+      .token.entity {
+        cursor: help;
+      }
+      .token.title,
+      .token.title .token.punctuation {
+        font-weight: 700;
+        color: #1d3e81;
+      }
+      .token.list {
+        color: #ed6a43;
+      }
+      .token.inserted {
+        background-color: #eaffea;
+        color: #55a532;
+      }
+      .token.deleted {
+        background-color: #ffecec;
+        color: #bd2c00;
+      }
+      .token.bold {
+        font-weight: 700;
+      }
+      .token.italic {
+        font-style: italic;
+      }
+      .language-json .token.property {
+        color: #183691;
+      }
+      .language-markup .token.tag .token.punctuation {
+        color: #333;
+      }
+      .language-css .token.function,
+      code.language-css {
+        color: #0086b3;
+      }
+      .language-yaml .token.atrule {
+        color: #63a35c;
+      }
+      code.language-yaml {
+        color: #183691;
+      }
+      .language-ruby .token.function {
+        color: #333;
+      }
+      .language-markdown .token.url {
+        color: #795da3;
+      }
+      .language-makefile .token.symbol {
+        color: #795da3;
+      }
+      .language-makefile .token.variable {
+        color: #183691;
+      }
+      .language-makefile .token.builtin {
+        color: #0086b3;
+      }
+      .language-bash .token.keyword {
+        color: #0086b3;
+      }
+      pre[data-line] {
+        position: relative;
+        padding: 1em 0 1em 3em;
+      }
+      pre[data-line] .line-highlight-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: transparent;
+        display: block;
+        width: 100%;
+      }
+      pre[data-line] .line-highlight {
+        position: absolute;
+        left: 0;
+        right: 0;
+        padding: inherit 0;
+        margin-top: 1em;
+        background: hsla(24, 20%, 50%, 0.08);
+        background: linear-gradient(
+          to right,
+          hsla(24, 20%, 50%, 0.1) 70%,
+          hsla(24, 20%, 50%, 0)
+        );
+        pointer-events: none;
+        line-height: inherit;
+        white-space: pre;
+      }
+      pre[data-line] .line-highlight:before,
+      pre[data-line] .line-highlight[data-end]:after {
+        content: attr(data-start);
+        position: absolute;
+        top: 0.4em;
+        left: 0.6em;
+        min-width: 1em;
+        padding: 0 0.5em;
+        background-color: hsla(24, 20%, 50%, 0.4);
+        color: #f4f1ef;
+        font: bold 65%/1.5 sans-serif;
+        text-align: center;
+        vertical-align: 0.3em;
+        border-radius: 999px;
+        text-shadow: none;
+        box-shadow: 0 1px #fff;
+      }
+      pre[data-line] .line-highlight[data-end]:after {
+        content: attr(data-end);
+        top: auto;
+        bottom: 0.4em;
+      }
+      html body {
+        font-family:
+          "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+        font-size: 16px;
+        line-height: 1.6;
+        color: #333;
+        background-color: #fff;
+        overflow: initial;
+        box-sizing: border-box;
+        word-wrap: break-word;
+      }
+      html body > :first-child {
+        margin-top: 0;
+      }
+      html body h1,
+      html body h2,
+      html body h3,
+      html body h4,
+      html body h5,
+      html body h6 {
+        line-height: 1.2;
+        margin-top: 1em;
+        margin-bottom: 16px;
+        color: #000;
+      }
+      html body h1 {
+        font-size: 2.25em;
+        font-weight: 300;
+        padding-bottom: 0.3em;
+      }
+      html body h2 {
+        font-size: 1.75em;
+        font-weight: 400;
+        padding-bottom: 0.3em;
+      }
+      html body h3 {
+        font-size: 1.5em;
+        font-weight: 500;
+      }
+      html body h4 {
+        font-size: 1.25em;
+        font-weight: 600;
+      }
+      html body h5 {
+        font-size: 1.1em;
+        font-weight: 600;
+      }
+      html body h6 {
+        font-size: 1em;
+        font-weight: 600;
+      }
+      html body h1,
+      html body h2,
+      html body h3,
+      html body h4,
+      html body h5 {
+        font-weight: 600;
+      }
+      html body h5 {
+        font-size: 1em;
+      }
+      html body h6 {
+        color: #5c5c5c;
+      }
+      html body strong {
+        color: #000;
+      }
+      html body del {
+        color: #5c5c5c;
+      }
+      html body a:not([href]) {
+        color: inherit;
+        text-decoration: none;
+      }
+      html body a {
+        color: #08c;
+        text-decoration: none;
+      }
+      html body a:hover {
+        color: #00a3f5;
+        text-decoration: none;
+      }
+      html body img {
+        max-width: 100%;
+      }
+      html body > p {
+        margin-top: 0;
+        margin-bottom: 16px;
+        word-wrap: break-word;
+      }
+      html body > ol,
+      html body > ul {
+        margin-bottom: 16px;
+      }
+      html body ol,
+      html body ul {
+        padding-left: 2em;
+      }
+      html body ol.no-list,
+      html body ul.no-list {
+        padding: 0;
+        list-style-type: none;
+      }
+      html body ol ol,
+      html body ol ul,
+      html body ul ol,
+      html body ul ul {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+      html body li {
+        margin-bottom: 0;
+      }
+      html body li.task-list-item {
+        list-style: none;
+      }
+      html body li > p {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+      html body .task-list-item-checkbox {
+        margin: 0 0.2em 0.25em -1.8em;
+        vertical-align: middle;
+      }
+      html body .task-list-item-checkbox:hover {
+        cursor: pointer;
+      }
+      html body blockquote {
+        margin: 16px 0;
+        font-size: inherit;
+        padding: 0 15px;
+        color: #5c5c5c;
+        background-color: #f0f0f0;
+        border-left: 4px solid #d6d6d6;
+      }
+      html body blockquote > :first-child {
+        margin-top: 0;
+      }
+      html body blockquote > :last-child {
+        margin-bottom: 0;
+      }
+      html body hr {
+        height: 4px;
+        margin: 32px 0;
+        background-color: #d6d6d6;
+        border: 0 none;
+      }
+      html body table {
+        margin: 10px 0 15px 0;
+        border-collapse: collapse;
+        border-spacing: 0;
+        display: block;
+        width: 100%;
+        overflow: auto;
+        word-break: normal;
+        word-break: keep-all;
+      }
+      html body table th {
+        font-weight: 700;
+        color: #000;
+      }
+      html body table td,
+      html body table th {
+        border: 1px solid #d6d6d6;
+        padding: 6px 13px;
+      }
+      html body dl {
+        padding: 0;
+      }
+      html body dl dt {
+        padding: 0;
+        margin-top: 16px;
+        font-size: 1em;
+        font-style: italic;
+        font-weight: 700;
+      }
+      html body dl dd {
+        padding: 0 16px;
+        margin-bottom: 16px;
+      }
+      html body code {
+        font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+        font-size: 0.85em;
+        color: #000;
+        background-color: #f0f0f0;
+        border-radius: 3px;
+        padding: 0.2em 0;
+      }
+      html body code::after,
+      html body code::before {
+        letter-spacing: -0.2em;
+        content: "\00a0";
+      }
+      html body pre > code {
+        padding: 0;
+        margin: 0;
+        word-break: normal;
+        white-space: pre;
+        background: 0 0;
+        border: 0;
+      }
+      html body .highlight {
+        margin-bottom: 16px;
+      }
+      html body .highlight pre,
+      html body pre {
+        padding: 1em;
+        overflow: auto;
+        line-height: 1.45;
+        border: #d6d6d6;
+        border-radius: 3px;
+      }
+      html body .highlight pre {
+        margin-bottom: 0;
+        word-break: normal;
+      }
+      html body pre code,
+      html body pre tt {
+        display: inline;
+        max-width: initial;
+        padding: 0;
+        margin: 0;
+        overflow: initial;
+        line-height: inherit;
+        word-wrap: normal;
+        background-color: transparent;
+        border: 0;
+      }
+      html body pre code:after,
+      html body pre code:before,
+      html body pre tt:after,
+      html body pre tt:before {
+        content: normal;
+      }
+      html body blockquote,
+      html body dl,
+      html body ol,
+      html body p,
+      html body pre,
+      html body ul {
+        margin-top: 0;
+        margin-bottom: 16px;
+      }
+      html body kbd {
+        color: #000;
+        border: 1px solid #d6d6d6;
+        border-bottom: 2px solid #c7c7c7;
+        padding: 2px 4px;
+        background-color: #f0f0f0;
+        border-radius: 3px;
+      }
+      @media print {
+        html body {
+          background-color: #fff;
+        }
+        html body h1,
+        html body h2,
+        html body h3,
+        html body h4,
+        html body h5,
+        html body h6 {
+          color: #000;
+          page-break-after: avoid;
+        }
+        html body blockquote {
+          color: #5c5c5c;
+        }
+        html body pre {
+          page-break-inside: avoid;
+        }
+        html body table {
+          display: table;
+        }
+        html body img {
+          display: block;
+          max-width: 100%;
+          max-height: 100%;
+        }
+        html body code,
+        html body pre {
+          word-wrap: break-word;
+          white-space: pre;
+        }
+      }
+      .markdown-preview {
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+      }
+      .markdown-preview ul {
+        list-style: disc;
+      }
+      .markdown-preview ul ul {
+        list-style: circle;
+      }
+      .markdown-preview ul ul ul {
+        list-style: square;
+      }
+      .markdown-preview ol {
+        list-style: decimal;
+      }
+      .markdown-preview ol ol,
+      .markdown-preview ul ol {
+        list-style-type: lower-roman;
+      }
+      .markdown-preview ol ol ol,
+      .markdown-preview ol ul ol,
+      .markdown-preview ul ol ol,
+      .markdown-preview ul ul ol {
+        list-style-type: lower-alpha;
+      }
+      .markdown-preview .newpage,
+      .markdown-preview .pagebreak {
+        page-break-before: always;
+      }
+      .markdown-preview pre.line-numbers {
+        position: relative;
+        padding-left: 3.8em;
+        counter-reset: linenumber;
+      }
+      .markdown-preview pre.line-numbers > code {
+        position: relative;
+      }
+      .markdown-preview pre.line-numbers .line-numbers-rows {
+        position: absolute;
+        pointer-events: none;
+        top: 1em;
+        font-size: 100%;
+        left: 0;
+        width: 3em;
+        letter-spacing: -1px;
+        border-right: 1px solid #999;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      .markdown-preview pre.line-numbers .line-numbers-rows > span {
+        pointer-events: none;
+        display: block;
+        counter-increment: linenumber;
+      }
+      .markdown-preview pre.line-numbers .line-numbers-rows > span:before {
+        content: counter(linenumber);
+        color: #999;
+        display: block;
+        padding-right: 0.8em;
+        text-align: right;
+      }
+      .markdown-preview .mathjax-exps .MathJax_Display {
+        text-align: center !important;
+      }
+      .markdown-preview:not([data-for="preview"])
+        .code-chunk
+        .code-chunk-btn-group {
+        display: none;
+      }
+      .markdown-preview:not([data-for="preview"]) .code-chunk .status {
+        display: none;
+      }
+      .markdown-preview:not([data-for="preview"]) .code-chunk .output-div {
+        margin-bottom: 16px;
+      }
+      .markdown-preview .md-toc {
+        padding: 0;
+      }
+      .markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link {
+        display: inline;
+        padding: 0.25rem 0;
+      }
+      .markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div,
+      .markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p {
+        display: inline;
+      }
+      .markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link {
+        font-weight: 800;
+      }
+      .scrollbar-style::-webkit-scrollbar {
+        width: 8px;
+      }
+      .scrollbar-style::-webkit-scrollbar-track {
+        border-radius: 10px;
+        background-color: transparent;
+      }
+      .scrollbar-style::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        background-color: rgba(150, 150, 150, 0.66);
+        border: 4px solid rgba(150, 150, 150, 0.66);
+        background-clip: content-box;
+      }
+      html body[for="html-export"]:not([data-presentation-mode]) {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        margin: 0;
+        padding: 0;
+        overflow: auto;
+      }
+      html
+        body[for="html-export"]:not([data-presentation-mode])
+        .markdown-preview {
+        position: relative;
+        top: 0;
+        min-height: 100vh;
+      }
+      @media screen and (min-width: 914px) {
+        html
+          body[for="html-export"]:not([data-presentation-mode])
+          .markdown-preview {
+          padding: 2em calc(50% - 457px + 2em);
+        }
+      }
+      @media screen and (max-width: 914px) {
+        html
+          body[for="html-export"]:not([data-presentation-mode])
+          .markdown-preview {
+          padding: 2em;
+        }
+      }
+      @media screen and (max-width: 450px) {
+        html
+          body[for="html-export"]:not([data-presentation-mode])
+          .markdown-preview {
+          font-size: 14px !important;
+          padding: 1em;
+        }
+      }
+      @media print {
+        html
+          body[for="html-export"]:not([data-presentation-mode])
+          #sidebar-toc-btn {
+          display: none;
+        }
+      }
+      html
+        body[for="html-export"]:not([data-presentation-mode])
+        #sidebar-toc-btn {
+        position: fixed;
+        bottom: 8px;
+        left: 8px;
+        font-size: 28px;
+        cursor: pointer;
+        color: inherit;
+        z-index: 99;
+        width: 32px;
+        text-align: center;
+        opacity: 0.4;
+      }
+      html
+        body[for="html-export"]:not(
+          [data-presentation-mode]
+        )[html-show-sidebar-toc]
+        #sidebar-toc-btn {
+        opacity: 1;
+      }
+      html
+        body[for="html-export"]:not(
+          [data-presentation-mode]
+        )[html-show-sidebar-toc]
+        .md-sidebar-toc {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 300px;
+        height: 100%;
+        padding: 32px 0 48px 0;
+        font-size: 14px;
+        box-shadow: 0 0 4px rgba(150, 150, 150, 0.33);
+        box-sizing: border-box;
+        overflow: auto;
+        background-color: inherit;
+      }
+      html
+        body[for="html-export"]:not(
+          [data-presentation-mode]
+        )[html-show-sidebar-toc]
+        .md-sidebar-toc::-webkit-scrollbar {
+        width: 8px;
+      }
+      html
+        body[for="html-export"]:not(
+          [data-presentation-mode]
+        )[html-show-sidebar-toc]
+        .md-sidebar-toc::-webkit-scrollbar-track {
+        border-radius: 10px;
+        background-color: transparent;
+      }
+      html
+        body[for="html-export"]:not(
+          [data-presentation-mode]
+        )[html-show-sidebar-toc]
+        .md-sidebar-toc::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        background-color: rgba(150, 150, 150, 0.66);
+        border: 4px solid rgba(150, 150, 150, 0.66);
+        background-clip: content-box;
+      }
+      html
+        body[for="html-export"]:not(
+          [data-presentation-mode]
+        )[html-show-sidebar-toc]
+        .md-sidebar-toc
+        a {
+        text-decoration: none;
+      }
+      html
+        body[for="html-export"]:not(
+          [data-presentation-mode]
+        )[html-show-sidebar-toc]
+        .md-sidebar-toc
+        .md-toc {
+        padding: 0 16px;
+      }
+      html
+        body[for="html-export"]:not(
+          [data-presentation-mode]
+        )[html-show-sidebar-toc]
+        .md-sidebar-toc
+        .md-toc
+        .md-toc-link-wrapper
+        .md-toc-link {
+        display: inline;
+        padding: 0.25rem 0;
+      }
+      html
+        body[for="html-export"]:not(
+          [data-presentation-mode]
+        )[html-show-sidebar-toc]
+        .md-sidebar-toc
+        .md-toc
+        .md-toc-link-wrapper
+        .md-toc-link
+        div,
+      html
+        body[for="html-export"]:not(
+          [data-presentation-mode]
+        )[html-show-sidebar-toc]
+        .md-sidebar-toc
+        .md-toc
+        .md-toc-link-wrapper
+        .md-toc-link
+        p {
+        display: inline;
+      }
+      html
+        body[for="html-export"]:not(
+          [data-presentation-mode]
+        )[html-show-sidebar-toc]
+        .md-sidebar-toc
+        .md-toc
+        .md-toc-link-wrapper.highlighted
+        .md-toc-link {
+        font-weight: 800;
+      }
+      html
+        body[for="html-export"]:not(
+          [data-presentation-mode]
+        )[html-show-sidebar-toc]
+        .markdown-preview {
+        left: 300px;
+        width: calc(100% - 300px);
+        padding: 2em calc(50% - 457px - 300px / 2);
+        margin: 0;
+        box-sizing: border-box;
+      }
+      @media screen and (max-width: 1274px) {
+        html
+          body[for="html-export"]:not(
+            [data-presentation-mode]
+          )[html-show-sidebar-toc]
+          .markdown-preview {
+          padding: 2em;
+        }
+      }
+      @media screen and (max-width: 450px) {
+        html
+          body[for="html-export"]:not(
+            [data-presentation-mode]
+          )[html-show-sidebar-toc]
+          .markdown-preview {
+          width: 100%;
+        }
+      }
+      html
+        body[for="html-export"]:not([data-presentation-mode]):not(
+          [html-show-sidebar-toc]
+        )
+        .markdown-preview {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      html
+        body[for="html-export"]:not([data-presentation-mode]):not(
+          [html-show-sidebar-toc]
+        )
+        .md-sidebar-toc {
+        display: none;
+      }
+      /* Please visit the URL below for more information: */
+      /*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+    </style>
+    <!-- The content below will be included at the end of the <head> element. -->
+    <script type="text/javascript">
+      document.addEventListener("DOMContentLoaded", function () {
+        // your code here
+      });
+    </script>
+  </head>
+  <body for="html-export">
+    <div class="crossnote markdown-preview">
+      <h1 id="x714---comandos-de-comunicação">
+        X714 - Comandos de Comunicação
+      </h1>
+      <h2 id="visão-geral">Visão Geral</h2>
+      <p>
+        O X714 aceita comandos através de múltiplas interfaces de comunicação:
+      </p>
+      <ul>
+        <li><strong>Serial</strong> (UART)</li>
+        <li><strong>Bluetooth Low Energy (BLE)</strong></li>
+        <li><strong>Ethernet (TCP/IP)</strong></li>
+      </ul>
+      <p>
+        Os comandos podem ser enviados individualmente ou em lote, utilizando o
+        separador <code>|</code> para múltiplos comandos em uma única
+        transmissão.
+      </p>
+      <hr />
+      <h2 id="comandos-básicos">Comandos Básicos</h2>
+      <h3 id="conectividade-e-status">Conectividade e Status</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Comando</th>
+            <th>Descrição</th>
+            <th>Resposta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>#ping</code> ou <code>ping</code></td>
+            <td>Testa conectividade</td>
+            <td><code>#PONG</code></td>
+          </tr>
+          <tr>
+            <td><code>#get_state</code></td>
+            <td>Obtém estado atual de leitura</td>
+            <td><code>#READING</code> ou <code>#IDLE</code></td>
+          </tr>
+          <tr>
+            <td><code>#get_info</code></td>
+            <td>Informações do dispositivo</td>
+            <td>
+              <code>#NAME:</code>, <code>#BT_MAC:</code>,
+              <code>#ETH_MAC:</code>, <code>#IP:</code>
+            </td>
+          </tr>
+          <tr>
+            <td><code>#get_serial</code></td>
+            <td>Serial do dispositivo</td>
+            <td><code>#SERIAL:[serial]</code></td>
+          </tr>
+          <tr>
+            <td><code>#restart</code></td>
+            <td>Reinicia o dispositivo</td>
+            <td>-</td>
+          </tr>
+        </tbody>
+      </table>
+      <h3 id="controle-de-leitura">Controle de Leitura</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Comando</th>
+            <th>Descrição</th>
+            <th>Resposta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>#read:on</code> ou <code>readtag on</code></td>
+            <td>Inicia leitura de tags</td>
+            <td><code>#READ:ON</code></td>
+          </tr>
+          <tr>
+            <td><code>#read:off</code> ou <code>readtag off</code></td>
+            <td>Para leitura de tags</td>
+            <td><code>#READ:OFF</code></td>
+          </tr>
+          <tr>
+            <td><code>initreadtag:on</code></td>
+            <td>Inicia leitura automaticamente</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td><code>initreadtag:off</code></td>
+            <td>Desabilita leitura automática</td>
+            <td>-</td>
+          </tr>
+        </tbody>
+      </table>
+      <h3 id="gerenciamento-de-tags">Gerenciamento de Tags</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Comando</th>
+            <th>Descrição</th>
+            <th>Resposta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>#get_tags</code></td>
+            <td>Lista epcs detectados</td>
+            <td>Lista de epcs</td>
+          </tr>
+          <tr>
+            <td><code>#get_tags_all</code></td>
+            <td>Lista todas as informações das tags</td>
+            <td>Lista completa de tags</td>
+          </tr>
+          <tr>
+            <td><code>#clear</code></td>
+            <td>Limpa buffer de tags</td>
+            <td>-</td>
+          </tr>
+        </tbody>
+      </table>
+      <h3 id="escrita-de-tags">Escrita de Tags</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Comando</th>
+            <th>Descrição</th>
+            <th>Formato</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>#write:[EPC];[PASSWORD]</code></td>
+            <td>Escreve EPC sem filtro</td>
+            <td><code>#write:000102030405060708090A0B;12345678</code></td>
+          </tr>
+          <tr>
+            <td><code>#write:[EPC];[PASSWORD];EPC;[TARGET]</code></td>
+            <td>Escreve EPC com filtro no epc</td>
+            <td>
+              <code
+                >#write:000102030405060708090A0B;12345678;epc;AABBCCDDEEFF001122334455</code
+              >
+            </td>
+          </tr>
+          <tr>
+            <td><code>#write:[EPC];[PASSWORD];TID;[TARGET]</code></td>
+            <td>Escreve EPC com filtro no tid</td>
+            <td>
+              <code
+                >#write:000102030405060708090A0B;12345678;tid;E28012341234123412341234</code
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p><strong>Parâmetros de escrita:</strong></p>
+      <ul>
+        <li><strong>EPC</strong>: 24 caracteres hexadecimais (12 bytes)</li>
+        <li><strong>PASSWORD</strong>: 8 caracteres hexadecimais (4 bytes)</li>
+        <li><strong>TYPE</strong>: <code>epc</code> ou <code>tid</code></li>
+        <li><strong>TARGET</strong>: 24 caracteres hexadecimais para filtro</li>
+      </ul>
+      <h3 id="gerenciamento-avançado-de-tags">
+        Gerenciamento Avançado de Tags
+      </h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Comando</th>
+            <th>Descrição</th>
+            <th>Formato</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>#change_password:[EPC];[NEW_PWD];[OLD_PWD]</code></td>
+            <td>Altera senha de tag específica</td>
+            <td>
+              <code
+                >#change_password:000102030405060708090A0B;ABCD1234;00000000</code
+              >
+            </td>
+          </tr>
+          <tr>
+            <td><code>#protected_mode:[EPC];[PASSWORD];[ENABLE]</code></td>
+            <td>Ativa/desativa modo protegido para tag específica</td>
+            <td>
+              <code>#protected_mode:000102030405060708090A0B;12345678;on</code>
+            </td>
+          </tr>
+          <tr>
+            <td><code>#protected_inventory:[ENABLE];[PASSWORD]</code></td>
+            <td>Ativa/desativa inventário protegido global</td>
+            <td><code>#protected_inventory:on;12345678</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <p><strong>Parâmetros avançados:</strong></p>
+      <ul>
+        <li>
+          <strong>EPC</strong>: 24 caracteres hexadecimais (12 bytes) - EPC da
+          tag alvo
+        </li>
+        <li>
+          <strong>NEW_PWD</strong>: 8 caracteres hexadecimais (4 bytes) - Nova
+          senha
+        </li>
+        <li>
+          <strong>OLD_PWD</strong>: 8 caracteres hexadecimais (4 bytes) - Senha
+          atual (padrão: 00000000)
+        </li>
+        <li>
+          <strong>PASSWORD</strong>: 8 caracteres hexadecimais (4 bytes) - Senha
+          de acesso (padrão: 00000000)
+        </li>
+        <li>
+          <strong>ENABLE</strong>: <code>on</code>/<code>off</code> ou
+          <code>true</code>/<code>false</code> - Habilita/desabilita proteção
+        </li>
+      </ul>
+      <p><strong>Respostas específicas:</strong></p>
+      <ul>
+        <li><code>#CHANGE_PASSWORD:OK</code> - Senha alterada com sucesso</li>
+        <li>
+          <code>#PROTECTED_MODE:ENABLED</code> - Modo protegido ativado para tag
+          específica
+        </li>
+        <li>
+          <code>#PROTECTED_MODE:DISABLED</code> - Modo protegido desativado para
+          tag específica
+        </li>
+        <li>
+          <code>#PROTECTED_INVENTORY:ENABLED</code> - Inventário protegido
+          ativado globalmente
+        </li>
+        <li>
+          <code>#PROTECTED_INVENTORY:DISABLED</code> - Inventário protegido
+          desativado globalmente
+        </li>
+        <li>
+          <code>#ERROR:[DESCRIÇÃO]</code> - Erro na execução (EPC inválido,
+          senha incorreta, etc.)
+        </li>
+      </ul>
+      <hr />
+      <h2 id="configuração-de-potência-e-sessão">
+        Configuração de Potência e Sessão
+      </h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Comando</th>
+            <th>Descrição</th>
+            <th>Faixa/Valores</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <code>#read_power:[VALOR]</code> ou <code>readpower:[VALOR]</code>
+            </td>
+            <td>Define potência de leitura</td>
+            <td>Conforme especificação</td>
+          </tr>
+          <tr>
+            <td><code>#get_power</code></td>
+            <td>Obtém potência atual</td>
+            <td><code>#POWER:[valor]</code></td>
+          </tr>
+          <tr>
+            <td>
+              <code>#session:[VALOR]</code> ou <code>gen2session:[VALOR]</code>
+            </td>
+            <td>Define sessão Gen2</td>
+            <td>0 ao máximo configurado</td>
+          </tr>
+          <tr>
+            <td><code>#get_session</code></td>
+            <td>Obtém sessão atual</td>
+            <td><code>#SESSION:[valor]</code></td>
+          </tr>
+          <tr>
+            <td><code>#password[...]</code></td>
+            <td>Altera senha do reader</td>
+            <td>Conforme protocolo</td>
+          </tr>
+        </tbody>
+      </table>
+      <hr />
+      <h2 id="configurações-gerais">Configurações Gerais</h2>
+      <h3 id="modo-de-operação">Modo de Operação</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Comando</th>
+            <th>Descrição</th>
+            <th>Valores</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>readmode hid</code></td>
+            <td>Modo teclado (HID)</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td><code>readmode normal</code></td>
+            <td>Modo normal</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td><code>#buzzer:on</code></td>
+            <td>Habilita buzzer</td>
+            <td><code>#BUZZER:ON</code></td>
+          </tr>
+          <tr>
+            <td><code>#buzzer:off</code></td>
+            <td>Desabilita buzzer</td>
+            <td><code>#BUZZER:OFF</code></td>
+          </tr>
+          <tr>
+            <td><code>#decode_gtin:on</code></td>
+            <td>Habilita decodificação GTIN</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td><code>#decode_gtin:off</code></td>
+            <td>Desabilita decodificação GTIN</td>
+            <td>-</td>
+          </tr>
+        </tbody>
+      </table>
+      <h3 id="configuração-de-rede">Configuração de Rede</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Comando</th>
+            <th>Descrição</th>
+            <th>Valores</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>#hotspot:on</code></td>
+            <td>Habilita modo hotspot</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td><code>#hotspot:off</code></td>
+            <td>Desabilita modo hotspot</td>
+            <td>-</td>
+          </tr>
+        </tbody>
+      </table>
+      <h3 id="configuração-de-prefixo">Configuração de Prefixo</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Comando</th>
+            <th>Descrição</th>
+            <th>Exemplo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>#prefix:[VALOR]</code></td>
+            <td>Define prefixo para tags</td>
+            <td><code>#prefix:TAG_</code></td>
+          </tr>
+          <tr>
+            <td><code>#get_prefix</code></td>
+            <td>Obtém prefixo atual</td>
+            <td><code>#PREFIX:[valor]</code></td>
+          </tr>
+          <tr>
+            <td><code>#get_protected_inventory</code></td>
+            <td>Obtém status do inventário protegido</td>
+            <td>
+              <code>#PROTECTED_INVENTORY:[status]</code>,
+              <code>#PROTECTED_INVENTORY_PASSWORD:[senha]</code>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <hr />
+      <h2 id="comando-de-configuração-múltipla">
+        Comando de Configuração Múltipla
+      </h2>
+      <h3 id="set_cmdcomandos"><code>#set_cmd:[COMANDOS]</code></h3>
+      <p>
+        Permite configurar múltiplas opções simultaneamente usando o separador
+        <code>|</code>.
+      </p>
+      <p><strong>Comandos disponíveis no set_cmd:</strong></p>
+      <table>
+        <thead>
+          <tr>
+            <th>Comando</th>
+            <th>Descrição</th>
+            <th>Exemplo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>set_ant:[N],[ATIVO],[POTÊNCIA],[RSSI]</code></td>
+            <td>Configura antena específica</td>
+            <td><code>set_ant:1,on,30,25</code></td>
+          </tr>
+          <tr>
+            <td><code>session:[VALOR]</code></td>
+            <td>Define sessão</td>
+            <td><code>session:1</code></td>
+          </tr>
+          <tr>
+            <td><code>read_power:[VALOR]</code></td>
+            <td>Potência de leitura</td>
+            <td><code>read_power:30</code></td>
+          </tr>
+          <tr>
+            <td><code>write_power:[VALOR]</code></td>
+            <td>Potência de escrita</td>
+            <td><code>write_power:30</code></td>
+          </tr>
+          <tr>
+            <td><code>buzzer:on/off</code></td>
+            <td>Controle do buzzer</td>
+            <td><code>buzzer:on</code></td>
+          </tr>
+          <tr>
+            <td><code>gpi_stop_delay:[MS]</code></td>
+            <td>Delay de parada GPI</td>
+            <td><code>gpi_stop_delay:1000</code></td>
+          </tr>
+          <tr>
+            <td><code>decode_gtin:on/off</code></td>
+            <td>Decodificação GTIN</td>
+            <td><code>decode_gtin:on</code></td>
+          </tr>
+          <tr>
+            <td><code>start_reading:on/off</code></td>
+            <td>Leitura automática</td>
+            <td><code>start_reading:on</code></td>
+          </tr>
+          <tr>
+            <td><code>gpi_start:on/off</code></td>
+            <td>Início por GPI</td>
+            <td><code>gpi_start:on</code></td>
+          </tr>
+          <tr>
+            <td><code>always_send:on/off</code></td>
+            <td>Envio contínuo</td>
+            <td><code>always_send:on</code></td>
+          </tr>
+          <tr>
+            <td><code>simple_send:on/off</code></td>
+            <td>Envio simplificado</td>
+            <td><code>simple_send:on</code></td>
+          </tr>
+          <tr>
+            <td><code>#simple_send_format:3;14</code></td>
+            <td>
+              Define o recorte EPC (fim exclusivo); aceita <code>rchlo</code>
+            </td>
+            <td><code>#SIMPLE_SEND_FORMAT:3;14</code></td>
+          </tr>
+          <tr>
+            <td><code>#get_simple_send_format</code></td>
+            <td>Consulta o recorte EPC</td>
+            <td><code>#SIMPLE_SEND_FORMAT:3;14</code></td>
+          </tr>
+          <tr>
+            <td><code>keyboard:on/off</code></td>
+            <td>Modo teclado</td>
+            <td><code>keyboard:on</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <p><strong>Exemplo de uso:</strong></p>
+      <pre
+        data-role="codeBlock"
+        data-info="text"
+        class="language-text text"
+      ><code>#set_cmd:session:1|read_power:30|buzzer:on|start_reading:on
+</code></pre>
+      <p><strong>Resposta:</strong> Para cada comando processado:</p>
+      <ul>
+        <li><code>#CMD:[comando]</code> (log do comando)</li>
+        <li><code>#SET_CMD:OK</code> ou <code>#SET_CMD:NOK</code></li>
+      </ul>
+      <hr />
+      <h2 id="comandos-em-lote">Comandos em Lote</h2>
+      <h3 id="múltiplos-comandos-com-">
+        Múltiplos Comandos com <code>|</code>
+      </h3>
+      <p>
+        É possível enviar vários comandos em uma única transmissão, separados
+        por <code>|</code>:
+      </p>
+      <p><strong>Exemplo:</strong></p>
+      <pre
+        data-role="codeBlock"
+        data-info="text"
+        class="language-text text"
+      ><code>#read:on|#clear|#buzzer:on
+</code></pre>
+      <p><strong>Comportamento:</strong></p>
+      <ul>
+        <li>Cada comando é processado sequencialmente</li>
+        <li>
+          Comandos <code>#set_cmd:</code> são tratados de forma especial (não
+          são separados)
+        </li>
+        <li>Outros comandos são processados individualmente</li>
+      </ul>
+      <hr />
+      <h2 id="códigos-de-resposta">Códigos de Resposta</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Resposta</th>
+            <th>Significado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>#PONG</code></td>
+            <td>Resposta ao ping</td>
+          </tr>
+          <tr>
+            <td><code>#READ:ON/OFF</code></td>
+            <td>Estado de leitura alterado</td>
+          </tr>
+          <tr>
+            <td><code>#READING/#IDLE</code></td>
+            <td>Estado atual de leitura</td>
+          </tr>
+          <tr>
+            <td><code>#BUZZER:ON/OFF</code></td>
+            <td>Estado do buzzer</td>
+          </tr>
+          <tr>
+            <td><code>#CHANGE_PASSWORD:OK</code></td>
+            <td>Senha alterada com sucesso</td>
+          </tr>
+          <tr>
+            <td><code>#PROTECTED_MODE:ENABLED</code></td>
+            <td>Modo protegido ativado para tag específica</td>
+          </tr>
+          <tr>
+            <td><code>#PROTECTED_MODE:DISABLED</code></td>
+            <td>Modo protegido desativado para tag específica</td>
+          </tr>
+          <tr>
+            <td><code>#PROTECTED_INVENTORY:ENABLED</code></td>
+            <td>Inventário protegido ativado globalmente</td>
+          </tr>
+          <tr>
+            <td><code>#PROTECTED_INVENTORY:DISABLED</code></td>
+            <td>Inventário protegido desativado globalmente</td>
+          </tr>
+          <tr>
+            <td><code>#PROTECTED_INVENTORY_PASSWORD:[senha]</code></td>
+            <td>Senha atual do inventário protegido</td>
+          </tr>
+          <tr>
+            <td><code>#INVALID_CMD</code></td>
+            <td>Comando não reconhecido</td>
+          </tr>
+          <tr>
+            <td><code>#ERROR:[DESCRIÇÃO]</code></td>
+            <td>Erro na execução (parâmetros inválidos, etc.)</td>
+          </tr>
+          <tr>
+            <td><code>#SET_CMD:OK/NOK</code></td>
+            <td>Resultado da configuração</td>
+          </tr>
+        </tbody>
+      </table>
+      <hr />
+      <h2 id="notas-importantes">Notas Importantes</h2>
+      <ol>
+        <li>
+          <strong>Comandos são case-sensitive</strong> - mantenha a
+          capitalização exata
+        </li>
+        <li>
+          <strong>Valores hexadecimais</strong> devem usar caracteres 0-9, A-F
+          (maiúsculos ou minúsculos)
+        </li>
+        <li>
+          <strong>Separadores</strong> para múltiplos comandos:
+          <code>|</code> (pipe)
+        </li>
+        <li>
+          <strong>Separadores</strong> para parâmetros: <code>;</code> (ponto e
+          vírgula) ou <code>:</code> (dois pontos)
+        </li>
+        <li>
+          <strong>Configurações</strong> são aplicadas imediatamente e podem
+          reconfigurar o reader
+        </li>
+        <li>
+          <strong>Reinicialização</strong> pode ser necessária após certas
+          configurações
+        </li>
+        <li>
+          <strong>Funcionalidades avançadas</strong> como alteração de senhas e
+          modo protegido requerem validação rigorosa dos parâmetros
+        </li>
+      </ol>
+      <hr />
+      <h2 id="suporte-técnico">Suporte Técnico</h2>
+      <p>
+        Para dúvidas técnicas ou implementação específica, consulte a
+        documentação técnica completa ou entre em contato com o suporte.
+      </p>
+    </div>
+  </body>
+</html>

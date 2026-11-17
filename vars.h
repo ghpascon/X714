@@ -19,6 +19,7 @@ CONNECTION connection;
 MySerial myserial;
 MySerialCheck myserialcheck;
 bool simple_send = false;
+String simple_send_format = "";
 bool keyboard = false;
 
 // ==================== Pinos ====================

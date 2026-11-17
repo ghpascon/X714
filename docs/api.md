@@ -120,6 +120,7 @@ Retorna:
 - `gpi_start`
 - `always_send`
 - `simple_send`
+- `simple_send_format` (formato `inicio;fim`, com fim exclusivo; exemplo `3;14`)
 - `keyboard`
 - `buzzer_on`
 - `decode_gtin`
@@ -134,6 +135,7 @@ Exemplo:
 ```json
 {
   "always_send": true,
+  "simple_send_format": "3;14",
   "indicator_time": 2500
 }
 ```
@@ -145,6 +147,7 @@ Exemplo:
 Retorna:
 
 - `simple_send`
+- `simple_send_format`
 - `session`
 - `gpi_stop_delay`
 

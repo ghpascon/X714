@@ -380,6 +380,31 @@ public:
             simple_send = cmd.endsWith("on");
             myserial.write("#SIMPLE_SEND:" + String(simple_send ? "on" : "off"));
         }
+        else if (cmd.startsWith("#simple_send_format:"))
+        {
+            String requested_format = cmd.substring(20);
+            requested_format.trim();
+            if (requested_format.length() == 0)
+            {
+                simple_send_format = "";
+                myserial.write("#SIMPLE_SEND_FORMAT:");
+            }
+            else
+            {
+                String normalized_format = normalize_simple_send_format(requested_format);
+                if (normalized_format.length() == 0)
+                {
+                    myserial.write("#ERROR:Invalid simple_send_format");
+                    return;
+                }
+                simple_send_format = normalized_format;
+                myserial.write("#SIMPLE_SEND_FORMAT:" + simple_send_format);
+            }
+        }
+        else if (cmd == "#get_simple_send_format")
+        {
+            myserial.write("#SIMPLE_SEND_FORMAT:" + simple_send_format);
+        }
         else if (cmd.startsWith("#keyboard:"))
         {
             keyboard = cmd.endsWith("on");

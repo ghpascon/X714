@@ -74,6 +74,47 @@
         background: #ffc458;
       }
 
+      .simple_send_panel {
+        width: 100%;
+        border: 2px solid #d8d8d8;
+        border-radius: 12px;
+        padding: 14px 16px;
+        box-sizing: border-box;
+        color: #ffffff;
+        background: rgba(0, 0, 0, 0.22);
+      }
+
+      .simple_send_controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        align-items: end;
+        gap: 12px;
+      }
+
+      .simple_send_field {
+        display: grid;
+        gap: 6px;
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .simple_send_select {
+        width: 100%;
+        height: 48px;
+        font-size: 20px;
+        padding: 0 12px;
+        color: #ffffff;
+        background: #1f1f1f;
+        border: 2px solid #8a8a8a;
+        border-radius: 10px;
+      }
+
+      @media (max-width: 760px) {
+        .simple_send_controls {
+          grid-template-columns: 1fr;
+        }
+      }
+
       @media (max-width: 760px) {
         .indicator_time_controls {
           grid-template-columns: 1fr;
@@ -160,6 +201,35 @@
               </td>
             </tr>
 
+            <tr id="simple_send_format_row" hidden>
+              <td colspan="2">
+                <div class="simple_send_panel">
+                  <div class="simple_send_controls">
+                    <label class="simple_send_field">
+                      INICIAL (INCLUSIVO)
+                      <select
+                        id="simple_send_start"
+                        class="simple_send_select"
+                      ></select>
+                    </label>
+                    <label class="simple_send_field">
+                      FINAL (EXCLUSIVO)
+                      <select
+                        id="simple_send_end"
+                        class="simple_send_select"
+                      ></select>
+                    </label>
+                    <button
+                      class="indicator_time_apply"
+                      onclick="saveSimpleSendFormat()"
+                    >
+                      APPLY
+                    </button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+
             <tr>
               <td>
                 <label>KEYBOARD:</label>
@@ -239,6 +309,7 @@
 
   <script>
     let modesState = null;
+    let simpleSendFormatDirty = false;
 
     function setStatus(message, isError) {
       const banner = document.getElementById("status-banner");
@@ -291,6 +362,19 @@
       if (document.activeElement !== indicatorInput) {
         indicatorInput.value = modesState.indicator_time;
       }
+
+      const simpleFormatRow = document.getElementById("simple_send_format_row");
+      simpleFormatRow.hidden = !modesState.simple_send;
+
+      const [formatStart, formatEnd] = parseSimpleSendFormat(
+        modesState.simple_send_format,
+      );
+      const startSelect = document.getElementById("simple_send_start");
+      const endSelect = document.getElementById("simple_send_end");
+      if (!simpleSendFormatDirty) {
+        startSelect.value = formatStart;
+        endSelect.value = formatEnd;
+      }
     }
 
     async function updateMode(field, value) {
@@ -341,9 +425,59 @@
       }
     }
 
+    function parseSimpleSendFormat(format) {
+      if (typeof format === "string" && /^\d+;\d+$/.test(format)) {
+        const [start, end] = format.split(";").map(Number);
+        return [String(start), String(end)];
+      }
+      return ["", ""];
+    }
+
+    function initializeSimpleSendSelects() {
+      const startSelect = document.getElementById("simple_send_start");
+      const endSelect = document.getElementById("simple_send_end");
+      startSelect.add(new Option("Selecione", ""));
+      endSelect.add(new Option("Selecione", ""));
+      for (let index = 0; index <= 24; index += 1) {
+        startSelect.add(new Option(String(index), String(index)));
+        endSelect.add(new Option(String(index), String(index)));
+      }
+      startSelect.addEventListener("change", () => {
+        simpleSendFormatDirty = true;
+      });
+      endSelect.addEventListener("change", () => {
+        simpleSendFormatDirty = true;
+      });
+    }
+
+    async function saveSimpleSendFormat() {
+      const start = Number.parseInt(
+        document.getElementById("simple_send_start").value,
+        10,
+      );
+      const end = Number.parseInt(
+        document.getElementById("simple_send_end").value,
+        10,
+      );
+
+      if (!Number.isInteger(start) || !Number.isInteger(end) || end <= start) {
+        setStatus("O final deve ser maior que o inicial.", true);
+        return;
+      }
+
+      try {
+        await updateMode("simple_send_format", `${start};${end}`);
+        simpleSendFormatDirty = false;
+        setStatus("Formato do Simple Send salvo.", false);
+      } catch (error) {
+        setStatus("Falha ao salvar formato: " + error, true);
+      }
+    }
+
     function update_html() {
       update_elements();
     }
+    initializeSimpleSendSelects();
     update_html();
     setInterval(update_html, 1000);
 
