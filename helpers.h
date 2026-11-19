@@ -76,6 +76,15 @@ static bool isUnsignedNumber(const String &value)
     return true;
 }
 
+String get_renner_sku(String epc)
+{
+    if (epc.length() < 16)
+        return "";
+    String hex_epc = epc.substring(4, 16);
+    unsigned long long decimal_value = strtoull(hex_epc.c_str(), NULL, 16);
+    return String(decimal_value);
+}
+
 String normalize_simple_send_format(const String &raw_format)
 {
     String format = raw_format;
@@ -84,6 +93,9 @@ String normalize_simple_send_format(const String &raw_format)
 
     if (format.length() == 0)
         return "";
+
+    if (format == "renner")
+        return "renner";
 
     if (format == "rchlo")
         format = "3;14";
@@ -119,6 +131,9 @@ String format_simple_send_epc(const String &epc, const String &raw_format)
     const String normalized = normalize_simple_send_format(format);
     if (normalized.length() == 0)
         return "";
+
+    if (normalized == "renner")
+        return get_renner_sku(epc);
 
     const int separator_pos = normalized.indexOf(';');
     const int start_idx = normalized.substring(0, separator_pos).toInt();

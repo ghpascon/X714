@@ -85,29 +85,29 @@ Observacoes de validacao:
 
 ### Potencia, sessao, antena e modo
 
-| Comando                                  | Descricao                                            | Resposta                                     |
-| ---------------------------------------- | ---------------------------------------------------- | -------------------------------------------- |
-| `#get_power`                             | Le potencia atual da antena 1                        | `#ANT_POWER:[valor]`                         |
-| `#read_power:[VALOR]`                    | Define potencia de leitura global                    | `#READ_POWER:[valor]` e `#POWER:[valor]`     |
-| `readpower:[VALOR]`                      | Alias para potencia de leitura                       | `#READ_POWER:[valor]`                        |
-| `#get_session`                           | Le sessao atual                                      | `#SESSION:[valor]`                           |
-| `#session:[VALOR]`                       | Define sessao                                        | `#SESSION:[valor]`                           |
-| `gen2session:[VALOR]`                    | Alias legacy de sessao                               | `#GEN2_SESSION:[valor]`                      |
-| `#set_ant:[N],[ATIVO],[POTENCIA],[RSSI]` | Configura antena                                     | `#ANT_CONFIGURED:N,on/off,power,rssi`        |
-| `#setup_reader`                          | Reinicia sequencia de setup do modulo reader         | `#SETUP_STARTED` (e depois eventos de setup) |
-| `readmode hid`                           | Saida em modo teclado                                | `#READ_MODE:HID`                             |
-| `readmode normal`                        | Saida normal (USB CDC)                               | `#READ_MODE:USB`                             |
-| `#buzzer:on` / `#buzzer:off`             | Liga/desliga buzzer                                  | `#BUZZER:on/off`                             |
-| `#decode_gtin:on` / `#decode_gtin:off`   | Liga/desliga conversao EPC para GTIN                 | `#DECODE_GTIN:on/off`                        |
-| `#keyboard:on` / `#keyboard:off`         | Liga/desliga envio em teclado HID                    | `#KEYBOARD:on/off`                           |
-| `#always_send:on` / `#always_send:off`   | Forca envio continuo de tags                         | `#ALWAYS_SEND:on/off`                        |
-| `#simple_send:on` / `#simple_send:off`   | Envio simplificado de tag                            | `#SIMPLE_SEND:on/off`                        |
-| `#simple_send_format:[INICIO];[FIM]`     | Define recorte EPC (fim exclusivo); aceita `rchlo`   | `#SIMPLE_SEND_FORMAT:[inicio];[fim]`         |
-| `#get_simple_send_format`                | Le o formato de envio simplificado                   | `#SIMPLE_SEND_FORMAT:[inicio];[fim]`         |
-| `#gpi_start:on` / `#gpi_start:off`       | Modo GPI controla leitura ou apenas reporta entradas | `#GPI_START:on/off`                          |
-| `#gpi_stop_delay:[MS]`                   | Delay de parada GPI                                  | sem resposta                                 |
-| `#measure_rl:[ANT]`                      | Mede RL com frequencia padrao                        | sem resposta textual garantida               |
-| `#measure_rl:[ANT],[FREQ]`               | Mede RL em frequencia especifica                     | sem resposta textual garantida               |
+| Comando                                  | Descricao                                                                   | Resposta                                     |
+| ---------------------------------------- | --------------------------------------------------------------------------- | -------------------------------------------- |
+| `#get_power`                             | Le potencia atual da antena 1                                               | `#ANT_POWER:[valor]`                         |
+| `#read_power:[VALOR]`                    | Define potencia de leitura global                                           | `#READ_POWER:[valor]` e `#POWER:[valor]`     |
+| `readpower:[VALOR]`                      | Alias para potencia de leitura                                              | `#READ_POWER:[valor]`                        |
+| `#get_session`                           | Le sessao atual                                                             | `#SESSION:[valor]`                           |
+| `#session:[VALOR]`                       | Define sessao                                                               | `#SESSION:[valor]`                           |
+| `gen2session:[VALOR]`                    | Alias legacy de sessao                                                      | `#GEN2_SESSION:[valor]`                      |
+| `#set_ant:[N],[ATIVO],[POTENCIA],[RSSI]` | Configura antena                                                            | `#ANT_CONFIGURED:N,on/off,power,rssi`        |
+| `#setup_reader`                          | Reinicia sequencia de setup do modulo reader                                | `#SETUP_STARTED` (e depois eventos de setup) |
+| `readmode hid`                           | Saida em modo teclado                                                       | `#READ_MODE:HID`                             |
+| `readmode normal`                        | Saida normal (USB CDC)                                                      | `#READ_MODE:USB`                             |
+| `#buzzer:on` / `#buzzer:off`             | Liga/desliga buzzer                                                         | `#BUZZER:on/off`                             |
+| `#decode_gtin:on` / `#decode_gtin:off`   | Liga/desliga conversao EPC para GTIN                                        | `#DECODE_GTIN:on/off`                        |
+| `#keyboard:on` / `#keyboard:off`         | Liga/desliga envio em teclado HID                                           | `#KEYBOARD:on/off`                           |
+| `#always_send:on` / `#always_send:off`   | Forca envio continuo de tags                                                | `#ALWAYS_SEND:on/off`                        |
+| `#simple_send:on` / `#simple_send:off`   | Envio simplificado de tag                                                   | `#SIMPLE_SEND:on/off`                        |
+| `#simple_send_format:[INICIO];[FIM]`     | Define recorte EPC (fim exclusivo); aceita `rchlo` e `renner` (SKU decimal) | `#SIMPLE_SEND_FORMAT:[inicio];[fim]`         |
+| `#get_simple_send_format`                | Le o formato de envio simplificado                                          | `#SIMPLE_SEND_FORMAT:[inicio];[fim]`         |
+| `#gpi_start:on` / `#gpi_start:off`       | Modo GPI controla leitura ou apenas reporta entradas                        | `#GPI_START:on/off`                          |
+| `#gpi_stop_delay:[MS]`                   | Delay de parada GPI                                                         | sem resposta                                 |
+| `#measure_rl:[ANT]`                      | Mede RL com frequencia padrao                                               | sem resposta textual garantida               |
+| `#measure_rl:[ANT],[FREQ]`               | Mede RL em frequencia especifica                                            | sem resposta textual garantida               |
 
 ### Prefixo e regravacao assistida
 
